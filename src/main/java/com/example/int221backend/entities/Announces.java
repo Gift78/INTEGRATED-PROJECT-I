@@ -21,7 +21,6 @@ public class Announces {
     private String announcementDisplay;
 
     @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "categoryId" ,nullable = false)
+    @JoinColumn(name = "categoryId", nullable = false)
     private Categories categoriesObject;
 }

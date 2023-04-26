@@ -17,4 +17,5 @@ public class AnnounceDTO {
     public String getCategory(){
         return categoriesObject.getCategoryName();
     }
+    private String display;
 }
