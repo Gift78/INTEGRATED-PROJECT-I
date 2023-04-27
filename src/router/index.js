@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import AnnouncmentListingComponent from "../components/AnnouncmentListingComponent.vue";
+import AnnouncmentsListingComponent from "../components/AnnouncmentsListingComponent.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -11,7 +11,7 @@ const router = createRouter({
     {
       path: "/announcments",
       name: "Announcments",
-      component: AnnouncmentListingComponent,
+      component: AnnouncmentsListingComponent,
     },
   ],
 });
