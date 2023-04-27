@@ -1,6 +1,5 @@
 package com.example.int221backend.controllers;
 
-import com.example.int221backend.dtos.AnnounceDTO;
 import com.example.int221backend.entities.Announces;
 import com.example.int221backend.services.AnnounceService;
 import org.modelmapper.ModelMapper;
@@ -22,10 +21,8 @@ public class AnnouncementController {
     private ModelMapper modelMapper;
 
     @GetMapping("")
-    public List<AnnounceDTO> getAllAnnouncements() {
-        List<Announces> announces = announceService.getAllAnnouncements();
-        List<AnnounceDTO> announceDTOList = announces.stream().map(e -> modelMapper.map(e, AnnounceDTO.class)).collect(Collectors.toList());
-        return announceDTOList;
+    public List<Announces> getAllAnnouncements() {
+        return announceService.getAllAnnouncements();
     }
 
     @GetMapping("{announceId}")

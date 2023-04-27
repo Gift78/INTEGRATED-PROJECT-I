@@ -1,6 +1,5 @@
 package com.example.int221backend.services;
 
-
 import com.example.int221backend.entities.Announces;
 import com.example.int221backend.repositories.AnnounceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
