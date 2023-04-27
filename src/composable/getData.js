@@ -6,11 +6,18 @@ const getData = async () => {
     if (res.ok) {
       const data = await res.json();
       return data;
+    } else if (res.status === 404) {
+      throw new Error("404 Not Found");
+    } else if (res.status === 500) {
+      throw new Error("500 Internal Server Error");
+    } else if (res.status === 503) {
+      throw new Error("503 Service Unavailable");
     } else {
-      throw new Error("There is something wrong, cannot get your data!");
+      throw new Error("Something went wrong.");
     }
   } catch (err) {
     console.log(err);
   }
 };
+
 export { getData };
