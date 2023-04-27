@@ -1,6 +1,6 @@
 <script setup>
 import PhGlobe from './icons/PhGlobe.vue';
-import DetailComponent from './DetailComponent.vue';
+import AnnouncmentDetailComponent from './AnnouncmentDetailComponent.vue';
 import { ref, onMounted } from 'vue'
 import { getData } from '../composable/getData.js';
 
@@ -72,7 +72,7 @@ const setPage = (page, detail) => {
                     </div>
                 </div>
             </div>
-            <DetailComponent v-if="currentPage === 'detailPage'" :detail="detailSelect" />
+            <AnnouncmentDetailComponent v-if="currentPage === 'detailPage'" :detail="detailSelect" />
         </div>
     </div>
 </template>
