@@ -1,21 +1,15 @@
 <script setup>
 import PhGlobe from './components/icons/PhGlobe.vue';
-// import FirstPageComponant from './components/FirstPageComponent.vue'
 import DetailComponent from './components/DetailComponent.vue';
 import { ref, onMounted } from 'vue'
 import { getData } from './composable/getData.js';
 
-
-
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-
 const data = ref()
 onMounted(async () => {
   data.value = await getData();
   console.log(data.value)
 });
-
 
 const detailSelect = ref(undefined)
 const currentPage = ref('annoucePage')
@@ -23,8 +17,6 @@ const setPage = (page, detail) => {
   currentPage.value = page
   detailSelect.value = detail
 }
-
-
 </script>
 
 <template>
@@ -78,11 +70,8 @@ const setPage = (page, detail) => {
           </div>
         </div>
       </div>
-
       <DetailComponent v-if="currentPage === 'detailPage'" :detail="detailSelect" />
-
     </div>
-
   </div>
 </template>
 
