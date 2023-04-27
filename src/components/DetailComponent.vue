@@ -27,16 +27,16 @@ const props = defineProps({
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Close Date</div>
-            <div class="text-cyan-800 w-full">{{ detail?.closeDate }}</div>
-        </div>
+                <div class="text-cyan-800 w-full">{{ detail?.closeDate }}</div>
+            </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Display</div>
                 <div class="text-cyan-800 w-full">{{ detail?.announcementDisplay }}</div>
             </div>
         </div>
         <!-- <div class="  mt-10 flex justify-end">
-                <div class="text-cyan-600 text-center rounded-xl p-5 bg-cyan-200 w-28 shadow-md">Back</div>
-            </div> -->
+            <div class="text-cyan-600 text-center rounded-xl p-5 bg-cyan-200 w-28 shadow-md">Back</div>
+        </div> -->
     </div>
 </template>
  
