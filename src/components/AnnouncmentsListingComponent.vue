@@ -12,7 +12,7 @@ onMounted(async () => {
 });
 
 const detailSelect = ref(undefined)
-const currentPage = ref('annoucePage')
+const currentPage = ref('announcePage')
 const setPage = (page, detail) => {
     currentPage.value = page
     detailSelect.value = detail
@@ -20,7 +20,7 @@ const setPage = (page, detail) => {
 </script>
 
 <template>
-    <div class=" h-screen flex-auto" style="background-color: #F3F5F7; ">
+    <div>
         <div style="width: 80em;" class="mx-auto">
 
             <!-- header -->
@@ -37,7 +37,7 @@ const setPage = (page, detail) => {
 
             <hr class="mt-4 border-2">
 
-            <div v-if="currentPage === 'annoucePage'">
+            <div v-if="currentPage === 'announcePage'">
                 <!-- head table -->
                 <div class="grid grid-cols-10 my-7">
                     <div class="text-center text-zinc-400">No.</div>
@@ -54,7 +54,7 @@ const setPage = (page, detail) => {
                     Announcement</div>
                 <div v-else>
                     <!-- show data -->
-                    <div v-for="(announce, index) in data" :key="data.announcementId"
+                    <div  v-for="(announce, index) in data" :key="data.announcementId"
                         class="grid grid-cols-10 bg-white my-5 h-20 rounded-xl shadow-md">
                         <div class="text-cyan-800 my-auto text-center">{{ index + 1 }} </div>
                         <div class="text-cyan-800 my-auto col-span-2">{{ announce.announcementTitle }} </div>
@@ -72,7 +72,12 @@ const setPage = (page, detail) => {
                     </div>
                 </div>
             </div>
-            <AnnouncmentDetailComponent v-if="currentPage === 'detailPage'" :detail="detailSelect" />
+            <div v-if="currentPage === 'detailPage'">
+                <AnnouncmentDetailComponent :detail="detailSelect" />
+                <div class="  mt-10 flex justify-end">
+                    <div class="text-cyan-600 text-center rounded-xl p-5 bg-cyan-200 w-28 shadow-md" @click="setPage('announcePage')">Back</div>
+                </div>
+            </div>
         </div>
     </div>
 </template>

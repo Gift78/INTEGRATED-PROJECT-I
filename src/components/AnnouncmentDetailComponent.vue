@@ -34,9 +34,7 @@ const props = defineProps({
                 <div class="text-cyan-800 w-full">{{ detail?.announcementDisplay }}</div>
             </div>
         </div>
-        <!-- <div class="  mt-10 flex justify-end">
-            <div class="text-cyan-600 text-center rounded-xl p-5 bg-cyan-200 w-28 shadow-md">Back</div>
-        </div> -->
+        
     </div>
 </template>
  
