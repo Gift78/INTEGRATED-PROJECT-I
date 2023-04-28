@@ -15,8 +15,8 @@ const router = createRouter({
       component: AnnouncmentsListingComponent,
     },
     {
-      path: "/detail",
-      name: "detail",
+      path: "/announcementDetail/:id",
+      name: "AnnouncementDetail",
       component: AnnouncmentsDetailComponent,
     },
   ],
