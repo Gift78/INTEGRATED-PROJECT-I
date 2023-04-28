@@ -5,18 +5,18 @@ import { ref, onMounted } from 'vue'
 import { getData } from '../composable/getData.js';
 
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-const data = ref()
-onMounted(async () => {
-    data.value = await getData();
-    console.log(data.value)
-});
-
+const data = ref([])
 const detailSelect = ref(undefined)
 const currentPage = ref('announcePage')
 const setPage = (page, detail) => {
     currentPage.value = page
     detailSelect.value = detail
 }
+
+onMounted(async () => {
+    data.value = await getData();
+    console.log(data.value)
+});
 </script>
 
 <template>
@@ -66,7 +66,7 @@ const setPage = (page, detail) => {
                             :class="announce.announcementDisplay == 'Y' ? 'bg-emerald-100 text-emerald-400' : 'bg-red-100 text-red-400'">
                             {{ announce.announcementDisplay }}
                         </div>
-                        <div class="text-cyan-400 my-auto text-center mx-auto bg-cyan-100 rounded-lg pt-2 w-20 h-10 shadow-md"
+                        <div class="text-cyan-400 my-auto text-center mx-auto bg-cyan-100 rounded-lg pt-2 w-20 h-10 shadow-md cursor-pointer"
                             @click="setPage('detailPage', announce)">View
                         </div>
                     </div>
@@ -75,7 +75,7 @@ const setPage = (page, detail) => {
             <div v-if="currentPage === 'detailPage'">
                 <AnnouncmentDetailComponent :detail="detailSelect" />
                 <div class="  mt-10 flex justify-end">
-                    <div class="text-cyan-600 text-center rounded-xl p-5 bg-cyan-200 w-28 shadow-md"
+                    <div class="text-cyan-600 text-center rounded-xl p-5 bg-cyan-200 w-28 shadow-md cursor-pointer"
                         @click="setPage('announcePage')">Back</div>
                 </div>
             </div>
