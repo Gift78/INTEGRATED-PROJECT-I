@@ -54,14 +54,14 @@ const setPage = (page, detail) => {
                     Announcement</div>
                 <div v-else>
                     <!-- show data -->
-                    <div  v-for="(announce, index) in data" :key="data.announcementId"
+                    <div v-for="(announce, index) in data" :key="data.announcementId"
                         class="grid grid-cols-10 bg-white my-5 h-20 rounded-xl shadow-md">
                         <div class="text-cyan-800 my-auto text-center">{{ index + 1 }} </div>
                         <div class="text-cyan-800 my-auto col-span-2">{{ announce.announcementTitle }} </div>
                         <div class="text-cyan-800 my-auto text-center capitalize">{{ announce.categoriesObject.categoryName
                         }}</div>
-                        <div class="text-cyan-800 my-auto text-center col-span-2">{{ announce.publishDate }} </div>
-                        <div class="text-cyan-800 my-auto text-center col-span-2">{{ announce.closeDate }} </div>
+                        <div class="text-cyan-800 my-auto text-center col-span-2">{{ announce.publishDate || '-' }} </div>
+                        <div class="text-cyan-800 my-auto text-center col-span-2">{{ announce.closeDate || '-' }} </div>
                         <div class="text-cyan-800 pt-2 my-auto mx-auto text-center w-10 h-10 rounded-full"
                             :class="announce.announcementDisplay == 'Y' ? 'bg-emerald-100 text-emerald-400' : 'bg-red-100 text-red-400'">
                             {{ announce.announcementDisplay }}
@@ -75,7 +75,8 @@ const setPage = (page, detail) => {
             <div v-if="currentPage === 'detailPage'">
                 <AnnouncmentDetailComponent :detail="detailSelect" />
                 <div class="  mt-10 flex justify-end">
-                    <div class="text-cyan-600 text-center rounded-xl p-5 bg-cyan-200 w-28 shadow-md" @click="setPage('announcePage')">Back</div>
+                    <div class="text-cyan-600 text-center rounded-xl p-5 bg-cyan-200 w-28 shadow-md"
+                        @click="setPage('announcePage')">Back</div>
                 </div>
             </div>
         </div>

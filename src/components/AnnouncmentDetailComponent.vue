@@ -26,11 +26,11 @@ const props = defineProps({
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Publish Date</div>
-                <div class="text-cyan-800 w-full">{{ detail?.publishDate }}</div>
+                <div class="text-cyan-800 w-full">{{ detail?.publishDate || '-' }}</div>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Close Date</div>
-                <div class="text-cyan-800 w-full">{{ detail?.closeDate }}</div>
+                <div class="text-cyan-800 w-full">{{ detail?.closeDate || '-' }}</div>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Display</div>
