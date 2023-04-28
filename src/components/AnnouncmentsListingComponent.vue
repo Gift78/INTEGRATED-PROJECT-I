@@ -1,6 +1,5 @@
 <script setup>
 import IconGlobe from './icons/IconGlobe.vue';
-import AnnouncmentDetailComponent from './AnnouncmentDetailComponent.vue';
 import { ref, onMounted } from 'vue'
 import { getAllData } from '../composable/getData.js';
 import { useRouter } from 'vue-router'
