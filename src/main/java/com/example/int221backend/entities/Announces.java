@@ -15,7 +15,7 @@ public class Announces {
     private int announcementId;
     private String announcementTitle;
     private String announcementDescription;
-    public String publishDate;
+    private String publishDate;
     private String closeDate;
 
     private String announcementDisplay;
