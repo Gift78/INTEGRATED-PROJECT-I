@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getDataById } from '../composable/getData';
 import { useRouter } from 'vue-router'
+import TimezoneComponent from './TimezoneComponent.vue';
 
 const router = useRouter()
 const { params } = useRoute()
@@ -20,13 +21,13 @@ onMounted(async () => {
 <template>
     <div style="width: 80em;" class="mx-auto">
         <!-- header -->
-        <header class="my-3">
-            <h1 class="text-cyan-800 text-3xl">Announcement Detail</h1>
-        </header>
+        <h1 class="text-cyan-800 text-3xl py-10">Announcement Detail</h1>
+
+        <TimezoneComponent />
 
         <!-- content -->
-        <div class="bg-white flex-col rounded-lg p-10 shadow-lg">
-            <div class="flex mt-5">
+        <div class="bg-white flex-col rounded-lg p-10 shadow-lg mt-5">
+            <div class="flex">
                 <div class="w-52 text-cyan-800 font-bold">Title</div>
                 <div class="text-cyan-800 w-full">{{ data.announcementTitle }}</div>
             </div>

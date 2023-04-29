@@ -1,11 +1,10 @@
 <script setup>
-import IconGlobe from './icons/IconGlobe.vue';
+import TimezoneComponent from './TimezoneComponent.vue';
 import { ref, onMounted } from 'vue'
 import { getAllData } from '../composable/getData.js';
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const data = ref([])
 
 const gotoDetail = (id) => {
@@ -25,18 +24,10 @@ onMounted(async () => {
             <div class="text-center text-3xl text-cyan-800 py-10">SIT Announcement System (SAS)</div>
 
             <!-- time zone bar -->
-            <div class="flex">
-                <div class="flex p-1 pr-3 rounded-lg" style="background-color: #12C980;">
-                    <IconGlobe class="pt-1" />
-                    <div class="text-white text-lg">Time zone :</div>
-                </div>
-                <div class="text-cyan-800 p-1 pl-3 text-lg">{{ timezone }}</div>
-            </div>
-
-            <hr class="mt-4 border-2">
+            <TimezoneComponent />
 
             <!-- head table -->
-            <div class="grid grid-cols-10 my-7">
+            <div class="grid grid-cols-10 my-5">
                 <div class="text-center text-zinc-400">No.</div>
                 <div class=" text-zinc-400 col-span-2">Title</div>
                 <div class="text-center text-zinc-400">Category</div>
@@ -47,8 +38,8 @@ onMounted(async () => {
             </div>
 
             <div class="text-center items-center justify-center text-gray-400 mt-48 text-2xl" v-if="data === undefined">
-                No
-                Announcement</div>
+                No Announcement
+            </div>
             <div v-else>
                 <!-- show data -->
                 <div v-for="(announce, index) in data" :key="data.announcementId"
