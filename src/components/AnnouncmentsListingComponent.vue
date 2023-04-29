@@ -22,7 +22,7 @@ onMounted(async () => {
         <div style="width: 80em;" class="mx-auto">
 
             <!-- header -->
-            <div class="text-center text-3xl text-cyan-800 py-10">SIT Announcement System(SAS)</div>
+            <div class="text-center text-3xl text-cyan-800 py-10">SIT Announcement System (SAS)</div>
 
             <!-- time zone bar -->
             <div class="flex">
@@ -55,8 +55,7 @@ onMounted(async () => {
                     class="grid grid-cols-10 bg-white my-5 h-20 rounded-xl shadow-md">
                     <div class="text-cyan-800 my-auto text-center">{{ index + 1 }} </div>
                     <div class="text-cyan-800 my-auto col-span-2">{{ announce.announcementTitle }} </div>
-                    <div class="text-cyan-800 my-auto text-center capitalize">{{ announce.categoriesObject.categoryName
-                    }}</div>
+                    <div class="text-cyan-800 my-auto text-center capitalize">{{ announce.announcementCategory }}</div>
                     <div class="text-cyan-800 my-auto text-center col-span-2">{{ announce.publishDate || '-' }} </div>
                     <div class="text-cyan-800 my-auto text-center col-span-2">{{ announce.closeDate || '-' }} </div>
                     <div class="text-cyan-800 pt-2 my-auto mx-auto text-center w-10 h-10 rounded-full"
