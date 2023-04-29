@@ -9,7 +9,7 @@ const { params } = useRoute()
 const data = ref({})
 
 const backToAnnouncements = () => {
-    router.push({ name: 'Announcements' })
+    router.push({ name: 'Announcement' })
 }
 
 onMounted(async () => {
