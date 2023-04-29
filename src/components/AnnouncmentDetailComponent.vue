@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const { params } = useRoute()
-const data = ref([])
+const data = ref({})
 
 const backToAnnouncements = () => {
     router.push({ name: 'Announcements' })
