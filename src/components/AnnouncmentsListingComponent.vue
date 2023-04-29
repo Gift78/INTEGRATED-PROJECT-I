@@ -42,7 +42,7 @@ onMounted(async () => {
             </div>
             <div v-else>
                 <!-- show data -->
-                <div v-for="(announce, index) in data" :key="data.announcementId"
+                <div v-for="(announce, index) in data" :key="data.id"
                     class="grid grid-cols-10 bg-white my-5 h-20 rounded-xl shadow-md">
                     <div class="text-cyan-800 my-auto text-center">{{ index + 1 }} </div>
                     <div class="text-cyan-800 my-auto col-span-2">{{ announce.announcementTitle }} </div>
@@ -54,7 +54,7 @@ onMounted(async () => {
                         {{ announce.announcementDisplay }}
                     </div>
                     <div class="text-cyan-400 my-auto text-center mx-auto bg-cyan-100 rounded-lg pt-2 w-20 h-10 shadow-md cursor-pointer"
-                        @click="gotoDetail(announce.announcementId)">View
+                        @click="gotoDetail(announce.id)">View
                     </div>
                 </div>
             </div>
