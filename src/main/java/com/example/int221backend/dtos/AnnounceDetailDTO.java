@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnnounceDetailDTO {
-    private Integer announcementId;
+    private Integer id;
     private String announcementTitle;
     private String announcementDescription;
     private String publishDate;

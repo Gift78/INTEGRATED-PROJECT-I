@@ -6,6 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -14,12 +19,34 @@ public class AnnounceService {
     private AnnounceRepository announceRepository;
 
     public List<Announces> getAllAnnouncements() {
-        return announceRepository.findAll(Sort.by("announcementId").descending());
+        List<Announces> announces = announceRepository.findAll(Sort.by("announcementId").descending());
+        announces.forEach((announce) -> {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime localPublishDate = LocalDateTime.parse(announce.publishDate, formatter);
+            LocalDateTime localCloseDate = LocalDateTime.parse(announce.publishDate, formatter);
+            ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
+            ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
+            Instant instantPublishDate = zonePublishDate.toInstant();
+            Instant instantCloseDate = zoneCloseDate.toInstant();
+            announce.setPublishDate(instantPublishDate.toString());
+            announce.setCloseDate(instantCloseDate.toString());
+        });
+        return announces;
     }
 
     public Announces getAnnounceById(Integer announceId) {
-        return announceRepository.findById(announceId).orElseThrow(
+        Announces announce = announceRepository.findById(announceId).orElseThrow(
                 () -> new RuntimeException("Announcement ID " + announceId + " does not exist!."));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime localPublishDate = LocalDateTime.parse(announce.publishDate, formatter);
+        LocalDateTime localCloseDate = LocalDateTime.parse(announce.publishDate, formatter);
+        ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
+        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
+        Instant instantPublishDate = zonePublishDate.toInstant();
+        Instant instantCloseDate = zoneCloseDate.toInstant();
+        announce.setPublishDate(instantPublishDate.toString());
+        announce.setCloseDate(instantCloseDate.toString());
+        return announce;
     }
 
 }
