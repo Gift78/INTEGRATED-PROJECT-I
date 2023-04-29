@@ -28,27 +28,27 @@ onMounted(async () => {
         <div class="bg-white flex-col rounded-lg p-10 shadow-lg">
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Title</div>
-                <div class="text-cyan-800 w-full">{{ data?.announcementTitle }}</div>
+                <div class="text-cyan-800 w-full">{{ data.announcementTitle }}</div>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Category</div>
-                <div class="text-cyan-800 w-full">{{ data?.categoriesObject?.categoryName }}</div>
+                <div class="text-cyan-800 w-full">{{ data.announcementCategory }}</div>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Description</div>
-                <div class="text-cyan-800 w-full">{{ data?.announcementDescription }}</div>
+                <div class="text-cyan-800 w-full">{{ data.announcementDescription }}</div>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Publish Date</div>
-                <div class="text-cyan-800 w-full">{{ data?.publishDate || '-' }}</div>
+                <div class="text-cyan-800 w-full">{{ data.publishDate || '-' }}</div>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Close Date</div>
-                <div class="text-cyan-800 w-full">{{ data?.closeDate || '-' }}</div>
+                <div class="text-cyan-800 w-full">{{ data.closeDate || '-' }}</div>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Display</div>
-                <div class="text-cyan-800 w-full">{{ data?.announcementDisplay }}</div>
+                <div class="text-cyan-800 w-full">{{ data.announcementDisplay }}</div>
             </div>
         </div>
 
