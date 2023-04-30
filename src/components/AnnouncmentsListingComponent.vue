@@ -3,6 +3,7 @@ import TimezoneComponent from './TimezoneComponent.vue';
 import { ref, onMounted } from 'vue'
 import { getAllData } from '../composable/getData.js';
 import { useRouter } from 'vue-router'
+import formatDatetime from '../composable/formatDatetime';
 
 const router = useRouter()
 const data = ref([])
@@ -47,8 +48,10 @@ onMounted(async () => {
                     <div class="text-cyan-800 my-auto text-center">{{ index + 1 }} </div>
                     <div class="text-cyan-800 my-auto col-span-2">{{ announce.announcementTitle }} </div>
                     <div class="text-cyan-800 my-auto text-center capitalize">{{ announce.announcementCategory }}</div>
-                    <div class="text-cyan-800 my-auto text-center col-span-2">{{ announce.publishDate || '-' }} </div>
-                    <div class="text-cyan-800 my-auto text-center col-span-2">{{ announce.closeDate || '-' }} </div>
+                    <div class="text-cyan-800 my-auto text-center col-span-2">{{ formatDatetime(announce.publishDate) || '-'
+                    }} </div>
+                    <div class="text-cyan-800 my-auto text-center col-span-2">{{ formatDatetime(announce.closeDate) || '-'
+                    }} </div>
                     <div class="text-cyan-800 pt-2 my-auto mx-auto text-center w-10 h-10 rounded-full"
                         :class="announce.announcementDisplay == 'Y' ? 'bg-emerald-100 text-emerald-400' : 'bg-red-100 text-red-400'">
                         {{ announce.announcementDisplay }}

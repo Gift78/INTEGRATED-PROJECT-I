@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { getDataById } from '../composable/getData';
 import { useRouter } from 'vue-router'
 import TimezoneComponent from './TimezoneComponent.vue';
+import formatDatetime from '../composable/formatDatetime';
 
 const router = useRouter()
 const { params } = useRoute()
@@ -41,11 +42,11 @@ onMounted(async () => {
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Publish Date</div>
-                <div class="text-cyan-800 w-full">{{ data.publishDate || '-' }}</div>
+                <div class="text-cyan-800 w-full">{{ formatDatetime(data.publishDate) || '-' }}</div>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Close Date</div>
-                <div class="text-cyan-800 w-full">{{ data.closeDate || '-' }}</div>
+                <div class="text-cyan-800 w-full">{{ formatDatetime(data.closeDate) || '-' }}</div>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Display</div>
