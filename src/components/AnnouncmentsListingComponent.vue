@@ -61,7 +61,7 @@ onMounted(async () => {
                         {{ announce.announcementDisplay }}
                     </div>
                     <div class="ann-button text-cyan-400 my-auto text-center mx-auto bg-cyan-100 rounded-lg pt-2 w-20 h-10 shadow-md cursor-pointer"
-                        @click="gotoDetail(announce.id)">View
+                        @click="gotoDetail(announce.id)">view
                     </div>
                 </div>
             </div>
