@@ -40,7 +40,7 @@ onMounted(async () => {
 
             <div class="text-center items-center justify-center text-gray-400 mt-48 text-2xl"
                 v-if="data === undefined || data.length === 0">
-                No Announcement
+                No Announcements
             </div>
             <div v-else>
                 <!-- show data -->
