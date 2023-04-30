@@ -1,13 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { getDataById } from '../composable/getData';
 import { useRouter } from 'vue-router'
-import TimezoneComponent from './TimezoneComponent.vue';
+import { getDataById } from '../composable/getData';
 import formatDatetime from '../composable/formatDatetime';
+import TimezoneComponent from './TimezoneComponent.vue';
 
-const router = useRouter()
 const { params } = useRoute()
+const router = useRouter()
 const data = ref({})
 
 const backToAnnouncements = () => {
