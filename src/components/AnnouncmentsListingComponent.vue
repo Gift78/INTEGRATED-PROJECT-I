@@ -45,19 +45,22 @@ onMounted(async () => {
             <div v-else>
                 <!-- show data -->
                 <div v-for="(announce, index) in data" :key="data.id"
-                    class="grid grid-cols-10 bg-white my-5 h-20 rounded-xl shadow-md">
+                    class="ann-item grid grid-cols-10 bg-white my-5 h-20 rounded-xl shadow-md">
                     <div class="text-cyan-800 my-auto text-center">{{ index + 1 }} </div>
-                    <div class="text-cyan-800 my-auto col-span-2">{{ announce.announcementTitle }} </div>
-                    <div class="text-cyan-800 my-auto text-center capitalize">{{ announce.announcementCategory }}</div>
-                    <div class="text-cyan-800 my-auto text-center col-span-2">{{ formatDatetime(announce.publishDate) || '-'
+                    <div class="ann-title text-cyan-800 my-auto col-span-2">{{ announce.announcementTitle }} </div>
+                    <div class="ann-category text-cyan-800 my-auto text-center capitalize">{{
+                        announce.announcementCategory }}</div>
+                    <div class="ann-publish-date text-cyan-800 my-auto text-center col-span-2">{{
+                        formatDatetime(announce.publishDate) || '-'
                     }} </div>
-                    <div class="text-cyan-800 my-auto text-center col-span-2">{{ formatDatetime(announce.closeDate) || '-'
+                    <div class="ann-close-datetext-cyan-800 my-auto text-center col-span-2">{{
+                        formatDatetime(announce.closeDate) || '-'
                     }} </div>
-                    <div class="text-cyan-800 pt-2 my-auto mx-auto text-center w-10 h-10 rounded-full"
+                    <div class="ann-display text-cyan-800 pt-2 my-auto mx-auto text-center w-10 h-10 rounded-full"
                         :class="announce.announcementDisplay == 'Y' ? 'bg-emerald-100 text-emerald-400' : 'bg-red-100 text-red-400'">
                         {{ announce.announcementDisplay }}
                     </div>
-                    <div class="text-cyan-400 my-auto text-center mx-auto bg-cyan-100 rounded-lg pt-2 w-20 h-10 shadow-md cursor-pointer"
+                    <div class="ann-button text-cyan-400 my-auto text-center mx-auto bg-cyan-100 rounded-lg pt-2 w-20 h-10 shadow-md cursor-pointer"
                         @click="gotoDetail(announce.id)">View
                     </div>
                 </div>
