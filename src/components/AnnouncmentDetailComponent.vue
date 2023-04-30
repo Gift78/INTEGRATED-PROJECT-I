@@ -64,7 +64,7 @@ onMounted(async () => {
         </div>
 
         <!-- button -->
-        <div class="flex justify-end mt-3" v-if="!isModalOpen">
+        <div class="flex justify-start mt-3" v-if="!isModalOpen">
             <button class="text-cyan-400 bg-cyan-100 text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
                 @click="backToAnnouncements">Back</button>
         </div>
