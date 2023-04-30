@@ -53,7 +53,7 @@ onMounted(async () => {
                     <div class="ann-publish-date text-cyan-800 my-auto text-center col-span-2">{{
                         formatDatetime(announce.publishDate) || '-'
                     }} </div>
-                    <div class="ann-close-datetext-cyan-800 my-auto text-center col-span-2">{{
+                    <div class="ann-close-date text-cyan-800 my-auto text-center col-span-2">{{
                         formatDatetime(announce.closeDate) || '-'
                     }} </div>
                     <div class="ann-display text-cyan-800 pt-2 my-auto mx-auto text-center w-10 h-10 rounded-full"
