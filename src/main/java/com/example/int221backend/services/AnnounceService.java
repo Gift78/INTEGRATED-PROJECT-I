@@ -1,14 +1,12 @@
 package com.example.int221backend.services;
 
 import com.example.int221backend.entities.Announces;
+import com.example.int221backend.exceptions.AnnounceNotFoundException;
 import com.example.int221backend.repositories.AnnounceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -43,8 +41,7 @@ public class AnnounceService {
     }
 
     public Announces getAnnounceById(Integer announceId) {
-        Announces announce = announceRepository.findById(announceId).orElseThrow(
-                () -> new ResourceNotFoundException("Announcement id does not exist"));
+        Announces announce = announceRepository.findById(announceId).orElseThrow(() -> new AnnounceNotFoundException(announceId));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (announce.getPublishDate() != null) {
             LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), formatter);
@@ -59,12 +56,5 @@ public class AnnounceService {
             announce.setCloseDate(instantCloseDate.toString());
         }
         return announce;
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public class ResourceNotFoundException extends RuntimeException {
-        public ResourceNotFoundException(String message) {
-            super(message);
-        }
     }
 }
