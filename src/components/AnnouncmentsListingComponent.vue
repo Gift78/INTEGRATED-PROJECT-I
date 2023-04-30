@@ -1,9 +1,9 @@
 <script setup>
-import TimezoneComponent from './TimezoneComponent.vue';
 import { ref, onMounted } from 'vue'
-import { getAllData } from '../composable/getData.js';
 import { useRouter } from 'vue-router'
+import { getAllData } from '../composable/getData.js';
 import formatDatetime from '../composable/formatDatetime';
+import TimezoneComponent from './TimezoneComponent.vue';
 
 const router = useRouter()
 const data = ref([])
