@@ -3,7 +3,7 @@ import AnnouncmentsListingComponent from "../components/AnnouncmentsListingCompo
 import AnnouncmentsDetailComponent from "../components/AnnouncmentDetailComponent.vue";
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
