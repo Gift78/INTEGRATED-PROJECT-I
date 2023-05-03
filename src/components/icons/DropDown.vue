@@ -5,6 +5,6 @@
 
 <script>
 export default {
-  name: 'Arrowdown'
+  name: 'MaterialSymbolsArrowDropDownRounded'
 }
 </script>

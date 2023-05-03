@@ -2,7 +2,7 @@
 import TimezoneComponent from './TimezoneComponent.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
-import Arrowdown from './icons/arrowdown.vue'
+import DropDown from './icons/DropDown.vue'
 import ArrowRight from './icons/ArrowRight.vue'
 import CancelRounded from './icons/CancelRounded.vue'
 const router = useRouter()
@@ -145,7 +145,7 @@ const addNewAnnouncement = async (annonuce) => {
                             <button @click="showDropdownOptions()"
                                 class="flex justify-between w-48 px-2 py-2 bg-background rounded-md shadow border focus:outline-none focus:border-emerald-plus">
                                 <span class="ann-category mt-1">{{ categorySelect.categoryName }}</span>
-                                <arrowdown />
+                                <DropDown />
                             </button>
                             <div :hidden="showItem" class="w-56 py-3 shadow-md bg-white border rounded-lg absolute">
                                 <div class=" block px-4 py-2 text-gray-500 hover:bg-emerald-light hover:text-white"
@@ -162,7 +162,7 @@ const addNewAnnouncement = async (annonuce) => {
             <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
                 <div class="flex">
                     <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Description :</div>
-                    <textarea rows="10" class="ann-description bg-white pl-5 pt-3 border-2 rounded-lg w-full mr-20"
+                    <textarea rows="10" maxlength="10000" class="ann-description bg-white pl-5 pt-3 border-2 rounded-lg w-full mr-20"
                         v-model="newAnnouncement.announcementDescription"></textarea>
                 </div>
             </div>
@@ -173,9 +173,9 @@ const addNewAnnouncement = async (annonuce) => {
                     <div class="felx-col w-full">
                         <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Publish Date</div>
                         <div class="flex w-full">
-                            <input type="date" class="ann-publish-date bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                            <input type="date" class="ann-publish-date text-black bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
                                 v-model="publishDate">
-                            <input type="time" class="ann-publish-time bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                            <input type="time" class="ann-publish-time text-black bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
                                 v-model="publishTime">
                         </div>
                     </div>
@@ -183,9 +183,9 @@ const addNewAnnouncement = async (annonuce) => {
                     <div class="felx-col w-full">
                         <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Close Date</div>
                         <div class="flex">
-                            <input type="date" class="ann-close-date bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                            <input type="date" class="ann-close-date text-black bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
                                 v-model="closeDate">
-                            <input type="time" class="ann-close-time bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                            <input type="time" class="ann-close-time text-black bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
                                 v-model="closeTime">
                         </div>
                     </div>
@@ -208,7 +208,7 @@ const addNewAnnouncement = async (annonuce) => {
                 <input type="checkbox" id="my-modal" class="modal-toggle" />
                 <div class="modal">
                     <CancelRounded class="text-red-500 absolute top-52 z-10 bg-white rounded-full" />
-                    <div class="modal-box">
+                    <div class="modal-box bg-white">
                         <p class="text-3xl font-bold text-center pt-16">Are you sure to cancel?</p>
                         <p class="py-5 text-center">Do you really want to leave this section? This process will discard all
                             changes.</p>

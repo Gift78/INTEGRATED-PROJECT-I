@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 import { getDataById } from '../composable/getData';
 import formatDatetime from '../composable/formatDatetime';
 import TimezoneComponent from './TimezoneComponent.vue';
+import CancelRounded from './icons/CancelRounded.vue'
 
 const { params } = useRoute();
 const router = useRouter();
@@ -74,13 +75,14 @@ onMounted(async () => {
     </div>
 
     <input type="checkbox" id="error-modal" class="modal-toggle modal-open" :checked="isModalOpen" />
-    <div class="modal">
-        <div class="modal-box bg-white">
-            <h3 class="font-bold text-2xl text-black">Error!</h3>
-            <p class="pt-4 text-black">The requested page is not available!</p>
-            <div class="modal-action">
-                <label for="error-modal" class="btn text-black bg-white hover:bg-gray-200"
-                    @click="backToAnnouncements">OK</label>
+    <div class="modal flex items-center justify-center" v-if="isModalOpen">
+        <CancelRounded class="text-red-500 absolute top-48 z-30 flex items-center justify-center bg-white rounded-full" />
+        <div class="sabsolute top-72 bg-white px-40 pb-10 z-10 rounded-3xl shadow-xl">
+            <p class="text-3xl font-bold text-center pt-16">Error!</p>
+            <p class="py-5 text-center">The requested page is not available!</p>
+            <div class="modal-action flex justify-center">
+                <label class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
+                    @click="backToAnnouncements()">OK</label>
             </div>
         </div>
     </div>
