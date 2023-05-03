@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router'
 import Arrowdown from './icons/arrowdown.vue'
 import ArrowRight from './icons/ArrowRight.vue'
+import CancelRounded from './icons/CancelRounded.vue'
 
 const router = useRouter()
 
@@ -43,7 +44,7 @@ const closeTime = ref('')
 
 const setting = () => {
     if (newAnnouncement.value.announcementTitle == '' || newAnnouncement.value.announcementDescription == '') {
-        return 'btn-disabled bg-smoke'
+        return 'btn-disabled bg-slate-800'
     } else {
         // set category
         newAnnouncement.value.announcementCategory = categorySelect.value
@@ -55,9 +56,12 @@ const setting = () => {
         }
 
         // set publish date
-        if (publishDate.value !== '' && publishTime.value !== '' && closeDate.value !== '' && closeTime.value !== '') {
+        if (publishDate.value !== '' && publishTime.value !== '' && closeDate.value == '' && closeTime.value == '') {
             newAnnouncement.value.publishDate = `${publishDate.value} ${publishTime.value}`
+            newAnnouncement.value.closeDate = null
+        } else if (closeDate.value !== '' && closeTime !== '' && publishDate.value == '' && publishTime.value == '') {
             newAnnouncement.value.closeDate = `${closeDate.value} ${closeTime.value}`
+            newAnnouncement.value.publishDate = null
         } else {
             newAnnouncement.value.publishDate = null
             newAnnouncement.value.closeDate = null
@@ -66,10 +70,16 @@ const setting = () => {
     }
 }
 
-const addNewAnnouncement = async () => {
+const changePage = (name) => {
+    router.push({ name: name })
+}
+
+const haveError = ref(false)
+
+const addNewAnnouncement = async (annonuce) => {
     setting()
-    if (newAnnouncement.value.announcementTitle !== '' && newAnnouncement.value.announcementDescription !== '') {
-        console.log(newAnnouncement.value)
+    if (annonuce.announcementTitle !== '' && annonuce.announcementDescription !== '') {
+        console.log(annonuce)
         try {
             const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements", {
                 method: 'POST',
@@ -77,115 +87,150 @@ const addNewAnnouncement = async () => {
                     'content-type': 'application/json'
                 },
                 body: JSON.stringify({
-                    announcementTitle: newAnnouncement.value.announcementTitle,
-                    announcementDescription: newAnnouncement.value.announcementDescription,
-                    publishDate: newAnnouncement.value.publishDate,
-                    closeDate: newAnnouncement.value.closeDate,
-                    announcementDisplay: newAnnouncement.value.announcementDisplay,
-                    categoriesObject: newAnnouncement.value.announcementCategory
+                    announcementTitle: annonuce.announcementTitle,
+                    announcementDescription: annonuce.announcementDescription,
+                    publishDate: annonuce.publishDate,
+                    closeDate: annonuce.closeDate,
+                    announcementDisplay: annonuce.announcementDisplay,
+                    categoriesObject: annonuce.announcementCategory
                 })
             })
             if (res.status === 200) {
                 console.log('add successfully')
-                router.push({ name: 'Announcement' })
+                changePage('Announcement')
             } else {
+                haveError.value = true
                 throw new Error('cannot add')
             }
         } catch (err) {
             console.log(err)
         }
-
         return ''
     }
-
 }
-
-
 
 </script>
  
 <template>
     <div style="width: 80em;" class="mx-auto">
-        <!-- header -->
-        <h1 class="text-cyan-800 text-3xl py-10">Announcement Detail</h1>
-        <TimezoneComponent />
-        <hr class="mt-4 border-2">
-
-        <!-- Announcement Title & Category -->
-        <div class="text-cyan-800 text-xl ml-10 mt-3">Announcement Title & Category</div>
-        <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
-            <div class="flex">
-                <div class="ml-16 text-cyan-800 w-20 py-3">Title :</div>
-                <input type="text" v-model="newAnnouncement.announcementTitle"
-                    class="border-2 rounded-lg w-full mr-20 py-3 pl-5">
+        <!-- Error message -->
+        <div class="flex items-center justify-center" v-if="haveError">
+            <CancelRounded
+                class="text-red-500 absolute top-48 z-30 flex items-center justify-center bg-white rounded-full" />
+            <div class="absolute top-72 bg-white px-10 pb-10 z-10 rounded-3xl shadow-xl">
+                <p class="text-3xl font-bold text-center pt-16">Error!</p>
+                <p class="py-5 text-center">Something went wrong. Cannot add your new announcement.</p>
+                <div class="modal-action flex justify-center">
+                    <label class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
+                        @click="changePage('Announcement')">OK</label>
+                </div>
             </div>
-            <div class="flex">
-                <div class="ml-16 mt-5 text-cyan-800 w-20 py-3">Category : </div>
-                <!-- dropdown button -->
-                <div class="flex pt-3">
-                    <div class="flex-none p-3">
-                        <button @click="showDropdownOptions()"
-                            class="flex justify-between w-48 px-2 py-2 bg-background rounded-md shadow border focus:outline-none focus:border-emerald-plus">
-                            <span class="mt-1">{{ categorySelect.categoryName }}</span>
-                            <arrowdown />
-                        </button>
-                        <div :hidden="showItem" class="w-56 py-3 shadow-md bg-white border rounded-lg absolute">
-                            <div class="block px-4 py-2 text-gray-500 hover:bg-emerald-light hover:text-white"
-                                v-for="category in categoryItem" @click="selectItem(category)">
-                                {{ category.categoryName }}
+        </div>
+
+        <!-- content -->
+        <div :class="haveError ? 'blur-sm' : ''" :style="haveError?'pointer-events: none;':''">
+            <!-- header -->
+            <h1 class="text-cyan-800 text-3xl py-10">Announcement Detail</h1>
+            <TimezoneComponent />
+            <hr class="mt-4 border-2">
+
+            <!-- Announcement Title & Category -->
+            <div class="text-cyan-800 text-xl ml-10 mt-3">Announcement Title & Category</div>
+            <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
+                <div class="flex">
+                    <div class="ml-16 text-cyan-800 w-20 py-3">Title :</div>
+                    <input type="text" v-model="newAnnouncement.announcementTitle"
+                        class="ann-title border-2 rounded-lg w-full mr-20 py-3 pl-5">
+                </div>
+                <div class="flex">
+                    <div class="ml-16 mt-5 text-cyan-800 w-20 py-3">Category : </div>
+                    <!-- dropdown button -->
+                    <div class="flex pt-3 ">
+                        <div class="flex-none p-3 relative">
+                            <button @click="showDropdownOptions()"
+                                class="flex justify-between w-48 px-2 py-2 bg-background rounded-md shadow border focus:outline-none focus:border-emerald-plus">
+                                <span class="ann-category mt-1">{{ categorySelect.categoryName }}</span>
+                                <arrowdown />
+                            </button>
+                            <div :hidden="showItem" class="w-56 py-3 shadow-md bg-white border rounded-lg absolute">
+                                <div class=" block px-4 py-2 text-gray-500 hover:bg-emerald-light hover:text-white"
+                                    v-for="category in categoryItem" @click="selectItem(category)">
+                                    {{ category.categoryName }}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Announcement Description -->
-        <div class="text-cyan-800 text-xl ml-10 mt-3">Announcement Description</div>
-        <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
-            <div class="flex">
-                <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Description :</div>
-                <textarea rows="10" class="border-2 rounded-lg w-full mr-20"
-                    v-model="newAnnouncement.announcementDescription"></textarea>
-            </div>
-        </div>
-
-        <!-- Date and Display -->
-        <div class="text-cyan-800 text-xl ml-10 mt-3">Date & Display</div>
-        <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col  pb-10">
-            <div class="flex justify-between">
-                <div class="felx-col w-full">
-                    <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Publish Date</div>
-                    <div class="flex w-full">
-                        <input type="date" class="mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="publishDate">
-                        <input type="time" class="mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="publishTime">
-                    </div>
-                </div>
-                <ArrowRight class="text-zinc-300 mt-8" />
-                <div class="felx-col w-full">
-                    <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Publish Date</div>
-                    <div class="flex">
-                        <input type="date" class="mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="closeDate">
-                        <input type="time" class="mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="closeTime">
-                    </div>
+            <!-- Announcement Description -->
+            <div class="text-cyan-800 text-xl ml-10 mt-3">Announcement Description</div>
+            <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
+                <div class="flex">
+                    <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Description :</div>
+                    <textarea rows="10" class="ann-description pl-5 pt-3 border-2 rounded-lg w-full mr-20"
+                        v-model="newAnnouncement.announcementDescription"></textarea>
                 </div>
             </div>
 
-            <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Display</div>
-            <div class="flex items-center">
-                <input type="checkbox" id="display" class="ml-24 w-5 h-5" v-model="displayed">
-                <label for="display" class="ml-5 text-cyan-800">Check to show this announcement.</label>
+            <!-- Date and Display -->
+            <div class="text-cyan-800 text-xl ml-10 mt-3">Date & Display</div>
+            <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col  pb-10">
+                <div class="flex justify-between">
+                    <div class="felx-col w-full">
+                        <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Publish Date</div>
+                        <div class="flex w-full">
+                            <input type="date" class="ann-publish-date mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="publishDate">
+                            <input type="time" class="ann-publish-time mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="publishTime">
+                        </div>
+                    </div>
+                    <ArrowRight class="text-zinc-300 mt-8" />
+                    <div class="felx-col w-full">
+                        <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Publish Date</div>
+                        <div class="flex">
+                            <input type="date" class="ann-close-date mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="closeDate">
+                            <input type="time" class="ann-close-time mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="closeTime">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Display</div>
+                <div class="flex items-center">
+                    <div class="form-control pl-20">
+                        <label class="cursor-pointer label">
+                            <input type="checkbox" id="display" class="ann-display checkbox checkbox-success" v-model="displayed" />
+                            <label for="display" class="ml-5 text-cyan-800">Check to show this announcement.</label>
+                        </label>
+                    </div>
+                </div>
+
             </div>
 
-        </div>
+            <!-- Submit or Cancel -->
+            <div class="flex justify-end mt-5 mb-24">
+                <label for="my-modal" class="ann-button btn mx-5 w-32 bg-zinc-300  hover:bg-zinc-400 border-none">Cancel</label>
+                <!-- Put this part before </body> tag -->
+                <input type="checkbox" id="my-modal" class="modal-toggle" />
+                <div class="modal">
+                    <CancelRounded class="text-red-500 absolute top-52 z-10 bg-white rounded-full" />
+                    <div class="modal-box">
+                        <p class="text-3xl font-bold text-center pt-16">Are you sure to cancel?</p>
+                        <p class="py-5 text-center">Do you really want to leave this section? This process will discard all
+                            changes.</p>
+                        <div class="modal-action flex justify-center">
+                            <!-- close modal -->
+                            <label for="my-modal" class="btn border-none w-24 bg-zinc-300 hover:bg-zinc-400">Cancel</label>
+                            <!-- cancel all change -->
+                            <label for="my-modal" class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
+                                @click="changePage('Announcement')">OK</label>
+                        </div>
+                    </div>
+                </div>
+                <button class="ann-button bg-emerald-plus hover:bg-emerald-600 duration-100 text-white w-32 py-3 rounded-lg"
+                    :class="setting()" @click="addNewAnnouncement(newAnnouncement)">Confirm</button>
+            </div>
 
-        <div>{{ newAnnouncement }}</div>
 
-        <!-- Submit or Cancel -->
-        <div class="flex justify-end mt-5 mb-24">
-            <button class="mr-5 bg-red-400 text-white w-32 py-3 rounded-lg">Cancel</button>
-            <button class="bg-emerald-plus text-white w-32 py-3 rounded-lg" :class="setting()"
-                @click="addNewAnnouncement()">Confirm</button>
         </div>
 
     </div>
