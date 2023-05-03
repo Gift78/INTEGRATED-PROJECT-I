@@ -3,7 +3,9 @@ package com.example.int221backend.controllers;
 import com.example.int221backend.dtos.AnnounceDTO;
 import com.example.int221backend.dtos.AnnounceDetailDTO;
 import com.example.int221backend.entities.Announces;
+import com.example.int221backend.entities.Categories;
 import com.example.int221backend.services.AnnounceService;
+import com.example.int221backend.services.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,10 @@ public class AnnouncementController {
     private AnnounceService announceService;
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private CategoryService categoryService;
+
 
     @GetMapping("")
     public List<AnnounceDTO> getAllAnnouncements() {
@@ -39,4 +45,8 @@ public class AnnouncementController {
         return announceService.addNewAnnounce(newAnnounce);
     }
 
+    @GetMapping("/category")
+    public List<Categories> getCategories(){
+        return categoryService.getAllCategory();
+    }
 }
