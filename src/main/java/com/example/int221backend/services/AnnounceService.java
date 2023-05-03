@@ -60,6 +60,4 @@ public class AnnounceService {
     public Announces addNewAnnounce(Announces newAnnounce) {
         return announceRepository.saveAndFlush(newAnnounce);
     }
-
-
 }
