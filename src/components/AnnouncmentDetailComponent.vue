@@ -34,6 +34,8 @@ onMounted(async () => {
         <h1 class="text-cyan-800 text-3xl py-10">Announcement Detail</h1>
 
         <TimezoneComponent />
+        <hr class="mt-4 border-2">
+
 
         <!-- content -->
         <div class="ann-item bg-white flex-col rounded-lg p-10 shadow-lg mt-5" v-if="!isModalOpen">

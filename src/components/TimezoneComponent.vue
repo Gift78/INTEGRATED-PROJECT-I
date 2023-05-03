@@ -13,7 +13,6 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         <div class="text-cyan-800 p-1 pl-3 text-lg">{{ timezone }}</div>
     </div>
 
-    <hr class="mt-4 border-2">
 </template>
 
 <style scoped></style>

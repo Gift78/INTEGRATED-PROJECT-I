@@ -5,7 +5,18 @@ export default {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors:{
+        "black":"#000000",
+        "white":"	#FFFFFF", 
+        "emerald-plus":"#12C980",
+        "emerald-light":"#28DD95",
+        "background":"#F3F5F7",
+        "smoke":"#C9C9C9",
+        "smoke-light":"#EBEBEB"
+      },
+    },
+    
   },
   plugins: [require("daisyui")],
 }
