@@ -1,8 +1,12 @@
 <script setup>
 import TimezoneComponent from './TimezoneComponent.vue';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router'
 import Arrowdown from './icons/arrowdown.vue'
 import ArrowRight from './icons/ArrowRight.vue'
+
+const router = useRouter()
+
 
 
 const categoryItem = [
@@ -50,14 +54,14 @@ const setting = () => {
             newAnnouncement.value.announcementDisplay = 'N'
         }
 
-        if(newAnnouncement.value.publishDate =""){
-
-        }
-
         // set publish date
-        newAnnouncement.value.publishDate = `${publishDate.value} ${publishTime.value}`
-        newAnnouncement.value.closeDate = `${closeDate.value} ${closeTime.value}`
-
+        if (publishDate.value !== '' && publishTime.value !== '' && closeDate.value !== '' && closeTime.value !== '') {
+            newAnnouncement.value.publishDate = `${publishDate.value} ${publishTime.value}`
+            newAnnouncement.value.closeDate = `${closeDate.value} ${closeTime.value}`
+        } else {
+            newAnnouncement.value.publishDate = null
+            newAnnouncement.value.closeDate = null
+        }
         return ''
     }
 }
@@ -81,8 +85,9 @@ const addNewAnnouncement = async () => {
                     categoriesObject: newAnnouncement.value.announcementCategory
                 })
             })
-            if (res.status === 201) {
+            if (res.status === 200) {
                 console.log('add successfully')
+                router.push({ name: 'Announcement' })
             } else {
                 throw new Error('cannot add')
             }
@@ -121,10 +126,10 @@ const addNewAnnouncement = async () => {
                     <div class="flex-none p-3">
                         <button @click="showDropdownOptions()"
                             class="flex justify-between w-48 px-2 py-2 bg-background rounded-md shadow border focus:outline-none focus:border-emerald-plus">
-                            <span>{{ categorySelect.categoryName }}</span>
+                            <span class="mt-1">{{ categorySelect.categoryName }}</span>
                             <arrowdown />
                         </button>
-                        <div :hidden="showItem" class="w-56 py-3 mt-2 shadow-md bg-white border rounded-lg ">
+                        <div :hidden="showItem" class="w-56 py-3 shadow-md bg-white border rounded-lg absolute">
                             <div class="block px-4 py-2 text-gray-500 hover:bg-emerald-light hover:text-white"
                                 v-for="category in categoryItem" @click="selectItem(category)">
                                 {{ category.categoryName }}
@@ -176,7 +181,7 @@ const addNewAnnouncement = async () => {
 
         <div>{{ newAnnouncement }}</div>
 
-        <!-- Submit or Calcel -->
+        <!-- Submit or Cancel -->
         <div class="flex justify-end mt-5 mb-24">
             <button class="mr-5 bg-red-400 text-white w-32 py-3 rounded-lg">Cancel</button>
             <button class="bg-emerald-plus text-white w-32 py-3 rounded-lg" :class="setting()"
