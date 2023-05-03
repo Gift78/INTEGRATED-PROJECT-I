@@ -32,7 +32,7 @@ public class AnnouncementController {
         return modelMapper.map(announcesExist,AnnounceDetailDTO.class);
     }
 
-    @PostMapping("")
+    @PostMapping("add")
     @ResponseStatus(HttpStatus.CREATED)
     public Announces create(@RequestBody Announces newAnnounce) { //แปลง json ให้เป็น object ของ java โดย @RequestBody
         return announceService.addNewAnnounce(newAnnounce);

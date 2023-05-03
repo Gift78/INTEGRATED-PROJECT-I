@@ -15,7 +15,9 @@ public class Announces {
     private int announcementId;
     private String announcementTitle;
     private String announcementDescription;
+    @Column(nullable = true)
     private String publishDate;
+    @Column(nullable = true)
     private String closeDate;
 
     private String announcementDisplay;
