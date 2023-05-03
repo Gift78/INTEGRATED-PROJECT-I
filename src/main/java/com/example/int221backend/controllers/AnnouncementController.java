@@ -33,7 +33,6 @@ public class AnnouncementController {
     }
 
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
     public Announces create(@RequestBody Announces newAnnounce) {
         return announceService.addNewAnnounce(newAnnounce);
     }
