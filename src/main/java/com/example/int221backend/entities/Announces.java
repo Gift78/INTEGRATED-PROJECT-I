@@ -12,6 +12,7 @@ import lombok.Setter;
 @Table(name = "announces")
 public class Announces {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int announcementId;
     private String announcementTitle;
     private String announcementDescription;
