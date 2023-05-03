@@ -5,18 +5,17 @@ import { useRouter } from 'vue-router'
 import Arrowdown from './icons/arrowdown.vue'
 import ArrowRight from './icons/ArrowRight.vue'
 import CancelRounded from './icons/CancelRounded.vue'
-
 const router = useRouter()
-
-
-
+// category data
 const categoryItem = [
     { categoryId: 1, categoryName: 'ทั่วไป' },
     { categoryId: 2, categoryName: 'ทุนการศึกษา' },
     { categoryId: 3, categoryName: 'หางาน' },
     { categoryId: 4, categoryName: 'ฝึกงาน' }
 ]
+// for dropdown select
 const categorySelect = ref(categoryItem[0])
+
 const showItem = ref(true)
 const showDropdownOptions = () => {
     showItem.value = !showItem.value
@@ -25,9 +24,9 @@ const selectItem = (item) => {
     categorySelect.value = item
     showItem.value = true
 }
-
+// for set display to Y / N
 const displayed = ref(false)
-
+// default announcement
 const newAnnouncement = ref({
     announcementTitle: '',
     announcementDescription: '',
@@ -36,12 +35,12 @@ const newAnnouncement = ref({
     announcementDisplay: 'N',
     announcementCategory: categorySelect.value
 })
-
+// to set date and time
 const publishDate = ref('')
 const publishTime = ref('')
 const closeDate = ref('')
 const closeTime = ref('')
-
+// set all announcement should set
 const setting = () => {
     if (newAnnouncement.value.announcementTitle == '' || newAnnouncement.value.announcementDescription == '') {
         return 'btn-disabled bg-slate-800'
@@ -54,7 +53,6 @@ const setting = () => {
         } else {
             newAnnouncement.value.announcementDisplay = 'N'
         }
-
         // set publish date
         if (publishDate.value !== '' && publishTime.value !== '' && closeDate.value == '' && closeTime.value == '') {
             newAnnouncement.value.publishDate = `${publishDate.value} ${publishTime.value}`
@@ -69,15 +67,15 @@ const setting = () => {
         return ''
     }
 }
-
 const changePage = (name) => {
     router.push({ name: name })
 }
-
+// if have error will show pop up
 const haveError = ref(false)
-
 const addNewAnnouncement = async (annonuce) => {
+    // set before create
     setting()
+    // Check if name and desc='' it will not be created.
     if (annonuce.announcementTitle !== '' && annonuce.announcementDescription !== '') {
         console.log(annonuce)
         try {
@@ -103,14 +101,13 @@ const addNewAnnouncement = async (annonuce) => {
                 throw new Error('cannot add')
             }
         } catch (err) {
+            haveError.value = true
             console.log(err)
         }
         return ''
     }
 }
-
 </script>
- 
 <template>
     <div style="width: 80em;" class="mx-auto">
         <!-- Error message -->
@@ -126,21 +123,19 @@ const addNewAnnouncement = async (annonuce) => {
                 </div>
             </div>
         </div>
-
         <!-- content -->
-        <div :class="haveError ? 'blur-sm' : ''" :style="haveError?'pointer-events: none;':''">
+        <div :class="haveError ? 'blur-sm' : ''" :style="haveError ? 'pointer-events: none;' : ''">
             <!-- header -->
             <h1 class="text-cyan-800 text-3xl py-10">Announcement Detail</h1>
             <TimezoneComponent />
             <hr class="mt-4 border-2">
-
             <!-- Announcement Title & Category -->
             <div class="text-cyan-800 text-xl ml-10 mt-3">Announcement Title & Category</div>
             <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
                 <div class="flex">
                     <div class="ml-16 text-cyan-800 w-20 py-3">Title :</div>
                     <input type="text" v-model="newAnnouncement.announcementTitle"
-                        class="ann-title border-2 rounded-lg w-full mr-20 py-3 pl-5">
+                        class="ann-title bg-white border-2 rounded-lg w-full mr-20 py-3 pl-5">
                 </div>
                 <div class="flex">
                     <div class="ml-16 mt-5 text-cyan-800 w-20 py-3">Category : </div>
@@ -162,17 +157,15 @@ const addNewAnnouncement = async (annonuce) => {
                     </div>
                 </div>
             </div>
-
             <!-- Announcement Description -->
             <div class="text-cyan-800 text-xl ml-10 mt-3">Announcement Description</div>
             <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
                 <div class="flex">
                     <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Description :</div>
-                    <textarea rows="10" class="ann-description pl-5 pt-3 border-2 rounded-lg w-full mr-20"
+                    <textarea rows="10" class="ann-description bg-white pl-5 pt-3 border-2 rounded-lg w-full mr-20"
                         v-model="newAnnouncement.announcementDescription"></textarea>
                 </div>
             </div>
-
             <!-- Date and Display -->
             <div class="text-cyan-800 text-xl ml-10 mt-3">Date & Display</div>
             <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col  pb-10">
@@ -180,36 +173,38 @@ const addNewAnnouncement = async (annonuce) => {
                     <div class="felx-col w-full">
                         <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Publish Date</div>
                         <div class="flex w-full">
-                            <input type="date" class="ann-publish-date mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="publishDate">
-                            <input type="time" class="ann-publish-time mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="publishTime">
+                            <input type="date" class="ann-publish-date bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                                v-model="publishDate">
+                            <input type="time" class="ann-publish-time bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                                v-model="publishTime">
                         </div>
                     </div>
                     <ArrowRight class="text-zinc-300 mt-8" />
                     <div class="felx-col w-full">
-                        <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Publish Date</div>
+                        <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Close Date</div>
                         <div class="flex">
-                            <input type="date" class="ann-close-date mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="closeDate">
-                            <input type="time" class="ann-close-time mx-3 w-full border-2 rounded-lg px-10 py-2" v-model="closeTime">
+                            <input type="date" class="ann-close-date bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                                v-model="closeDate">
+                            <input type="time" class="ann-close-time bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                                v-model="closeTime">
                         </div>
                     </div>
                 </div>
-
                 <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Display</div>
                 <div class="flex items-center">
                     <div class="form-control pl-20">
                         <label class="cursor-pointer label">
-                            <input type="checkbox" id="display" class="ann-display checkbox checkbox-success" v-model="displayed" />
+                            <input type="checkbox" id="display" class="ann-display checkbox checkbox-success"
+                                v-model="displayed" />
                             <label for="display" class="ml-5 text-cyan-800">Check to show this announcement.</label>
                         </label>
                     </div>
                 </div>
-
             </div>
-
             <!-- Submit or Cancel -->
             <div class="flex justify-end mt-5 mb-24">
-                <label for="my-modal" class="ann-button btn mx-5 w-32 bg-zinc-300  hover:bg-zinc-400 border-none">Cancel</label>
-                <!-- Put this part before </body> tag -->
+                <label for="my-modal"
+                    class="ann-button btn mx-5 w-32 bg-zinc-300  hover:bg-zinc-400 border-none">Cancel</label>
                 <input type="checkbox" id="my-modal" class="modal-toggle" />
                 <div class="modal">
                     <CancelRounded class="text-red-500 absolute top-52 z-10 bg-white rounded-full" />
@@ -229,10 +224,7 @@ const addNewAnnouncement = async (annonuce) => {
                 <button class="ann-button bg-emerald-plus hover:bg-emerald-600 duration-100 text-white w-32 py-3 rounded-lg"
                     :class="setting()" @click="addNewAnnouncement(newAnnouncement)">Confirm</button>
             </div>
-
-
         </div>
-
     </div>
 </template>
  
