@@ -1,7 +1,6 @@
 package com.example.int221backend.entities;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,9 +20,13 @@ public class Announces {
     @Column(nullable = true)
     private String closeDate;
 
-    private String announcementDisplay;
 
     @ManyToOne
     @JoinColumn(name = "categoryId", nullable = false)
     private Categories categoriesObject;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('Y','n') DEFAULT 'N'")
+    private AnnouncementDisplay announcementDisplay = AnnouncementDisplay.N;
 }

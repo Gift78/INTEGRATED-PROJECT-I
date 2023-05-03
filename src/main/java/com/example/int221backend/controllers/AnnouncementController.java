@@ -6,7 +6,6 @@ import com.example.int221backend.entities.Announces;
 import com.example.int221backend.services.AnnounceService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,5 +34,10 @@ public class AnnouncementController {
     @PostMapping("")
     public Announces create(@RequestBody Announces newAnnounce) {
         return announceService.addNewAnnounce(newAnnounce);
+    }
+
+    @DeleteMapping("{announceId}")
+    public void removeAnnounce(@PathVariable Integer announceId){
+        announceService.removeAnnounce((announceId));
     }
 }

@@ -5,7 +5,10 @@ import com.example.int221backend.exceptions.AnnounceNotFoundException;
 import com.example.int221backend.repositories.AnnounceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -59,5 +62,12 @@ public class AnnounceService {
 
     public Announces addNewAnnounce(Announces newAnnounce) {
         return announceRepository.saveAndFlush(newAnnounce);
+    }
+
+    public void  removeAnnounce(Integer announcementId){
+        Announces announce =announceRepository.findById(announcementId).orElseThrow(()
+                -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Announcement id " + announcementId + "DOES NOT EXIST!!!")
+        );
+        announceRepository.delete(announce);
     }
 }
