@@ -1,6 +1,6 @@
 package com.example.int221backend.entities;
 
-public enum  AnnouncementDisplay {
+public enum AnnouncementDisplay {
     Y,
     N
 }

@@ -64,10 +64,8 @@ public class AnnounceService {
         return announceRepository.saveAndFlush(newAnnounce);
     }
 
-    public void  removeAnnounce(Integer announcementId){
-        Announces announce =announceRepository.findById(announcementId).orElseThrow(()
-                -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Announcement id " + announcementId + "DOES NOT EXIST!!!")
-        );
+    public void  removeAnnounce(Integer announceId){
+        Announces announce =announceRepository.findById(announceId).orElseThrow(() -> new AnnounceNotFoundException(announceId));
         announceRepository.delete(announce);
     }
 }

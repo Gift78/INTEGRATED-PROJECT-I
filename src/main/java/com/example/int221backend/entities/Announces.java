@@ -20,11 +20,9 @@ public class Announces {
     @Column(nullable = true)
     private String closeDate;
 
-
     @ManyToOne
     @JoinColumn(name = "categoryId", nullable = false)
     private Categories categoriesObject;
-
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('Y','n') DEFAULT 'N'")
