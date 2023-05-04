@@ -32,7 +32,7 @@ onMounted(async () => {
             <!-- time zone bar -->
             <div class="flex justify-between">
                 <TimezoneComponent />
-                <div class="ann-button text-center rounded-md text-white p-1 px-4 bg-emerald-plus hover:bg-emerald-light hover:scale-105"
+                <div class="ann-button text-center rounded-md text-white p-1 px-4 bg-emerald-plus hover:bg-emerald-light hover:scale-105 cursor-pointer"
                     @click="changePage('AddAnnouncement', undefined)">
                     + Add Announcement
                 </div>
