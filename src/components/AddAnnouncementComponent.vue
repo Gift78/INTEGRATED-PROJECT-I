@@ -162,7 +162,8 @@ const addNewAnnouncement = async (annonuce) => {
             <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
                 <div class="flex">
                     <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Description :</div>
-                    <textarea rows="10" maxlength="10000" class="ann-description bg-white pl-5 pt-3 border-2 rounded-lg w-full mr-20"
+                    <textarea rows="10" maxlength="10000"
+                        class="ann-description bg-white pl-5 pt-3 border-2 rounded-lg w-full mr-20"
                         v-model="newAnnouncement.announcementDescription"></textarea>
                 </div>
             </div>
@@ -173,9 +174,9 @@ const addNewAnnouncement = async (annonuce) => {
                     <div class="felx-col w-full">
                         <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Publish Date</div>
                         <div class="flex w-full">
-                            <input type="date" class="ann-publish-date text-black bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                            <input type="date" class="ann-publish-date bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
                                 v-model="publishDate">
-                            <input type="time" class="ann-publish-time text-black bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                            <input type="time" class="ann-publish-time bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
                                 v-model="publishTime">
                         </div>
                     </div>
@@ -183,9 +184,9 @@ const addNewAnnouncement = async (annonuce) => {
                     <div class="felx-col w-full">
                         <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Close Date</div>
                         <div class="flex">
-                            <input type="date" class="ann-close-date text-black bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                            <input type="date" class="ann-close-date bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
                                 v-model="closeDate">
-                            <input type="time" class="ann-close-time text-black bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
+                            <input type="time" class="ann-close-time bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
                                 v-model="closeTime">
                         </div>
                     </div>
@@ -228,4 +229,9 @@ const addNewAnnouncement = async (annonuce) => {
     </div>
 </template>
  
-<style scoped></style>
+<style scoped>
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(100%);
+}
+</style>
