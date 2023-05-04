@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { getAllData } from '../composable/getData.js';
 import formatDatetime from '../composable/formatDatetime';
 import TimezoneComponent from './TimezoneComponent.vue';
+import InformationCircle from './icons/InformationCircle.vue'
 
 const router = useRouter()
 const data = ref([])
@@ -19,6 +20,28 @@ const changePage = (name, id) => {
 onMounted(async () => {
     data.value = await getAllData();
 });
+
+const errorOnDelete = ref(false)
+const deleteId = ref(undefined)
+const deleteAnnouncement = async (id) => {
+    try {
+        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + id, {
+            method: 'DELETE'
+        })
+        if (res.status === 200) {
+            data.value = data.value.filter((ann) => {
+                return ann.id !== id
+            })
+            console.log('delete successfully')
+        } else {
+            errorOnDelete.value = true
+            throw new Error('cannot delete')
+        }
+    } catch (error) {
+        errorOnDelete.value = true
+        console.log(error)
+    }
+}
 
 </script>
 
@@ -38,8 +61,6 @@ onMounted(async () => {
                 </div>
             </div>
             <hr class="mt-4 border-2">
-
-
 
             <!-- head table -->
             <div class="grid grid-cols-11 my-5">
@@ -76,13 +97,42 @@ onMounted(async () => {
                     </div>
                     <div class="flex ml-10 col-span-2">
                         <div class="ann-button mx-2 text-cyan-400 my-auto text-center bg-cyan-100 hover:bg-cyan-200 hover:scale-110  rounded-lg pt-2 w-16 h-10 shadow-sm cursor-pointer"
-                            @click="changePage('AnnouncementDetail', announce.id)">view
+                            @click="changePage('AnnouncementDetail', announce.id)">View
                         </div>
-                        <div class="ann-button mx-2 text-red-400 my-auto text-center bg-red-100 hover:bg-red-200 hover:scale-110  rounded-lg pt-2 w-16 h-10 shadow-sm cursor-pointer"
-                            @click="">delete
+                        <!-- delete -->
+                        <label for="my-modal" class="ann-button mx-2 text-red-400 my-auto text-center bg-red-100 hover:bg-red-200 
+                            hover:scale-110  rounded-lg pt-2 w-16 h-10 shadow-sm cursor-pointer"
+                            @click="deleteId = announce.id">Delete</label>
+                        <input type="checkbox" id="my-modal" class="modal-toggle" />
+                        <div class="modal">
+                            <InformationCircle class="text-red-500 absolute top-52 z-10 bg-white rounded-full" />
+                            <div class="modal-box bg-white">
+                                <p class="text-3xl font-bold text-center pt-16">Are you sure to delete?
+                                </p>
+                                <p class="py-5 text-center">Do you really want to delete this announcement? This process
+                                    cannot be undone.</p>
+                                <div class="modal-action flex justify-center">
+                                    <label for="my-modal"
+                                        class="btn border-none w-24 bg-zinc-300 hover:bg-zinc-400">Cancel</label>
+                                    <label for="my-modal"
+                                        class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
+                                        @click="deleteAnnouncement(deleteId)">OK</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
+                </div>
+            </div>
+            <div class="flex items-center justify-center" v-if="errorOnDelete">
+                <CancelRounded
+                    class="text-red-500 absolute top-48 z-30 flex items-center justify-center bg-white rounded-full" />
+                <div class="absolute top-72 bg-white px-40 pb-10 z-10 rounded-3xl shadow-xl">
+                    <p class="text-3xl font-bold text-center pt-16">Error!</p>
+                    <p class="py-5 text-center">Something went wrong. Cannot delete announcement.</p>
+                    <div class="modal-action flex justify-center">
+                        <label class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
+                            @click="errorOnDelete = false">OK</label>
+                    </div>
                 </div>
             </div>
         </div>
