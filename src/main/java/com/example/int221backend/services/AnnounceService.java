@@ -64,8 +64,20 @@ public class AnnounceService {
         return announceRepository.saveAndFlush(newAnnounce);
     }
 
-    public void  removeAnnounce(Integer announceId){
+    public void removeAnnounce(Integer announceId){
         Announces announce =announceRepository.findById(announceId).orElseThrow(() -> new AnnounceNotFoundException(announceId));
         announceRepository.delete(announce);
+    }
+
+    public Announces updateAnnounce(Integer announceId, Announces newAnnounce) {
+        Announces announce = announceRepository.findById(announceId).orElseThrow(() -> new AnnounceNotFoundException(announceId));
+
+        announce.setAnnouncementTitle(newAnnounce.getAnnouncementTitle());
+        announce.setAnnouncementDescription(newAnnounce.getAnnouncementDescription());
+        announce.setAnnouncementDisplay(newAnnounce.getAnnouncementDisplay());
+        announce.setCategoriesObject(newAnnounce.getCategoriesObject());
+        announce.setPublishDate(newAnnounce.getPublishDate());
+        announce.setCloseDate(newAnnounce.getCloseDate());
+        return announceRepository.saveAndFlush(announce);
     }
 }

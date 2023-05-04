@@ -40,4 +40,9 @@ public class AnnouncementController {
     public void removeAnnounce(@PathVariable Integer announceId){
         announceService.removeAnnounce((announceId));
     }
+
+    @PutMapping("{announceId}")
+    public Announces updateAnnounce(@PathVariable Integer announceId, @RequestBody Announces newAnnounce){
+        return announceService.updateAnnounce(announceId, newAnnounce);
+    }
 }
