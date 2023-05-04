@@ -5,10 +5,7 @@ import com.example.int221backend.exceptions.AnnounceNotFoundException;
 import com.example.int221backend.repositories.AnnounceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
