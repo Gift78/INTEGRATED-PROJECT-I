@@ -23,5 +23,4 @@ public class Categories {
     @JsonIgnore
     @OneToMany(mappedBy = "categoriesObject")
     private Set<Announces> announces = new LinkedHashSet<>();
-
 }
