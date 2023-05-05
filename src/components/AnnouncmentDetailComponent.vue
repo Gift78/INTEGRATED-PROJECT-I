@@ -77,7 +77,7 @@ onMounted(async () => {
     <input type="checkbox" id="error-modal" class="modal-toggle modal-open" :checked="isModalOpen" />
     <div class="modal flex items-center justify-center" v-if="isModalOpen">
         <CancelRounded class="text-red-500 absolute top-48 z-30 flex items-center justify-center bg-white rounded-full" />
-        <div class="sabsolute top-72 bg-white px-40 pb-10 z-10 rounded-3xl shadow-xl">
+        <div class="absolute top-72 bg-white px-40 pb-10 z-10 rounded-3xl shadow-xl">
             <p class="text-3xl font-bold text-center pt-16">Error!</p>
             <p class="py-5 text-center">The requested page is not available!</p>
             <div class="modal-action flex justify-center">

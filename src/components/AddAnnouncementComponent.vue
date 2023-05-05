@@ -33,7 +33,7 @@ const newAnnouncement = ref({
     publishDate: null,
     closeDate: null,
     announcementDisplay: 'N',
-    announcementCategory: categorySelect.value
+    categoryId: categorySelect.value.categoryId
 })
 // to set date and time
 const publishDate = ref('')
@@ -46,7 +46,7 @@ const setting = () => {
         return 'btn-disabled bg-slate-800'
     } else {
         // set category
-        newAnnouncement.value.announcementCategory = categorySelect.value
+        newAnnouncement.value.categoryId = categorySelect.value.categoryId
         // set display
         if (displayed.value) {
             newAnnouncement.value.announcementDisplay = 'Y'
@@ -55,11 +55,14 @@ const setting = () => {
         }
         // set publish date
         if (publishDate.value !== '' && publishTime.value !== '' && closeDate.value == '' && closeTime.value == '') {
-            newAnnouncement.value.publishDate = `${publishDate.value} ${publishTime.value}`
+            newAnnouncement.value.publishDate = new Date(`${publishDate.value} ${publishTime.value}`).toISOString().slice(0, 19) + 'Z'
             newAnnouncement.value.closeDate = null
         } else if (closeDate.value !== '' && closeTime !== '' && publishDate.value == '' && publishTime.value == '') {
-            newAnnouncement.value.closeDate = `${closeDate.value} ${closeTime.value}`
+            newAnnouncement.value.closeDate = new Date(`${closeDate.value} ${closeTime.value}`).toISOString().slice(0, 19) + 'Z'
             newAnnouncement.value.publishDate = null
+        } else if (closeDate.value !== '' && closeTime !== '' && publishDate.value !== '' && publishTime.value !== '') {
+            newAnnouncement.value.publishDate = new Date(`${publishDate.value} ${publishTime.value}`).toISOString().slice(0, 19) + 'Z'
+            newAnnouncement.value.closeDate = new Date(`${closeDate.value} ${closeTime.value}`).toISOString().slice(0, 19) + 'Z'
         } else {
             newAnnouncement.value.publishDate = null
             newAnnouncement.value.closeDate = null
@@ -90,8 +93,16 @@ const addNewAnnouncement = async (annonuce) => {
                     publishDate: annonuce.publishDate,
                     closeDate: annonuce.closeDate,
                     announcementDisplay: annonuce.announcementDisplay,
-                    categoriesObject: annonuce.announcementCategory
+                    categoryId: annonuce.categoryId
                 })
+                // {
+                //     "announcementTitle": "ประกาศ (ร่าง) ตารางสอบปลายภาค 2/65",
+                //     "announcementDescription": "หลักสูตรขอแจ้งตารางสอบปลายภาค (ร่าง) 2/65 โดยนักศึกษาที่สอบซ้อนในวันเดียวกัน ขอให้แจ้งกลับมาที่พี่ตุ๊ก ภายในวันที่ 8 พ.ค. 66",
+                //     "publishDate": null,
+                //     "closeDate": null,
+                //     "announcementDisplay": "N",
+                //     "categoryId": 3
+                // }
             })
             if (res.status === 200) {
                 console.log('add successfully')
@@ -232,6 +243,6 @@ const addNewAnnouncement = async (annonuce) => {
 <style scoped>
 input[type="time"]::-webkit-calendar-picker-indicator,
 input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(100%);
+    filter: invert(50%);
 }
 </style>

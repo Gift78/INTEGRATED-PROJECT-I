@@ -5,6 +5,7 @@ import { getAllData } from '../composable/getData.js';
 import formatDatetime from '../composable/formatDatetime';
 import TimezoneComponent from './TimezoneComponent.vue';
 import InformationCircle from './icons/InformationCircle.vue'
+import CancelRounded from './icons/CancelRounded.vue';
 
 const router = useRouter()
 const data = ref([])
@@ -82,7 +83,7 @@ const deleteAnnouncement = async (id) => {
                 <div v-for="(announce, index) in data" :key="data.id"
                     class="ann-item grid grid-cols-11 bg-white my-5 h-20 rounded-xl shadow-md">
                     <div class="text-cyan-800 my-auto text-center">{{ index + 1 }} </div>
-                    <div class="ann-title text-cyan-800 my-auto col-span-2">{{ announce.announcementTitle }} </div>
+                    <div class="ann-title text-cyan-800 my-auto col-span-2 overflow-hidden">{{ announce.announcementTitle }} </div>
                     <div class="ann-category text-cyan-800 my-auto text-center capitalize">{{
                         announce.announcementCategory }}</div>
                     <div class="ann-publish-date text-cyan-800 my-auto text-center col-span-2">{{
@@ -105,7 +106,7 @@ const deleteAnnouncement = async (id) => {
                             @click="deleteId = announce.id">Delete</label>
                         <input type="checkbox" id="my-modal" class="modal-toggle" />
                         <div class="modal">
-                            <InformationCircle class="text-red-500 absolute top-52 z-10 bg-white rounded-full" />
+                            <InformationCircle class="text-red-500 absolute top-40 z-10 bg-white rounded-full" />
                             <div class="modal-box bg-white">
                                 <p class="text-3xl font-bold text-center pt-16">Are you sure to delete?
                                 </p>
