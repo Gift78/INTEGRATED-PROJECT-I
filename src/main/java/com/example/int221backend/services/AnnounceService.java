@@ -4,10 +4,8 @@ import com.example.int221backend.entities.Announces;
 import com.example.int221backend.entities.Categories;
 import com.example.int221backend.exceptions.AnnounceNotFoundException;
 import com.example.int221backend.repositories.AnnounceRepository;
-import com.example.int221backend.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
