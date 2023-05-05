@@ -11,7 +11,20 @@ const { params } = useRoute();
 const router = useRouter();
 const data = ref({});
 const isModalOpen = ref(false);
-
+const categoryItem = [
+    { categoryId: 1, categoryName: 'ทั่วไป' },
+    { categoryId: 2, categoryName: 'ทุนการศึกษา' },
+    { categoryId: 3, categoryName: 'หางาน' },
+    { categoryId: 4, categoryName: 'ฝึกงาน' }
+]
+const editedAnnounce = ref({
+    announcementTitle: '',
+    announcementDescription: '',
+    publishDate: null,
+    closeDate: null,
+    announcementDisplay: 'N',
+    categoryId: 1
+})
 const backToAnnouncements = () => {
     router.push({ name: 'Announcement' });
 }
@@ -29,9 +42,9 @@ onMounted(async () => {
     }
 });
 
-const editAnnouncement = async (updateAnnounce,announceId) => {
+const editAnnouncement = async (updateAnnounce, announceId) => {
     try {
-        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/"+announceId,
+        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + announceId,
             {
                 method: 'PUT',
                 headers: {
@@ -48,7 +61,8 @@ const editAnnouncement = async (updateAnnounce,announceId) => {
                 })
             })
         if (res.status === 200) {
-
+            backToAnnouncements()
+            console.log('edit')
         } else {
             throw new Error('cannot edit')
         }
@@ -72,28 +86,29 @@ const editAnnouncement = async (updateAnnounce,announceId) => {
         <div class="ann-item bg-white flex-col rounded-lg p-10 shadow-lg mt-5" v-if="!isModalOpen">
             <div class="flex">
                 <div class="w-52 text-cyan-800 font-bold">Title</div>
-                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementTitle"/>
+                <input v-model="editedAnnounce.announcementTitle" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementTitle" />
 
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Category</div>
-                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementCategory"/>
+                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementCategory" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Description</div>
-                <textarea class="textarea h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementDescription"></textarea>
+                <textarea v-model="editedAnnounce.announcementDescription" class="textarea h-10 w-full bg-slate-100 rounded-lg pl-4"
+                    :value="data?.announcementDescription"></textarea>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Publish Date</div>
-                <input type="text" class="h-10 w-full bg-slate-100 rounded- pl-4" :value="data?.publishDate || '-'  "/>
+                <input v-model="editedAnnounce.publishDate" type="text" class="h-10 w-full bg-slate-100 rounded- pl-4" :value="data?.publishDate || '-'" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Close Date</div>
-                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.closeDate || '-'  "/>
+                <input v-model="editedAnnounce.closeDate" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.closeDate || '-'" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Display</div>
-                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementDisplay"/>
+                <input  v-model="editedAnnounce.announcementDisplay" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementDisplay" />
             </div>
         </div>
 
@@ -103,9 +118,9 @@ const editAnnouncement = async (updateAnnounce,announceId) => {
                 class="ann-button text-black bg-slate-100 text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
                 @click="backToAnnouncements">Back</button>
 
-                <button
+            <button
                 class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10 "
-                @click="editAnnouncement()">Edit</button>
+                @click="editAnnouncement(editedAnnounce,params?.id)">Edit</button>
         </div>
     </div>
 
