@@ -17,18 +17,50 @@ const categoryItem = [
     { categoryId: 3, categoryName: 'หางาน' },
     { categoryId: 4, categoryName: 'ฝึกงาน' }
 ]
+
 const editedAnnounce = ref({
     announcementTitle: '',
     announcementDescription: '',
     publishDate: null,
     closeDate: null,
     announcementDisplay: 'N',
-    categoryId: 1
+    categoryId: null
 })
+
 const backToAnnouncements = () => {
     router.push({ name: 'Announcement' });
 }
 
+const datetimeFormatter = (datetime) => {
+    if (!datetime) {
+        return null;
+    }
+
+    const date = new Date(datetime);
+    const year = date.getFullYear();
+    const month = date.toLocaleString('default', { month: 'short' });
+    const day = date.getDate();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+
+    if (minute < 10) {
+        return `${day} ${month} ${year} at ${hour}:0${minute}`;
+    } else {
+        return `${day} ${month} ${year} at ${hour}:${minute}`;
+    }
+}
+
+const datetimeFormatterISO = (dateString) => {
+    console.log(dateString)
+    if (!dateString) {
+        return null;
+    }
+
+    const newDateString = dateString.slice(0, 11) + " , " + dateString.slice(15, 20)
+    const dateObj = new Date(newDateString).toISOString().slice(0, -5) + "Z";
+    console.log(dateObj)
+    return dateObj
+}
 
 onMounted(async () => {
     try {
@@ -37,13 +69,38 @@ onMounted(async () => {
         if (data.value === undefined) {
             isModalOpen.value = true;
         }
+
+        editedAnnounce.value.announcementTitle = data.value.announcementTitle
+        editedAnnounce.value.announcementDescription = data.value.announcementDescription
+        editedAnnounce.value.publishDate = datetimeFormatter(data.value.publishDate)
+        editedAnnounce.value.closeDate = datetimeFormatter(data.value.closeDate)
+        editedAnnounce.value.announcementDisplay = data.value.announcementDisplay
+
+        categoryItem.forEach((item) => {
+            if (item.categoryName === data.value.announcementCategory) {
+                editedAnnounce.value.categoryId = item.categoryId
+            }
+        })
     } catch (error) {
         console.log(error);
     }
 });
 
 const editAnnouncement = async (updateAnnounce, announceId) => {
+    let foundMatchingCategory = false;
+    for (const item of categoryItem) {
+        if (item.categoryName === data.value.announcementCategory) {
+            updateAnnounce.categoryId = item.categoryId;
+            foundMatchingCategory = true;
+            break;
+        }
+    }
+
+    updateAnnounce.closeDate = datetimeFormatterISO(updateAnnounce.closeDate)
+    updateAnnounce.publishDate = datetimeFormatterISO(updateAnnounce.publishDate)
+
     try {
+        console.log(updateAnnounce)
         const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + announceId,
             {
                 method: 'PUT',
@@ -57,7 +114,6 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
                     closeDate: updateAnnounce.closeDate,
                     announcementDisplay: updateAnnounce.announcementDisplay,
                     categoryId: updateAnnounce.categoryId
-
                 })
             })
         if (res.status === 200) {
@@ -86,29 +142,30 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         <div class="ann-item bg-white flex-col rounded-lg p-10 shadow-lg mt-5" v-if="!isModalOpen">
             <div class="flex">
                 <div class="w-52 text-cyan-800 font-bold">Title</div>
-                <input v-model="editedAnnounce.announcementTitle" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementTitle" />
-
+                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4"
+                    v-model="editedAnnounce.announcementTitle" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Category</div>
-                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementCategory" />
+                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" v-model="data.announcementCategory" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Description</div>
-                <textarea v-model="editedAnnounce.announcementDescription" class="textarea h-10 w-full bg-slate-100 rounded-lg pl-4"
-                    :value="data?.announcementDescription"></textarea>
+                <textarea class="textarea h-10 w-full bg-slate-100 rounded-lg pl-4"
+                    v-model="editedAnnounce.announcementDescription"></textarea>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Publish Date</div>
-                <input v-model="editedAnnounce.publishDate" type="text" class="h-10 w-full bg-slate-100 rounded- pl-4" :value="data?.publishDate || '-'" />
+                <input v-model="editedAnnounce.publishDate" type="text" class="h-10 w-full bg-slate-100 rounded- pl-4" />
             </div>
-            <div class="flex mt-5">
+            <div class=" flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Close Date</div>
-                <input v-model="editedAnnounce.closeDate" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.closeDate || '-'" />
+                <input v-model="editedAnnounce.closeDate" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Display</div>
-                <input  v-model="editedAnnounce.announcementDisplay" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementDisplay" />
+                <input v-model="editedAnnounce.announcementDisplay" type="text"
+                    class="h-10 w-full bg-slate-100 rounded-lg pl-4" />
             </div>
         </div>
 
@@ -120,7 +177,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
 
             <button
                 class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10 "
-                @click="editAnnouncement(editedAnnounce,params?.id)">Edit</button>
+                @click="editAnnouncement(editedAnnounce, params?.id)">Edit</button>
         </div>
     </div>
 
