@@ -51,12 +51,14 @@ const datetimeFormatter = (datetime) => {
 }
 
 const datetimeFormatterISO = (dateString) => {
-    console.log(dateString)
     if (!dateString) {
         return null;
     }
-
-    const newDateString = dateString.slice(0, 11) + " , " + dateString.slice(15, 20)
+    console.log(dateString)
+    const atIndex = dateString.search('at')
+    const dateSliced = dateString.slice(0, atIndex)
+    const timeSliced = dateString.slice(atIndex + 2, 30)
+    const newDateString = dateSliced + ',' + timeSliced
     const dateObj = new Date(newDateString).toISOString().slice(0, -5) + "Z";
     console.log(dateObj)
     return dateObj
@@ -94,9 +96,6 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             foundMatchingCategory = true;
             break;
         }
-    }
-    if (!foundMatchingCategory) {
-        return;
     }
 
     updateAnnounce.closeDate = datetimeFormatterISO(updateAnnounce.closeDate)
