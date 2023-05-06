@@ -18,6 +18,15 @@ const changePage = (name, id) => {
         router.push({ name: name })
     }
 }
+const editPage = (name, id) => {
+    if (id !== undefined) {
+        router.push({ name: name, params: { id: id } })
+    } else {
+        router.push({ name: name })
+    }
+}
+
+
 
 onMounted(async () => {
     data.value = await getAllData();
@@ -62,6 +71,7 @@ const deleteAnnouncement = async (id) => {
                     @click="changePage('AddAnnouncement', undefined)">
                     + Add Announcement
                 </div>
+
             </div>
             <hr class="mt-4 border-2">
 
@@ -102,6 +112,9 @@ const deleteAnnouncement = async (id) => {
                     <div class="flex ml-10 col-span-2">
                         <div class="ann-button mx-2 text-cyan-400 my-auto text-center bg-cyan-100 hover:bg-cyan-200 hover:scale-110  rounded-lg pt-2 w-16 h-10 shadow-sm cursor-pointer"
                             @click="changePage('AnnouncementDetail', announce.id)">View
+                        </div>
+                        <div class="ann-button mx-2 text-orange-500 my-auto text-center bg-orange-200 hover:bg-orange-300 hover:scale-110  rounded-lg pt-2 w-16 h-10 shadow-sm cursor-pointer"
+                        @click="editPage('EditAnnouncement',announce.id)">Edit
                         </div>
                         <!-- delete -->
                         <label for="my-modal" class="ann-button mx-2 text-red-400 my-auto text-center bg-red-100 hover:bg-red-200 
