@@ -17,6 +17,15 @@ const changePage = (name, id) => {
         router.push({ name: name })
     }
 }
+const editPage = (name, id) => {
+    if (id !== undefined) {
+        router.push({ name: name, params: { id: id } })
+    } else {
+        router.push({ name: name })
+    }
+}
+
+
 
 onMounted(async () => {
     data.value = await getAllData();
@@ -60,6 +69,7 @@ const deleteAnnouncement = async (id) => {
                     @click="changePage('AddAnnouncement', undefined)">
                     + Add Announcement
                 </div>
+
             </div>
             <hr class="mt-4 border-2">
 
@@ -83,7 +93,8 @@ const deleteAnnouncement = async (id) => {
                 <div v-for="(announce, index) in data" :key="data.id"
                     class="ann-item grid grid-cols-11 bg-white my-5 h-20 rounded-xl shadow-md">
                     <div class="text-cyan-800 my-auto text-center">{{ index + 1 }} </div>
-                    <div class="ann-title text-cyan-800 my-auto col-span-2 overflow-hidden">{{ announce.announcementTitle }} </div>
+                    <div class="ann-title text-cyan-800 my-auto col-span-2 overflow-hidden">{{ announce.announcementTitle }}
+                    </div>
                     <div class="ann-category text-cyan-800 my-auto text-center capitalize">{{
                         announce.announcementCategory }}</div>
                     <div class="ann-publish-date text-cyan-800 my-auto text-center col-span-2">{{
@@ -99,6 +110,9 @@ const deleteAnnouncement = async (id) => {
                     <div class="flex ml-10 col-span-2">
                         <div class="ann-button mx-2 text-cyan-400 my-auto text-center bg-cyan-100 hover:bg-cyan-200 hover:scale-110  rounded-lg pt-2 w-16 h-10 shadow-sm cursor-pointer"
                             @click="changePage('AnnouncementDetail', announce.id)">View
+                        </div>
+                        <div class="ann-button mx-2 text-orange-500 my-auto text-center bg-orange-200 hover:bg-orange-300 hover:scale-110  rounded-lg pt-2 w-16 h-10 shadow-sm cursor-pointer"
+                        @click="editPage('EditAnnouncement',announce.id)">Edit
                         </div>
                         <!-- delete -->
                         <label for="my-modal" class="ann-button mx-2 text-red-400 my-auto text-center bg-red-100 hover:bg-red-200 

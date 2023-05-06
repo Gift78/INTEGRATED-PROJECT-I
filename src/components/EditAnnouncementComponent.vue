@@ -9,31 +9,19 @@ import CancelRounded from './icons/CancelRounded.vue'
 
 const { params } = useRoute();
 const router = useRouter();
-const data = ref({});
 const isModalOpen = ref(false);
-const categoryItem = [
-    { categoryId: 1, categoryName: 'ทั่วไป' },
-    { categoryId: 2, categoryName: 'ทุนการศึกษา' },
-    { categoryId: 3, categoryName: 'หางาน' },
-    { categoryId: 4, categoryName: 'ฝึกงาน' }
-]
-const editedAnnounce = ref({
-    announcementTitle: '',
-    announcementDescription: '',
-    publishDate: null,
-    closeDate: null,
-    announcementDisplay: 'N',
-    categoryId: 1
-})
+const data = ref({});
+
 const backToAnnouncements = () => {
     router.push({ name: 'Announcement' });
 }
 
-
 onMounted(async () => {
     try {
         data.value = await getDataById(params?.id);
-
+        data.value.publishDate = datetimeFormatter(data.value.publishDate)
+        data.value.closeDate = datetimeFormatter(data.value.closeDate)
+        console.log(data.value)
         if (data.value === undefined) {
             isModalOpen.value = true;
         }
@@ -41,6 +29,44 @@ onMounted(async () => {
         console.log(error);
     }
 });
+
+const findCategoryName = (categoryName) => {
+    if (categoryName === 'ทั่วไป') {
+        return 1
+    } else if (categoryName === 'ทุนการศึกษา') {
+        return 2
+    } else if (categoryName === 'หางาน') {
+        return 3
+    } else if (categoryName === 'ฝึกงาน') {
+        return 4
+    }
+}
+
+const datetimeFormatter = (datetime) => {
+    if (!datetime) {
+        return '';
+    }
+
+    const date = new Date(datetime);
+    const year = date.getFullYear();
+    const month = date.toLocaleString('default', { month: 'short' });
+    const day = date.getDate();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+
+    if (minute < 10) {
+        return `${day} ${month} ${year} at ${hour}:0${minute}`;
+    } else {
+        return `${day} ${month} ${year} at ${hour}:${minute}`;
+    }
+}
+
+const datetimeFormatIso = (dateString) => {
+    const dateObj = new Date(dateString);
+    const isoString = dateObj.toISOString().slice(0, -5) + "Z";
+    console.log(isoString)
+    return isoString
+}
 
 const editAnnouncement = async (updateAnnounce, announceId) => {
     try {
@@ -53,10 +79,10 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
                 body: JSON.stringify({
                     announcementTitle: updateAnnounce.announcementTitle,
                     announcementDescription: updateAnnounce.announcementDescription,
-                    publishDate: updateAnnounce.publishDate,
-                    closeDate: updateAnnounce.closeDate,
+                    publishDate: datetimeFormatIso(updateAnnounce.publishDate),
+                    closeDate: datetimeFormatIso(updateAnnounce.closeDate),
                     announcementDisplay: updateAnnounce.announcementDisplay,
-                    categoryId: updateAnnounce.categoryId
+                    categoryId: findCategoryName(updateAnnounce.announcementCategory)
 
                 })
             })
@@ -86,29 +112,29 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         <div class="ann-item bg-white flex-col rounded-lg p-10 shadow-lg mt-5" v-if="!isModalOpen">
             <div class="flex">
                 <div class="w-52 text-cyan-800 font-bold">Title</div>
-                <input v-model="editedAnnounce.announcementTitle" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementTitle" />
+                <input v-model="data.announcementTitle" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" />
 
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Category</div>
-                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementCategory" />
+                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" v-model="data.announcementCategory" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Description</div>
-                <textarea v-model="editedAnnounce.announcementDescription" class="textarea h-10 w-full bg-slate-100 rounded-lg pl-4"
-                    :value="data?.announcementDescription"></textarea>
+                <textarea v-model="data.announcementDescription"
+                    class="textarea h-10 w-full bg-slate-100 rounded-lg pl-4"></textarea>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Publish Date</div>
-                <input v-model="editedAnnounce.publishDate" type="text" class="h-10 w-full bg-slate-100 rounded- pl-4" :value="data?.publishDate || '-'" />
+                <input v-model="data.publishDate" type="text" class="h-10 w-full bg-slate-100 rounded- pl-4" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Close Date</div>
-                <input v-model="editedAnnounce.closeDate" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.closeDate || '-'" />
+                <input v-model="data.closeDate" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Display</div>
-                <input  v-model="editedAnnounce.announcementDisplay" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" :value="data?.announcementDisplay" />
+                <input v-model="data.announcementDisplay" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" />
             </div>
         </div>
 
@@ -120,7 +146,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
 
             <button
                 class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10 "
-                @click="editAnnouncement(editedAnnounce,params?.id)">Edit</button>
+                @click="editAnnouncement(data, params?.id)">Edit</button>
         </div>
     </div>
 
