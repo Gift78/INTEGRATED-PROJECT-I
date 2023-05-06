@@ -9,6 +9,7 @@ import CancelRounded from './icons/CancelRounded.vue';
 
 const router = useRouter()
 const data = ref([])
+const errors = ref({})
 
 const changePage = (name, id) => {
     if (id !== undefined) {
@@ -35,12 +36,13 @@ const deleteAnnouncement = async (id) => {
             })
             console.log('delete successfully')
         } else {
+            const errorData = await res.json()
+            errors.value = errorData
             errorOnDelete.value = true
-            throw new Error('cannot delete')
         }
     } catch (error) {
         errorOnDelete.value = true
-        console.log(error)
+        errors.value = error
     }
 }
 
@@ -83,7 +85,8 @@ const deleteAnnouncement = async (id) => {
                 <div v-for="(announce, index) in data" :key="data.id"
                     class="ann-item grid grid-cols-11 bg-white my-5 h-20 rounded-xl shadow-md">
                     <div class="text-cyan-800 my-auto text-center">{{ index + 1 }} </div>
-                    <div class="ann-title text-cyan-800 my-auto col-span-2 overflow-hidden">{{ announce.announcementTitle }} </div>
+                    <div class="ann-title text-cyan-800 my-auto col-span-2 overflow-hidden">{{ announce.announcementTitle }}
+                    </div>
                     <div class="ann-category text-cyan-800 my-auto text-center capitalize">{{
                         announce.announcementCategory }}</div>
                     <div class="ann-publish-date text-cyan-800 my-auto text-center col-span-2">{{
@@ -128,8 +131,8 @@ const deleteAnnouncement = async (id) => {
                 <CancelRounded
                     class="text-red-500 absolute top-48 z-30 flex items-center justify-center bg-white rounded-full" />
                 <div class="absolute top-72 bg-white px-40 pb-10 z-10 rounded-3xl shadow-xl">
-                    <p class="text-3xl font-bold text-center pt-16">Error!</p>
-                    <p class="py-5 text-center">Something went wrong. Cannot delete announcement.</p>
+                    <p class="text-3xl font-bold text-center pt-16">Error {{ errors.status }}!</p>
+                    <p class="py-5 text-center">{{ errors.message }}</p>
                     <div class="modal-action flex justify-center">
                         <label class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
                             @click="errorOnDelete = false">OK</label>

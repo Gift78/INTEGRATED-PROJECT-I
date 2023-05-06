@@ -6,6 +6,8 @@ import DropDown from './icons/DropDown.vue'
 import ArrowRight from './icons/ArrowRight.vue'
 import CancelRounded from './icons/CancelRounded.vue'
 const router = useRouter()
+
+const errors = ref({})
 // category data
 const categoryItem = [
     { categoryId: 1, categoryName: 'ทั่วไป' },
@@ -35,11 +37,13 @@ const newAnnouncement = ref({
     announcementDisplay: 'N',
     categoryId: categorySelect.value.categoryId
 })
+
 // to set date and time
 const publishDate = ref('')
 const publishTime = ref('')
 const closeDate = ref('')
 const closeTime = ref('')
+
 // set all announcement should set
 const setting = () => {
     if (newAnnouncement.value.announcementTitle == '' || newAnnouncement.value.announcementDescription == '') {
@@ -70,9 +74,11 @@ const setting = () => {
         return ''
     }
 }
+
 const changePage = (name) => {
     router.push({ name: name })
 }
+
 // if have error will show pop up
 const haveError = ref(false)
 const addNewAnnouncement = async (annonuce) => {
@@ -95,25 +101,19 @@ const addNewAnnouncement = async (annonuce) => {
                     announcementDisplay: annonuce.announcementDisplay,
                     categoryId: annonuce.categoryId
                 })
-                // {
-                //     "announcementTitle": "ประกาศ (ร่าง) ตารางสอบปลายภาค 2/65",
-                //     "announcementDescription": "หลักสูตรขอแจ้งตารางสอบปลายภาค (ร่าง) 2/65 โดยนักศึกษาที่สอบซ้อนในวันเดียวกัน ขอให้แจ้งกลับมาที่พี่ตุ๊ก ภายในวันที่ 8 พ.ค. 66",
-                //     "publishDate": null,
-                //     "closeDate": null,
-                //     "announcementDisplay": "N",
-                //     "categoryId": 3
-                // }
             })
+
             if (res.status === 200) {
                 console.log('add successfully')
                 changePage('Announcement')
             } else {
+                const errorData = await res.json()
+                errors.value = errorData
                 haveError.value = true
-                throw new Error('cannot add')
             }
         } catch (err) {
+            errors.value = err
             haveError.value = true
-            console.log(err)
         }
         return ''
     }
@@ -126,8 +126,8 @@ const addNewAnnouncement = async (annonuce) => {
             <CancelRounded
                 class="text-red-500 absolute top-48 z-30 flex items-center justify-center bg-white rounded-full" />
             <div class="absolute top-72 bg-white px-10 pb-10 z-10 rounded-3xl shadow-xl">
-                <p class="text-3xl font-bold text-center pt-16">Error!</p>
-                <p class="py-5 text-center">Something went wrong. Cannot add your new announcement.</p>
+                <p class="text-3xl font-bold text-center pt-16">Error {{ errors.status }}!</p>
+                <p class="py-5 text-center">{{ errors.message }}</p>
                 <div class="modal-action flex justify-center">
                     <label class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
                         @click="changePage('Announcement')">OK</label>
