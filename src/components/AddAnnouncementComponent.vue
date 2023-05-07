@@ -15,17 +15,7 @@ const categoryItem = [
     { categoryId: 3, categoryName: 'หางาน' },
     { categoryId: 4, categoryName: 'ฝึกงาน' }
 ]
-// for dropdown select
-const categorySelect = ref(categoryItem[0])
 
-const showItem = ref(true)
-const showDropdownOptions = () => {
-    showItem.value = !showItem.value
-}
-const selectItem = (item) => {
-    categorySelect.value = item
-    showItem.value = true
-}
 // for set display to Y / N
 const displayed = ref(false)
 // default announcement
@@ -35,7 +25,7 @@ const newAnnouncement = ref({
     publishDate: null,
     closeDate: null,
     announcementDisplay: 'N',
-    categoryId: categorySelect.value.categoryId
+    categoryId: null
 })
 
 // to set date and time
@@ -50,7 +40,6 @@ const setting = () => {
         return 'btn-disabled bg-slate-800'
     } else {
         // set category
-        newAnnouncement.value.categoryId = categorySelect.value.categoryId
         // set display
         if (displayed.value) {
             newAnnouncement.value.announcementDisplay = 'Y'
@@ -153,17 +142,11 @@ const addNewAnnouncement = async (annonuce) => {
                     <!-- dropdown button -->
                     <div class="flex pt-3 ">
                         <div class="flex-none p-3 relative">
-                            <button @click="showDropdownOptions()"
-                                class="flex justify-between w-48 px-2 py-2 bg-background rounded-md shadow border focus:outline-none focus:border-emerald-plus">
-                                <span class="ann-category mt-1">{{ categorySelect.categoryName }}</span>
-                                <DropDown />
-                            </button>
-                            <div :hidden="showItem" class="w-56 py-3 shadow-md bg-white border rounded-lg absolute">
-                                <div class=" block px-4 py-2 text-gray-500 hover:bg-emerald-light hover:text-white"
-                                    v-for="category in categoryItem" @click="selectItem(category)">
+                            <select class="ann-category select w-full max-w-xs" v-model="newAnnouncement.categoryId">
+                                <option v-for="category in categoryItem" :value="category.categoryId">
                                     {{ category.categoryName }}
-                                </div>
-                            </div>
+                                </option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -234,7 +217,7 @@ const addNewAnnouncement = async (annonuce) => {
                     </div>
                 </div>
                 <button class="ann-button bg-emerald-plus hover:bg-emerald-600 duration-100 text-white w-32 py-3 rounded-lg"
-                    :class="setting()" @click="addNewAnnouncement(newAnnouncement)">Confirm</button>
+                    :class="setting()" @click="addNewAnnouncement(newAnnouncement)">Submit</button>
             </div>
         </div>
     </div>
