@@ -97,6 +97,9 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             break;
         }
     }
+    if (!foundMatchingCategory) {
+        return;
+    }
 
     updateAnnounce.closeDate = datetimeFormatterISO(updateAnnounce.closeDate)
     updateAnnounce.publishDate = datetimeFormatterISO(updateAnnounce.publishDate)
