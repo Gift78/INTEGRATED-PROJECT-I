@@ -68,6 +68,26 @@ const datetimeFormatterISO = (dateString) => {
     return dateObj
 }
 
+watch([editedAnnounce], () => {
+    if (editedAnnounce.value.closeDate === '') {
+        editedAnnounce.value.closeDate = null
+    }
+    if (editedAnnounce.value.publishDate === '') {
+        editedAnnounce.value.publishDate = null
+    }
+
+    if (editedAnnounce.value.announcementTitle !== data.value.announcementTitle ||
+        editedAnnounce.value.announcementDescription !== data.value.announcementDescription ||
+        editedAnnounce.value.publishDate !== datetimeFormatter(data.value.publishDate) ||
+        editedAnnounce.value.closeDate !== datetimeFormatter(data.value.closeDate) ||
+        editedAnnounce.value.announcementDisplay !== data.value.announcementDisplay) {
+        isFieldEdit.value = true;
+    } else {
+        console.log('no edit')
+        isFieldEdit.value = false;
+    }
+}, { deep: true })
+
 onMounted(async () => {
     try {
         data.value = await getDataById(params?.id);
@@ -91,26 +111,6 @@ onMounted(async () => {
         console.log(error);
     }
 });
-
-// watch 
-// editedAnnounce.value.announcementTitle
-// editedAnnounce.value.announcementDescription
-// editedAnnounce.value.publishDate
-// editedAnnounce.value.closeDate
-// editedAnnounce.value.announcementDisplay
-// data.announcementCategory
-// if one of these change, then isFieldEdit.value = true
-
-watch(editedAnnounce, (newValue, oldValue) => {
-    if (newValue.announcementTitle !== oldValue.announcementTitle ||
-        newValue.announcementDescription !== oldValue.announcementDescription ||
-        newValue.publishDate !== oldValue.publishDate ||
-        newValue.closeDate !== oldValue.closeDate ||
-        newValue.announcementDisplay !== oldValue.announcementDisplay ||
-        newValue.categoryId !== oldValue.categoryId) {
-        isFieldEdit.value = true
-    }
-})
 
 const editAnnouncement = async (updateAnnounce, announceId) => {
     let foundMatchingCategory = false;
@@ -171,33 +171,35 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         <div class="ann-item bg-white flex-col rounded-lg p-10 shadow-lg mt-5" v-if="!isModalOpen">
             <div class="flex">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Title</div>
-                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4 border"
+                <input type="text" class="ann-title h-10 w-full bg-slate-100 rounded-lg pl-4 border"
                     v-model="editedAnnounce.announcementTitle" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Category</div>
-                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4 border"
+                <input type="text" class="ann-category h-10 w-full bg-slate-100 rounded-lg pl-4 border"
                     v-model="data.announcementCategory" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Description</div>
-                <textarea class="pt-2 w-full bg-slate-100 rounded-lg pl-4 border" rows="5"
+                <textarea class="ann-description pt-2 w-full bg-slate-100 rounded-lg pl-4 border" rows="5"
                     v-model="editedAnnounce.announcementDescription"></textarea>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Publish Date</div>
                 <input v-model="editedAnnounce.publishDate" type="text"
-                    class="h-10 w-full bg-slate-100 rounded-lg pl-4 border" placeholder="e.g : 1 jan 2023 at 06:00" />
+                    class="ann-publish-date ann-publish-time h-10 w-full bg-slate-100 rounded-lg pl-4 border"
+                    placeholder="e.g : 1 jan 2023 at 06:00" />
             </div>
             <div class=" flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Close Date</div>
                 <input v-model="editedAnnounce.closeDate" type="text"
-                    class="h-10 w-full bg-slate-100 rounded-lg pl-4 border" placeholder="e.g : 1 jan 2023 at 06:00" />
+                    class="ann-close-date ann-close-time h-10 w-full bg-slate-100 rounded-lg pl-4 border"
+                    placeholder="e.g : 1 jan 2023 at 06:00" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Display</div>
                 <input v-model="editedAnnounce.announcementDisplay" type="text"
-                    class="h-10 w-full bg-slate-100 rounded-lg pl-4 border" />
+                    class="ann-display h-10 w-full bg-slate-100 rounded-lg pl-4 border" />
             </div>
         </div>
 
