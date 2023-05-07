@@ -24,7 +24,8 @@ const editedAnnounce = ref({
     publishDate: null,
     closeDate: null,
     announcementDisplay: 'N',
-    categoryId: null
+    categoryId: null,
+    announcementCategory: ''
 })
 
 const changePage = (name, id) => {
@@ -58,17 +59,16 @@ const datetimeFormatterISO = (dateString) => {
     if (!dateString) {
         return null;
     }
-    console.log(dateString)
+
     const atIndex = dateString.search('at')
     const dateSliced = dateString.slice(0, atIndex)
     const timeSliced = dateString.slice(atIndex + 2, 30)
     const newDateString = dateSliced + ',' + timeSliced
     const dateObj = new Date(newDateString).toISOString().slice(0, -5) + "Z";
-    console.log(dateObj)
     return dateObj
 }
 
-watch([editedAnnounce], () => {
+watch(editedAnnounce, () => {
     if (editedAnnounce.value.closeDate === '') {
         editedAnnounce.value.closeDate = null
     }
@@ -80,10 +80,10 @@ watch([editedAnnounce], () => {
         editedAnnounce.value.announcementDescription !== data.value.announcementDescription ||
         editedAnnounce.value.publishDate !== datetimeFormatter(data.value.publishDate) ||
         editedAnnounce.value.closeDate !== datetimeFormatter(data.value.closeDate) ||
-        editedAnnounce.value.announcementDisplay !== data.value.announcementDisplay) {
+        editedAnnounce.value.announcementDisplay !== data.value.announcementDisplay ||
+        editedAnnounce.value.announcementCategory !== data.value.announcementCategory) {
         isFieldEdit.value = true;
     } else {
-        console.log('no edit')
         isFieldEdit.value = false;
     }
 }, { deep: true })
@@ -101,9 +101,10 @@ onMounted(async () => {
         editedAnnounce.value.publishDate = datetimeFormatter(data.value.publishDate)
         editedAnnounce.value.closeDate = datetimeFormatter(data.value.closeDate)
         editedAnnounce.value.announcementDisplay = data.value.announcementDisplay
+        editedAnnounce.value.announcementCategory = data.value.announcementCategory
 
         categoryItem.forEach((item) => {
-            if (item.categoryName === data.value.announcementCategory) {
+            if (item.categoryName === editedAnnounce.value.announcementCategory) {
                 editedAnnounce.value.categoryId = item.categoryId
             }
         })
@@ -177,7 +178,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Category</div>
                 <input type="text" class="ann-category h-10 w-full bg-slate-100 rounded-lg pl-4 border"
-                    v-model="data.announcementCategory" />
+                    v-model="editedAnnounce.announcementCategory" />
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Description</div>
@@ -209,10 +210,9 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
                 class="ann-button text-black bg-slate-100 text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
                 @click="changePage('AnnouncementDetail', params?.id)">Back</button>
 
-            <button
-                class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
-                :class="{ 'opacity-50 cursor-not-allowed': !isFieldEdit }" :disabled="!isFieldEdit"
-                @click="editAnnouncement(editedAnnounce, params?.id)">Edit</button>
+            <button class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md px-5 py-2 w-20 h-10"
+                :class="{ 'opacity-50 cursor-not-allowed': !isFieldEdit, 'cursor-pointer': isFieldEdit }"
+                :disabled="!isFieldEdit" @click="editAnnouncement(editedAnnounce, params?.id)">Edit</button>
         </div>
     </div>
 
