@@ -1,9 +1,8 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { getDataById } from '../composable/getData';
-import formatDatetime from '../composable/formatDatetime';
 import TimezoneComponent from './TimezoneComponent.vue';
 import CancelRounded from './icons/CancelRounded.vue'
 
@@ -11,6 +10,7 @@ const { params } = useRoute();
 const router = useRouter();
 const data = ref({});
 const isModalOpen = ref(false);
+const isFieldEdit = ref(false);
 const categoryItem = [
     { categoryId: 1, categoryName: 'ทั่วไป' },
     { categoryId: 2, categoryName: 'ทุนการศึกษา' },
@@ -92,6 +92,26 @@ onMounted(async () => {
     }
 });
 
+// watch 
+// editedAnnounce.value.announcementTitle
+// editedAnnounce.value.announcementDescription
+// editedAnnounce.value.publishDate
+// editedAnnounce.value.closeDate
+// editedAnnounce.value.announcementDisplay
+// data.announcementCategory
+// if one of these change, then isFieldEdit.value = true
+
+watch(editedAnnounce, (newValue, oldValue) => {
+    if (newValue.announcementTitle !== oldValue.announcementTitle ||
+        newValue.announcementDescription !== oldValue.announcementDescription ||
+        newValue.publishDate !== oldValue.publishDate ||
+        newValue.closeDate !== oldValue.closeDate ||
+        newValue.announcementDisplay !== oldValue.announcementDisplay ||
+        newValue.categoryId !== oldValue.categoryId) {
+        isFieldEdit.value = true
+    }
+})
+
 const editAnnouncement = async (updateAnnounce, announceId) => {
     let foundMatchingCategory = false;
     for (const item of categoryItem) {
@@ -100,6 +120,9 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             foundMatchingCategory = true;
             break;
         }
+    }
+    if (!foundMatchingCategory) {
+        return;
     }
 
     updateAnnounce.closeDate = datetimeFormatterISO(updateAnnounce.closeDate)
@@ -123,7 +146,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
                 })
             })
         if (res.status === 200) {
-            changePage('AnnouncementDetail',params?.id)
+            changePage('AnnouncementDetail', params?.id)
             console.log('edit')
         } else {
             throw new Error('cannot edit')
@@ -182,10 +205,11 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         <div class="flex justify-end mt-3 space-x-3 " v-if="!isModalOpen">
             <button
                 class="ann-button text-black bg-slate-100 text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
-                @click="changePage('AnnouncementDetail',params?.id)">Back</button>
+                @click="changePage('AnnouncementDetail', params?.id)">Back</button>
 
             <button
-                class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10 "
+                class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
+                :class="{ 'opacity-50 cursor-not-allowed': !isFieldEdit }" :disabled="!isFieldEdit"
                 @click="editAnnouncement(editedAnnounce, params?.id)">Edit</button>
         </div>
     </div>
@@ -198,7 +222,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             <p class="py-5 text-center">The requested page is not available!</p>
             <div class="modal-action flex justify-center">
                 <label class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
-                    @click="changePage('AnnouncementDetail',params?.id)">OK</label>
+                    @click="changePage('AnnouncementDetail', params?.id)">OK</label>
             </div>
         </div>
     </div>
