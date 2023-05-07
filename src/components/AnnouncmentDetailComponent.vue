@@ -12,14 +12,17 @@ const router = useRouter();
 const data = ref({});
 const isModalOpen = ref(false);
 
-const backToAnnouncements = () => {
-    router.push({ name: 'Announcement' });
+const changePage = (name, id) => {
+    if (id !== undefined) {
+        router.push({ name: name, params: { id: id } })
+    } else {
+        router.push({ name: name })
+    }
 }
 
 onMounted(async () => {
     try {
         data.value = await getDataById(params?.id);
-
         if (data.value === undefined) {
             isModalOpen.value = true;
         }
@@ -70,7 +73,12 @@ onMounted(async () => {
         <div class="flex justify-start mt-3" v-if="!isModalOpen">
             <button
                 class="ann-button text-cyan-400 bg-cyan-100 text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
-                @click="backToAnnouncements">Back</button>
+                @click="changePage('Announcement')">Back
+            </button>
+            <button
+                class="ann-button text-orange-400 mx-3 bg-orange-200 text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
+                @click="changePage('EditAnnouncement',params?.id)">Edit
+            </button>
         </div>
     </div>
 
@@ -82,7 +90,7 @@ onMounted(async () => {
             <p class="py-5 text-center">The requested page is not available!</p>
             <div class="modal-action flex justify-center">
                 <label class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
-                    @click="backToAnnouncements()">OK</label>
+                    @click="changePage('Announcement')">OK</label>
             </div>
         </div>
     </div>

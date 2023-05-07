@@ -27,8 +27,12 @@ const editedAnnounce = ref({
     categoryId: null
 })
 
-const backToAnnouncements = () => {
-    router.push({ name: 'Announcement' });
+const changePage = (name, id) => {
+    if (id !== undefined) {
+        router.push({ name: name, params: { id: id } })
+    } else {
+        router.push({ name: name })
+    }
 }
 
 const datetimeFormatter = (datetime) => {
@@ -97,9 +101,6 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             break;
         }
     }
-    if (!foundMatchingCategory) {
-        return;
-    }
 
     updateAnnounce.closeDate = datetimeFormatterISO(updateAnnounce.closeDate)
     updateAnnounce.publishDate = datetimeFormatterISO(updateAnnounce.publishDate)
@@ -122,7 +123,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
                 })
             })
         if (res.status === 200) {
-            backToAnnouncements()
+            changePage('AnnouncementDetail',params?.id)
             console.log('edit')
         } else {
             throw new Error('cannot edit')
@@ -146,31 +147,34 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         <!-- content -->
         <div class="ann-item bg-white flex-col rounded-lg p-10 shadow-lg mt-5" v-if="!isModalOpen">
             <div class="flex">
-                <div class="w-52 text-cyan-800 font-bold">Title</div>
-                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4"
+                <div class="w-52 text-cyan-800 font-bold pt-2">Title</div>
+                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4 border"
                     v-model="editedAnnounce.announcementTitle" />
             </div>
             <div class="flex mt-5">
-                <div class="w-52 text-cyan-800 font-bold">Category</div>
-                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" v-model="data.announcementCategory" />
+                <div class="w-52 text-cyan-800 font-bold pt-2">Category</div>
+                <input type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4 border"
+                    v-model="data.announcementCategory" />
             </div>
             <div class="flex mt-5">
-                <div class="w-52 text-cyan-800 font-bold">Description</div>
-                <textarea class="textarea h-10 w-full bg-slate-100 rounded-lg pl-4"
+                <div class="w-52 text-cyan-800 font-bold pt-2">Description</div>
+                <textarea class="pt-2 w-full bg-slate-100 rounded-lg pl-4 border" rows="5"
                     v-model="editedAnnounce.announcementDescription"></textarea>
             </div>
             <div class="flex mt-5">
-                <div class="w-52 text-cyan-800 font-bold">Publish Date</div>
-                <input v-model="editedAnnounce.publishDate" type="text" class="h-10 w-full bg-slate-100 rounded- pl-4" />
+                <div class="w-52 text-cyan-800 font-bold pt-2">Publish Date</div>
+                <input v-model="editedAnnounce.publishDate" type="text"
+                    class="h-10 w-full bg-slate-100 rounded-lg pl-4 border" placeholder="e.g : 1 jan 2023 at 06:00" />
             </div>
             <div class=" flex mt-5">
-                <div class="w-52 text-cyan-800 font-bold">Close Date</div>
-                <input v-model="editedAnnounce.closeDate" type="text" class="h-10 w-full bg-slate-100 rounded-lg pl-4" />
+                <div class="w-52 text-cyan-800 font-bold pt-2">Close Date</div>
+                <input v-model="editedAnnounce.closeDate" type="text"
+                    class="h-10 w-full bg-slate-100 rounded-lg pl-4 border" placeholder="e.g : 1 jan 2023 at 06:00" />
             </div>
             <div class="flex mt-5">
-                <div class="w-52 text-cyan-800 font-bold">Display</div>
+                <div class="w-52 text-cyan-800 font-bold pt-2">Display</div>
                 <input v-model="editedAnnounce.announcementDisplay" type="text"
-                    class="h-10 w-full bg-slate-100 rounded-lg pl-4" />
+                    class="h-10 w-full bg-slate-100 rounded-lg pl-4 border" />
             </div>
         </div>
 
@@ -178,7 +182,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         <div class="flex justify-end mt-3 space-x-3 " v-if="!isModalOpen">
             <button
                 class="ann-button text-black bg-slate-100 text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
-                @click="backToAnnouncements">Back</button>
+                @click="changePage('AnnouncementDetail',params?.id)">Back</button>
 
             <button
                 class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10 "
@@ -194,7 +198,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             <p class="py-5 text-center">The requested page is not available!</p>
             <div class="modal-action flex justify-center">
                 <label class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
-                    @click="backToAnnouncements()">OK</label>
+                    @click="changePage('AnnouncementDetail',params?.id)">OK</label>
             </div>
         </div>
     </div>
