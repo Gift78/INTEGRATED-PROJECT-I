@@ -152,7 +152,6 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             })
         if (res.status === 200) {
             changePage('AnnouncementDetail', params?.id)
-            console.log('edit')
         } else {
             throw new Error('cannot edit')
         }
@@ -170,7 +169,6 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
 
         <TimezoneComponent />
         <hr class="mt-4 border-2">
-
 
         <!-- content -->
         <div class="ann-item bg-white flex-col rounded-lg p-10 shadow-lg mt-5" v-if="!isModalOpen">
@@ -234,4 +232,8 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
     </div>
 </template>
  
-<style scoped></style>
+<style scoped>
+input {
+    color: black;
+}
+</style>
