@@ -1,10 +1,11 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { getDataById } from '../composable/getData';
 import TimezoneComponent from './TimezoneComponent.vue';
 import CancelRounded from './icons/CancelRounded.vue'
+import formatDatetime from '../composable/formatDatetime';
 
 const { params } = useRoute();
 const router = useRouter();
@@ -33,35 +34,13 @@ const publishDate = ref('')
 const publishTime = ref('')
 const closeDate = ref('')
 const closeTime = ref('')
+const display = ref(false)
 
 const changePage = (name, id) => {
     if (id !== undefined) {
         router.push({ name: name, params: { id: id } })
     } else {
         router.push({ name: name })
-    }
-}
-
-const datetimeFormatter = (datetime) => {
-    if (!datetime) {
-        return null;
-    }
-
-    const date = new Date(datetime);
-    const year = date.getFullYear();
-    const month = date.toLocaleString('default', { month: 'short' });
-    const day = date.getDate();
-    const hour = date.getHours();
-    const minute = date.getMinutes();
-
-    if (minute < 10 && hour < 10) {
-        return `${day} ${month} ${year} at 0${hour}:0${minute}`;
-    } else if (minute < 10) {
-        return `${day} ${month} ${year} at ${hour}:0${minute}`;
-    } else if (hour < 10) {
-        return `${day} ${month} ${year} at 0${hour}:${minute}`;
-    } else {
-        return `${day} ${month} ${year} at ${hour}:${minute}`;
     }
 }
 
@@ -75,59 +54,45 @@ const datetimeFormatterISO = (date, time) => {
     return dateObj
 }
 
-const getDate = (dateString) => {
-    if (!dateString) {
-        return null;
+const getFormattedDate = (date) => {
+    if (date === null || date === undefined || date === '' || date === 'Invalid Date') {
+        return '';
     }
-    const atIndex = dateString.search('at')
-    const dateSliced = dateString.slice(0, atIndex - 1)
-    // console.log('input : ' + dateSliced)
-    let newDate = new Date(dateSliced).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-    })
-    // console.log('only date : ' + newDate)
-    let [day, month, year] = newDate.split("/"); // แยกค่าวันที่ออกเป็นปี เดือน วัน
-    if (day.length == 1) {
-        day = '0' + day
-    }
-    if (month.length == 1) {
-        month = '0' + month
-    }
-    const formattedDate = `${year}-${month}-${day}`
-    // console.log('re format : ' + formattedDate)
-    return formattedDate
+
+    date = new Date(date)
+
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
 }
 
-
-const getTime = (dateString) => {
-    if (!dateString) {
-        return null;
+const getFormattedTime = (date) => {
+    if (date === null || date === undefined || date === '' || date === 'Invalid Date') {
+        return '';
     }
-    const atIndex = dateString.search('at')
-    const timeSliced = dateString.slice(atIndex + 3, 30)
-    // console.log('get time : '+timeSliced)
-    return timeSliced
+
+    date = new Date(date)
+
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
 }
 
+watch([editedAnnounce, display, publishDate, publishTime, closeDate, closeTime], () => {
+    editedAnnounce.value.announcementCategory = categoryItem.find(item => item.categoryId === editedAnnounce.value.categoryId).categoryName
 
-
-
-watch(editedAnnounce, () => {
-    if (editedAnnounce.value.closeDate === '') {
-        editedAnnounce.value.closeDate = null
-    }
-    if (editedAnnounce.value.publishDate === '') {
-        editedAnnounce.value.publishDate = null
+    if (display.value === true) {
+        editedAnnounce.value.announcementDisplay = 'Y'
+    } else {
+        editedAnnounce.value.announcementDisplay = 'N'
     }
 
     if (editedAnnounce.value.announcementTitle !== data.value.announcementTitle ||
         editedAnnounce.value.announcementDescription !== data.value.announcementDescription ||
-        editedAnnounce.value.publishDate !== datetimeFormatter(data.value.publishDate) ||
-        editedAnnounce.value.closeDate !== datetimeFormatter(data.value.closeDate) ||
+        editedAnnounce.value.publishDate !== data.value.publishDate ||
+        editedAnnounce.value.closeDate !== data.value.closeDate ||
         editedAnnounce.value.announcementDisplay !== data.value.announcementDisplay ||
-        editedAnnounce.value.announcementCategory !== data.value.announcementCategory) {
+        editedAnnounce.value.announcementCategory !== data.value.announcementCategory ||
+        publishDate.value !== getFormattedDate(editedAnnounce.value.publishDate) ||
+        publishTime.value !== getFormattedTime(editedAnnounce.value.publishDate) ||
+        closeDate.value !== getFormattedDate(editedAnnounce.value.closeDate) ||
+        closeTime.value !== getFormattedTime(editedAnnounce.value.closeDate)) {
         isFieldEdit.value = true;
     } else {
         isFieldEdit.value = false;
@@ -142,49 +107,40 @@ onMounted(async () => {
             isModalOpen.value = true;
         }
 
+        if (data.value.publishDate !== null) {
+            publishDate.value = getFormattedDate(data.value.publishDate)
+            publishTime.value = getFormattedTime(data.value.publishDate)
+        }
+
+        if (data.value.closeDate !== null) {
+            closeDate.value = getFormattedDate(data.value.closeDate)
+            closeTime.value = getFormattedTime(data.value.closeDate)
+        }
+
         editedAnnounce.value.announcementTitle = data.value.announcementTitle
         editedAnnounce.value.announcementDescription = data.value.announcementDescription
-        editedAnnounce.value.publishDate = datetimeFormatter(data.value.publishDate)
-        editedAnnounce.value.closeDate = datetimeFormatter(data.value.closeDate)
+        editedAnnounce.value.publishDate = data.value.publishDate
+        editedAnnounce.value.closeDate = data.value.closeDate
         editedAnnounce.value.announcementDisplay = data.value.announcementDisplay
         editedAnnounce.value.announcementCategory = data.value.announcementCategory
+
+        if (editedAnnounce.value.announcementDisplay === 'Y') {
+            display.value = true
+        } else {
+            display.value = false
+        }
 
         categoryItem.forEach((item) => {
             if (item.categoryName === editedAnnounce.value.announcementCategory) {
                 editedAnnounce.value.categoryId = item.categoryId
             }
         })
-
-        console.log('on mounted : ' + editedAnnounce.value.publishDate)
-
-        // console.log('get date result : ' + getDate(editedAnnounce.value.publishDate))
-        publishDate.value = getDate(editedAnnounce.value.publishDate)
-        closeDate.value = getDate(editedAnnounce.value.closeDate)
-
-        publishTime.value = getTime(editedAnnounce.value.publishDate)
-        closeDate.value = getTime(editedAnnounce.value.closeDate)
-
-        console.log(publishDate.value + ' , ' + publishTime.value)
-
-
     } catch (error) {
         console.log(error);
     }
 });
 
 const editAnnouncement = async (updateAnnounce, announceId) => {
-    let foundMatchingCategory = false;
-    for (const item of categoryItem) {
-        if (item.categoryName === data.value.announcementCategory) {
-            updateAnnounce.categoryId = item.categoryId;
-            foundMatchingCategory = true;
-            break;
-        }
-    }
-    if (!foundMatchingCategory) {
-        return;
-    }
-    
     updateAnnounce.publishDate = datetimeFormatterISO(publishDate.value, publishTime.value)
     updateAnnounce.closeDate = datetimeFormatterISO(closeDate.value, closeTime.value)
 
@@ -253,30 +209,27 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             <div class="flex mt-5">
                 <div class="text-cyan-800 w-40 py-3 font-bold">Publish Date</div>
                 <div class="flex ml-1">
-                    <input type="date" class="ann-publish-date bg-white mx-3  border-2 rounded-lg px-10 py-2"
+                    <input type="date" class="ann-publish-date bg-white mx-3 border-2 rounded-lg px-10 py-2"
                         v-model="publishDate">
-                    <input type="time" class="ann-publish-time bg-white mx-3  border-2 rounded-lg px-10 py-2"
+                    <input type="time" class="ann-publish-time bg-white mx-3 border-2 rounded-lg px-10 py-2"
                         v-model="publishTime">
                 </div>
             </div>
             <div class="flex mt-5">
                 <div class="text-cyan-800 w-40 py-3 font-bold">Close Date</div>
-                <div class="flex ml-2">
-                    <input type="date" class="ann-close-date bg-white mx-3  border-2 rounded-lg px-10 py-2"
+                <div class="flex ml-1">
+                    <input type="date" class="ann-close-date bg-white mx-3 border-2 rounded-lg px-10 py-2"
                         v-model="closeDate">
-                    <input type="time" class="ann-close-time bg-white mx-3  border-2 rounded-lg px-10 py-2"
+                    <input type="time" class="ann-close-time bg-white mx-3 border-2 rounded-lg px-10 py-2"
                         v-model="closeTime">
                 </div>
             </div>
 
-
-
             <div class="flex mt-5">
-                <div class="w-52 text-cyan-800 font-bold pt-2">Display</div>
-                <!-- <input v-model="editedAnnounce.announcementDisplay" type="text" class="ann-display h-10 w-full bg-slate-100 rounded-lg pl-4 border" /> -->
+                <div class="w-44 text-cyan-800 font-bold pt-2">Display</div>
                 <label class="cursor-pointer label">
-                    <input type="checkbox" id="display" class="ann-display checkbox checkbox-success"
-                        v-model="editedAnnounce.announcementDisplay" />
+                    <input type="checkbox" id="display" class="ann-display checkbox checkbox-success" v-model="display"
+                        :checked="display" />
                     <label for="display" class="ml-5 text-cyan-800">Check to show this announcement.</label>
                 </label>
             </div>
@@ -290,7 +243,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
 
             <button class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md px-5 py-2 w-20 h-10"
                 :class="{ 'opacity-50 cursor-not-allowed': !isFieldEdit, 'cursor-pointer': isFieldEdit }"
-                :disabled="!isFieldEdit" @click="editAnnouncement(editedAnnounce, params?.id)">Edit</button>
+                :disabled="!isFieldEdit" @click="editAnnouncement(editedAnnounce, params?.id)">edit</button>
         </div>
     </div>
 
@@ -309,7 +262,14 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
 </template>
  
 <style scoped>
-input {
+input,
+textarea,
+select {
     color: black;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(50%);
 }
 </style>

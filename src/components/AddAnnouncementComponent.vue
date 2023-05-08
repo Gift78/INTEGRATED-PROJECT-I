@@ -37,7 +37,7 @@ const closeTime = ref('')
 // set all announcement should set
 const setting = () => {
     if (newAnnouncement.value.announcementTitle == '' || newAnnouncement.value.announcementDescription == '' || newAnnouncement.value.categoryId == undefined) {
-        return 'cursor-not-allowed bg-slate-800'
+        return 'opacity-50 cursor-not-allowed'
     } else {
         // set category
         // set display
@@ -71,6 +71,8 @@ const changePage = (name) => {
 // if have error will show pop up
 const haveError = ref(false)
 const addNewAnnouncement = async (annonuce) => {
+
+    console.log('fetching...')
     // set before create
     setting()
     // Check if name and desc='' it will not be created.
@@ -96,15 +98,16 @@ const addNewAnnouncement = async (annonuce) => {
                 console.log('add successfully')
                 changePage('Announcement')
             } else {
+                console.log('add failed')
                 const errorData = await res.json()
                 errors.value = errorData
                 haveError.value = true
             }
         } catch (err) {
+            console.log(err)
             errors.value = err
             haveError.value = true
         }
-        return ''
     }
 }
 </script>
