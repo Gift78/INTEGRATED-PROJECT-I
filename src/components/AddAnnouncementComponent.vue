@@ -18,6 +18,7 @@ const categoryItem = [
 
 // for set display to Y / N
 const displayed = ref(false)
+const isFormValid = ref(false)
 // default announcement
 const newAnnouncement = ref({
     announcementTitle: '',
@@ -37,10 +38,12 @@ const closeTime = ref('')
 // set all announcement should set
 const setting = () => {
     if (newAnnouncement.value.announcementTitle == '' || newAnnouncement.value.announcementDescription == '' || newAnnouncement.value.categoryId == undefined) {
+        isFormValid.value = false
         return 'opacity-50 cursor-not-allowed'
     } else {
         // set category
         // set display
+        isFormValid.value = true
         if (displayed.value) {
             newAnnouncement.value.announcementDisplay = 'Y'
         } else {
@@ -221,7 +224,7 @@ const addNewAnnouncement = async (annonuce) => {
                     </div>
                 </div>
                 <button class="ann-button bg-emerald-plus text-white w-32 py-3 rounded-lg " :class="setting()"
-                    @click="addNewAnnouncement(newAnnouncement)">Submit</button>
+                    :disabled="!isFormValid" @click="addNewAnnouncement(newAnnouncement)">Submit</button>
             </div>
         </div>
     </div>
