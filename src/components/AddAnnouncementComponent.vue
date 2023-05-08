@@ -36,8 +36,8 @@ const closeTime = ref('')
 
 // set all announcement should set
 const setting = () => {
-    if (newAnnouncement.value.announcementTitle == '' || newAnnouncement.value.announcementDescription == '') {
-        return 'btn-disabled bg-slate-800'
+    if (newAnnouncement.value.announcementTitle == '' || newAnnouncement.value.announcementDescription == '' || newAnnouncement.value.categoryId == undefined) {
+        return 'cursor-not-allowed bg-slate-800'
     } else {
         // set category
         // set display
@@ -142,7 +142,7 @@ const addNewAnnouncement = async (annonuce) => {
                     <!-- dropdown button -->
                     <div class="flex pt-3 ">
                         <div class="flex-none p-3 relative">
-                            <select class="ann-category select select-bordered w-full max-w-xs"
+                            <select class="ann-category select select-bordered w-full max-w-xs font-normal"
                                 v-model="newAnnouncement.categoryId">
                                 <option v-for="category in categoryItem" :value="category.categoryId">
                                     {{ category.categoryName }}
@@ -200,7 +200,7 @@ const addNewAnnouncement = async (annonuce) => {
             <!-- Submit or Cancel -->
             <div class="flex justify-end mt-5 mb-24">
                 <label for="my-modal"
-                    class="ann-button btn mx-5 w-32 bg-zinc-300  hover:bg-zinc-400 border-none">Cancel</label>
+                    class="ann-button btn mx-5 w-32 bg-zinc-300  hover:bg-zinc-400 border-none ">Cancel</label>
                 <input type="checkbox" id="my-modal" class="modal-toggle" />
                 <div class="modal">
                     <CancelRounded class="text-red-500 absolute top-52 z-10 bg-white rounded-full" />
@@ -217,8 +217,8 @@ const addNewAnnouncement = async (annonuce) => {
                         </div>
                     </div>
                 </div>
-                <button class="ann-button bg-emerald-plus hover:bg-emerald-600 duration-100 text-white w-32 py-3 rounded-lg"
-                    :class="setting()" @click="addNewAnnouncement(newAnnouncement)">Submit</button>
+                <button class="ann-button bg-emerald-plus text-white w-32 py-3 rounded-lg " :class="setting()"
+                    @click="addNewAnnouncement(newAnnouncement)">Submit</button>
             </div>
         </div>
     </div>
