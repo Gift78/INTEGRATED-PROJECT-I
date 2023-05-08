@@ -106,10 +106,4 @@ public class AnnounceService {
         datetimeFormatter(localFormatter, announceSave);
         return announceSave;
     }
-
-    public Announces getLastestAnnounce() {
-        List<Announces> announces = announceRepository.findAll(Sort.by("announcementId").descending());
-        Announces announce = announces.get(0);
-        return announce;
-    }
 }
