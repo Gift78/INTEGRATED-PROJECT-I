@@ -48,8 +48,12 @@ const datetimeFormatter = (datetime) => {
     const hour = date.getHours();
     const minute = date.getMinutes();
 
-    if (minute < 10) {
+    if (minute < 10 && hour < 10) {
+        return `${day} ${month} ${year} at 0${hour}:0${minute}`;
+    } else if (minute < 10) {
         return `${day} ${month} ${year} at ${hour}:0${minute}`;
+    } else if (hour < 10) {
+        return `${day} ${month} ${year} at 0${hour}:${minute}`;
     } else {
         return `${day} ${month} ${year} at ${hour}:${minute}`;
     }
