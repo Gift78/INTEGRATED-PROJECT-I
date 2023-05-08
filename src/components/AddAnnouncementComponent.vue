@@ -142,7 +142,8 @@ const addNewAnnouncement = async (annonuce) => {
                     <!-- dropdown button -->
                     <div class="flex pt-3 ">
                         <div class="flex-none p-3 relative">
-                            <select class="ann-category select w-full max-w-xs" v-model="newAnnouncement.categoryId">
+                            <select class="ann-category select select-bordered w-full max-w-xs"
+                                v-model="newAnnouncement.categoryId">
                                 <option v-for="category in categoryItem" :value="category.categoryId">
                                     {{ category.categoryName }}
                                 </option>
@@ -227,5 +228,9 @@ const addNewAnnouncement = async (annonuce) => {
 input[type="time"]::-webkit-calendar-picker-indicator,
 input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(50%);
+}
+
+select {
+    background-color: #fff;
 }
 </style>
