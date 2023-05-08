@@ -43,7 +43,7 @@ describe('TC-UPDATE-ANNOUNCEMENT-3: normal - update category and display', () =>
 
         cy.wait(200) ;
         cy.get('.ann-title').contains('(PBI7-3)ประกาศ (ร่าง) ตารางสอบปลายภาค 2/65')
-        cy.get('.ann-button').contains('edit',{matchCase: false})
+        cy.get('.ann-button').contains('edit',{matchCase: false}).should('exist')
     })
 
     it('should click edit and have a form to edit data and the submit button is disable"',()=>{
@@ -58,7 +58,7 @@ describe('TC-UPDATE-ANNOUNCEMENT-3: normal - update category and display', () =>
         cy.get('.ann-button').contains('edit',{matchCase: false}).should('exist').click()
 
         cy.wait(200)
-        cy.get('.ann-button').contains(/submit|save|update|add|edit/g,{matchCase: false}).as('ann-submit')
+        cy.get('.ann-button').contains(/submit|save|update|add|edit/g,{matchCase: false}).should('exist').as('ann-submit')
         cy.get('@ann-submit').should('be.disabled')
     })
 
@@ -98,7 +98,7 @@ describe('TC-UPDATE-ANNOUNCEMENT-3: normal - update category and display', () =>
         cy.wait(200)
         cy.get('.ann-category').select('ทั่วไป')
         cy.get('.ann-display').check({force:true})
-        cy.get('.ann-button').contains(/submit|save|update|add|edit/g,{matchCase: false}).as('ann-submit')
+        cy.get('.ann-button').contains(/submit|save|update|add|edit/g,{matchCase: false}).should('exist').as('ann-submit')
         cy.get('@ann-submit').should('be.enabled')
     })
 
@@ -116,7 +116,7 @@ describe('TC-UPDATE-ANNOUNCEMENT-3: normal - update category and display', () =>
         cy.wait(200)
         cy.get('.ann-category').select('ทั่วไป')
         cy.get('.ann-display').check({force:true})
-        cy.get('.ann-button').contains(/submit|save|update|add|edit/g,{matchCase: false}).as('ann-submit')
+        cy.get('.ann-button').contains(/submit|save|update|add|edit/g,{matchCase: false}).should('exist').as('ann-submit')
         cy.get('@ann-submit').should('be.enabled')
         cy.get('@ann-submit').should('exist').click()
         cy.wait(200)

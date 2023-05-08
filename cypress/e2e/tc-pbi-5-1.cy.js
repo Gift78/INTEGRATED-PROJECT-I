@@ -61,7 +61,7 @@ describe('TC-CREATE-ANNOUNCEMENT-1: normal - nominal data', () => {
         cy.get('.ann-publish-date').contains('6:00')
         cy.get('.ann-close-date').contains('-')
         cy.get('.ann-display').contains('N')
-        cy.get('.ann-button').contains('Back',{matchCase: false})
+        cy.get('.ann-button').contains('Back',{matchCase: false}).should('exist')
     })
   });
   
