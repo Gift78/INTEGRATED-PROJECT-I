@@ -5,8 +5,10 @@ import com.example.int221backend.dtos.AnnounceDetailDTO;
 import com.example.int221backend.dtos.AnnounceTestDTO;
 import com.example.int221backend.entities.Announces;
 import com.example.int221backend.services.AnnounceService;
+import com.example.int221backend.utils.AnnouncesToAnnounceDTOConverter;
+import com.example.int221backend.utils.AnnouncesToAnnounceDetailDTOConverter;
+import com.example.int221backend.utils.AnnouncesToAnnounceTestDTOConverter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -23,28 +25,23 @@ public class AnnouncementController {
 
     @GetMapping("")
     public List<AnnounceDTO> getAllAnnouncements() {
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         List<Announces> announces = announceService.getAllAnnouncements();
-        List<AnnounceDTO> announceDTOList = announces.stream().map(e -> {
-            AnnounceDTO announceDTO = modelMapper.map(e, AnnounceDTO.class);
-            announceDTO.setId(e.getAnnouncementId());
-            return announceDTO;
-        }).collect(Collectors.toList());
-        return announceDTOList;
+        modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
+        return announces.stream().map(e -> modelMapper.map(e, AnnounceDTO.class)).collect(Collectors.toList());
     }
 
     @GetMapping("{announceId}")
     public AnnounceDetailDTO getDetailById(@PathVariable Integer announceId) {
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Announces announcesExist = announceService.getAnnounceById(announceId);
-        return modelMapper.map(announcesExist,AnnounceDetailDTO.class);
+        modelMapper.addConverter(new AnnouncesToAnnounceDetailDTOConverter());
+        return modelMapper.map(announcesExist, AnnounceDetailDTO.class);
     }
 
     @PostMapping("")
-    public AnnounceTestDTO create(@RequestBody Announces newAnnounce) {
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    public AnnounceDetailDTO create(@RequestBody Announces newAnnounce) {
         Announces announce = announceService.addNewAnnounce(newAnnounce);
-        return modelMapper.map(announce, AnnounceTestDTO.class);
+        modelMapper.addConverter(new AnnouncesToAnnounceDetailDTOConverter());
+        return modelMapper.map(announce, AnnounceDetailDTO.class);
     }
 
     @DeleteMapping("{announceId}")
@@ -54,8 +51,8 @@ public class AnnouncementController {
 
     @PutMapping("{announceId}")
     public AnnounceTestDTO updateAnnounce(@PathVariable Integer announceId, @RequestBody Announces newAnnounce){
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Announces announce = announceService.updateAnnounce(announceId, newAnnounce);
+        modelMapper.addConverter(new AnnouncesToAnnounceTestDTOConverter());
         return modelMapper.map(announce, AnnounceTestDTO.class);
     }
 }

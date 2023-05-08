@@ -74,7 +74,7 @@ public class AnnounceService {
     }
 
     public void removeAnnounce(Integer announceId){
-        Announces announce =announceRepository.findById(announceId).orElseThrow(() -> new AnnounceNotFoundException(announceId));
+        Announces announce = announceRepository.findById(announceId).orElseThrow(() -> new AnnounceNotFoundException(announceId));
         announceRepository.delete(announce);
     }
 
@@ -105,5 +105,11 @@ public class AnnounceService {
         Announces announceSave = announceRepository.saveAndFlush(announce);
         datetimeFormatter(localFormatter, announceSave);
         return announceSave;
+    }
+
+    public Announces getLastestAnnounce() {
+        List<Announces> announces = announceRepository.findAll(Sort.by("announcementId").descending());
+        Announces announce = announces.get(0);
+        return announce;
     }
 }
