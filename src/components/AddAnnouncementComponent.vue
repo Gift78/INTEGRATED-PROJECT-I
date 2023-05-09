@@ -1,8 +1,7 @@
 <script setup>
 import TimezoneComponent from './TimezoneComponent.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
-import DropDown from './icons/DropDown.vue'
 import ArrowRight from './icons/ArrowRight.vue'
 import CancelRounded from './icons/CancelRounded.vue'
 const router = useRouter()
@@ -35,37 +34,19 @@ const publishTime = ref('')
 const closeDate = ref('')
 const closeTime = ref('')
 
-// set all announcement should set
-const setting = () => {
+watch([newAnnouncement, displayed], () => {
     if (newAnnouncement.value.announcementTitle == '' || newAnnouncement.value.announcementDescription == '' || newAnnouncement.value.categoryId == undefined) {
         isFormValid.value = false
-        return 'opacity-50 cursor-not-allowed'
     } else {
-        // set category
-        // set display
         isFormValid.value = true
-        if (displayed.value) {
-            newAnnouncement.value.announcementDisplay = 'Y'
-        } else {
-            newAnnouncement.value.announcementDisplay = 'N'
-        }
-        // set publish date
-        if (publishDate.value !== '' && publishTime.value !== '' && closeDate.value == '' && closeTime.value == '') {
-            newAnnouncement.value.publishDate = new Date(`${publishDate.value} ${publishTime.value}`).toISOString().slice(0, 19) + 'Z'
-            newAnnouncement.value.closeDate = null
-        } else if (closeDate.value !== '' && closeTime !== '' && publishDate.value == '' && publishTime.value == '') {
-            newAnnouncement.value.closeDate = new Date(`${closeDate.value} ${closeTime.value}`).toISOString().slice(0, 19) + 'Z'
-            newAnnouncement.value.publishDate = null
-        } else if (closeDate.value !== '' && closeTime !== '' && publishDate.value !== '' && publishTime.value !== '') {
-            newAnnouncement.value.publishDate = new Date(`${publishDate.value} ${publishTime.value}`).toISOString().slice(0, 19) + 'Z'
-            newAnnouncement.value.closeDate = new Date(`${closeDate.value} ${closeTime.value}`).toISOString().slice(0, 19) + 'Z'
-        } else {
-            newAnnouncement.value.publishDate = null
-            newAnnouncement.value.closeDate = null
-        }
-        return ''
     }
-}
+
+    if (displayed.value) {
+        newAnnouncement.value.announcementDisplay = 'Y'
+    } else {
+        newAnnouncement.value.announcementDisplay = 'N'
+    }
+}, { deep: true })
 
 const changePage = (name) => {
     router.push({ name: name })
@@ -74,43 +55,49 @@ const changePage = (name) => {
 // if have error will show pop up
 const haveError = ref(false)
 const addNewAnnouncement = async (annonuce) => {
-
     console.log('fetching...')
-    // set before create
-    setting()
-    // Check if name and desc='' it will not be created.
-    if (annonuce.announcementTitle !== '' && annonuce.announcementDescription !== '') {
-        console.log(annonuce)
-        try {
-            const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements", {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    announcementTitle: annonuce.announcementTitle,
-                    announcementDescription: annonuce.announcementDescription,
-                    publishDate: annonuce.publishDate,
-                    closeDate: annonuce.closeDate,
-                    announcementDisplay: annonuce.announcementDisplay,
-                    categoryId: annonuce.categoryId
-                })
-            })
 
-            if (res.status === 200) {
-                console.log('add successfully')
-                changePage('Announcement')
-            } else {
-                console.log('add failed')
-                const errorData = await res.json()
-                errors.value = errorData
-                haveError.value = true
-            }
-        } catch (err) {
-            console.log(err)
-            errors.value = err
+    if (publishDate.value !== '' && publishTime.value !== '') {
+        newAnnouncement.value.publishDate = new Date(`${publishDate.value} ${publishTime.value}`).toISOString().slice(0, 19) + 'Z'
+    } else {
+        newAnnouncement.value.publishDate = null
+    }
+
+    if (closeDate.value !== '' && closeTime !== '') {
+        newAnnouncement.value.closeDate = new Date(`${closeDate.value} ${closeTime.value}`).toISOString().slice(0, 19) + 'Z'
+    } else {
+        newAnnouncement.value.closeDate = null
+    }
+
+    try {
+        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements", {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                announcementTitle: annonuce.announcementTitle,
+                announcementDescription: annonuce.announcementDescription,
+                publishDate: annonuce.publishDate,
+                closeDate: annonuce.closeDate,
+                announcementDisplay: annonuce.announcementDisplay,
+                categoryId: annonuce.categoryId
+            })
+        })
+
+        if (res.status === 200) {
+            console.log('add successfully')
+            changePage('Announcement')
+        } else {
+            console.log('add failed')
+            const errorData = await res.json()
+            errors.value = errorData
             haveError.value = true
         }
+    } catch (err) {
+        console.log(err)
+        errors.value = err
+        haveError.value = true
     }
 }
 </script>
@@ -163,8 +150,7 @@ const addNewAnnouncement = async (annonuce) => {
             <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
                 <div class="flex">
                     <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Description :</div>
-                    <textarea rows="10" maxlength="10000"
-                        class="ann-description bg-white pl-5 pt-3 border-2 rounded-lg w-full mr-20"
+                    <textarea rows="10" class="ann-description bg-white pl-5 pt-3 border-2 rounded-lg w-full mr-20"
                         v-model="newAnnouncement.announcementDescription"></textarea>
                 </div>
             </div>
@@ -223,7 +209,8 @@ const addNewAnnouncement = async (annonuce) => {
                         </div>
                     </div>
                 </div>
-                <button class="ann-button bg-emerald-plus text-white w-32 py-3 rounded-lg " :class="setting()"
+                <button class="ann-button bg-emerald-plus text-white w-32 py-3 rounded-lg "
+                    :class="{ 'opacity-50 cursor-not-allowed': !isFormValid, 'cursor-pointer': isFormValid }"
                     :disabled="!isFormValid" @click="addNewAnnouncement(newAnnouncement)">Submit</button>
             </div>
         </div>
