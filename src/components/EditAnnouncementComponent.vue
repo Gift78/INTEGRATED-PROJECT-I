@@ -145,7 +145,6 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
     updateAnnounce.closeDate = datetimeFormatterISO(closeDate.value, closeTime.value)
 
     try {
-        console.log(updateAnnounce)
         const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + announceId,
             {
                 method: 'PUT',
@@ -190,7 +189,6 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             </div>
             <div class="flex mt-5">
                 <div class="w-44 text-cyan-800 font-bold pt-3">Category</div>
-                <!-- <input type="text" class="ann-category h-10 w-full bg-slate-100 rounded-lg pl-4 border" v-model="editedAnnounce.announcementCategory" /> -->
 
                 <!-- dropdown button -->
                 <select class="ann-category select select-bordered bg-slate-100" v-model="editedAnnounce.categoryId">
