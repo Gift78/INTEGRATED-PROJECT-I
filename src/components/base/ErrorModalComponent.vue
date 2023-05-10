@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
-import CancelRounded from './icons/CancelRounded.vue';
-import InformationCircle from './icons/InformationCircle.vue';
+import CancelRounded from '../icons/CancelRounded.vue';
+import InformationCircle from '../icons/InformationCircle.vue';
 
 const router = useRouter()
 

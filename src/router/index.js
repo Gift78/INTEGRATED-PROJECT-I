@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
-import AnnouncmentsListingComponent from "../components/AnnouncmentsListingComponent.vue";
-import AnnouncmentsDetailComponent from "../components/AnnouncmentDetailComponent.vue";
-import AddAnnouncementComponent from "../components/AddAnnouncementComponent.vue";
-import EditAnnouncementComponent from "../components/EditAnnouncementComponent.vue"
-import UserAnnouncementListingComponent from '../components/UserAnnouncementListingComponent.vue'
+import AnnouncmentsListingComponent from "../components/admin/AnnouncmentsListingComponent.vue";
+import AnnouncmentsDetailComponent from "../components/admin/AnnouncmentDetailComponent.vue";
+import AddAnnouncementComponent from "../components/admin/AddAnnouncementComponent.vue";
+import EditAnnouncementComponent from "../components/admin/EditAnnouncementComponent.vue";
+import UserAnnouncementListingComponent from "../components/user/UserAnnouncementListingComponent.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,13 +30,13 @@ const router = createRouter({
     {
       path: "/admin/announcement/:id/edit",
       name: "EditAnnouncement",
-      component: EditAnnouncementComponent
+      component: EditAnnouncementComponent,
     },
     {
       path: "/announcement",
       name: "UserAnnouncement",
-      component: UserAnnouncementListingComponent
-},
+      component: UserAnnouncementListingComponent,
+    },
   ],
 });
 

@@ -2,8 +2,8 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
-import { getDataById } from '../composable/getData';
-import TimezoneComponent from './TimezoneComponent.vue';
+import { getDataById } from '../../composable/getData';
+import TimezoneComponent from '../base/TimezoneComponent.vue';
 
 const { params } = useRoute();
 const router = useRouter();
@@ -238,7 +238,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
 
             <button class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md px-5 py-2 w-20 h-10"
                 :class="{ 'opacity-50 cursor-not-allowed': !isFieldEdit, 'cursor-pointer': isFieldEdit }"
-                :disabled="!isFieldEdit" @click="editAnnouncement(editedAnnounce, params?.id)">edit</button>
+                :disabled="!isFieldEdit" @click="editAnnouncement(editedAnnounce, params?.id)">Edit</button>
         </div>
     </div>
 </template>

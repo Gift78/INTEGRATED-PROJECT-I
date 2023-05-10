@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import TimezoneComponent from './TimezoneComponent.vue';
-import Published from './icons/Published.vue'
-import Unpublished from './icons/Unpublished.vue'
-import { getAllData } from '../composable/getData';
-import formatDatetime from '../composable/formatDatetime.js'
+import TimezoneComponent from '../base/TimezoneComponent.vue';
+import Published from '../icons/Published.vue'
+import Unpublished from '../icons/Unpublished.vue'
+import { getAllData } from '../../composable/getData';
+import formatDatetime from '../../composable/formatDatetime.js'
 
 const mode = ref('active')
 const activeButton = ref('text-white bg-emerald-light')

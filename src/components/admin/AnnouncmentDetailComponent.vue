@@ -2,9 +2,9 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
-import formatDatetime from '../composable/formatDatetime';
-import TimezoneComponent from './TimezoneComponent.vue';
-import ErrorModalComponent from './ErrorModalComponent.vue';
+import formatDatetime from '../../composable/formatDatetime';
+import TimezoneComponent from '../base/TimezoneComponent.vue';
+import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 
 const { params } = useRoute();
 const router = useRouter();

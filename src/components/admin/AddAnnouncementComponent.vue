@@ -1,9 +1,9 @@
 <script setup>
-import TimezoneComponent from './TimezoneComponent.vue';
+import TimezoneComponent from '../base/TimezoneComponent.vue';
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
-import ArrowRight from './icons/ArrowRight.vue'
-import ErrorModalComponent from './ErrorModalComponent.vue';
+import ArrowRight from '../icons/ArrowRight.vue'
+import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 const router = useRouter()
 
 const errors = ref({})

@@ -1,5 +1,5 @@
 <script setup>
-import IconGlobe from './icons/IconGlobe.vue';
+import IconGlobe from '../icons/IconGlobe.vue';
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 </script>
 

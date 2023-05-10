@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getAllData } from '../composable/getData.js';
-import formatDatetime from '../composable/formatDatetime';
-import TimezoneComponent from './TimezoneComponent.vue';
-import ErrorModalComponent from './ErrorModalComponent.vue';
+import { getAllData } from '../../composable/getData.js';
+import formatDatetime from '../../composable/formatDatetime';
+import TimezoneComponent from '../base/TimezoneComponent.vue';
+import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 
 const router = useRouter()
 const data = ref([])
