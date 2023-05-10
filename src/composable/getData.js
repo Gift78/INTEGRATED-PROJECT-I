@@ -1,7 +1,7 @@
-const getAllData = async () => {
+const getAllData = async (mode) => {
   try {
     const res = await fetch(
-      import.meta.env.VITE_ROOT_API + "/api/announcements"
+      import.meta.env.VITE_ROOT_API + `/api/announcements?mode=${mode}`
     );
     if (res.ok) {
       const data = await res.json();
