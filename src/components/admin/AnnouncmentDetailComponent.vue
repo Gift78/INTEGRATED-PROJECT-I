@@ -23,7 +23,6 @@ const changePage = (name, id) => {
 onMounted(async () => {
     try {
         const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + params?.id)
-        data.value = await res.json();
         if (res.ok) {
             data.value = await res.json();
         } else {
