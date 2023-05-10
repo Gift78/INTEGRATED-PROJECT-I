@@ -24,8 +24,8 @@ public class AnnouncementController {
     private ModelMapper modelMapper;
 
     @GetMapping("")
-    public List<AnnounceDTO> getAllAnnouncements() {
-        List<Announces> announces = announceService.getAllAnnouncements();
+    public List<AnnounceDTO> getAllAnnouncements(@RequestParam(required = false) String mode) {
+        List<Announces> announces = announceService.getAllAnnouncements(mode);
         modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
         return announces.stream().map(e -> modelMapper.map(e, AnnounceDTO.class)).collect(Collectors.toList());
     }
