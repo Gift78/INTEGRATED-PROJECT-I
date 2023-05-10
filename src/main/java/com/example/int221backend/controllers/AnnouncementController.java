@@ -1,8 +1,6 @@
 package com.example.int221backend.controllers;
 
-import com.example.int221backend.dtos.AnnounceDTO;
-import com.example.int221backend.dtos.AnnounceDetailDTO;
-import com.example.int221backend.dtos.AnnounceTestDTO;
+import com.example.int221backend.dtos.*;
 import com.example.int221backend.entities.Announces;
 import com.example.int221backend.services.AnnounceService;
 import com.example.int221backend.converters.AnnouncesToAnnounceDTOConverter;
@@ -24,10 +22,18 @@ public class AnnouncementController {
     private ModelMapper modelMapper;
 
     @GetMapping("")
-    public List<AnnounceDTO> getAllAnnouncements(@RequestParam(required = false) String mode) {
+    public List<?> getAllAnnouncements(@RequestParam(required = false) String mode) {
         List<Announces> announces = announceService.getAllAnnouncements(mode);
-        modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
-        return announces.stream().map(e -> modelMapper.map(e, AnnounceDTO.class)).collect(Collectors.toList());
+        if (mode == null || mode.equals("admin")) {
+            modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
+            return announces.stream().map(e -> modelMapper.map(e, AnnounceDTO.class)).collect(Collectors.toList());
+        } else if (mode.equals("active")) {
+            return announces.stream().map(e -> modelMapper.map(e, AnnounceViewActiveDTO.class)).collect(Collectors.toList());
+        } else if (mode.equals("close")) {
+            return announces.stream().map(e -> modelMapper.map(e, AnnounceViewCloseDTO.class)).collect(Collectors.toList());
+        } else {
+            return null;
+        }
     }
 
     @GetMapping("{announceId}")
