@@ -26,14 +26,13 @@ onMounted(async () => {
         if (res.ok) {
             data.value = await res.json();
         } else {
+            data.value = await res.json();
             isModalOpen.value = true
             const errorData = data.value
             errors.value = errorData
-            console.log(errors.value)
         }
     } catch (error) {
         errors.value = error
-        console.log(error);
     }
 })
 </script>

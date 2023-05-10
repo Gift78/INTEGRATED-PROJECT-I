@@ -15,11 +15,12 @@ const isClosed = ref(false)
 
 onMounted(async () => {
     try {
-        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + params?.id)
+        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/s" + params?.id)
         if (res.ok) {
             data.value = await res.json();
             checkCloseDate(data.value.closeDate)
         } else {
+            data.value = await res.json();
             isModalOpen.value = true
             const errorData = data.value
             errors.value = errorData
