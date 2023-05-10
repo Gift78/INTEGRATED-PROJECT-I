@@ -6,6 +6,7 @@ import { getDataById } from '../composable/getData';
 import formatDatetime from '../composable/formatDatetime';
 import TimezoneComponent from './TimezoneComponent.vue';
 import CancelRounded from './icons/CancelRounded.vue'
+import ErrorModalComponent from './ErrorModalComponent.vue';
 
 const { params } = useRoute();
 const router = useRouter();
@@ -20,16 +21,24 @@ const changePage = (name, id) => {
     }
 }
 
+const errors = ref()
 onMounted(async () => {
     try {
-        data.value = await getDataById(params?.id);
-        if (data.value === undefined) {
-            isModalOpen.value = true;
+        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + params?.id)
+        data.value = await res.json();
+        if (res.ok) {
+            data.value = await res.json();
+        } else {
+            isModalOpen.value = true
+            const errorData = data.value
+            errors.value = errorData
+            console.log(errors.value)
         }
     } catch (error) {
+        errors.value = error
         console.log(error);
     }
-});
+})
 </script>
  
 <template>
@@ -77,23 +86,13 @@ onMounted(async () => {
             </button>
             <button
                 class="ann-button text-orange-400 mx-3 bg-orange-200 text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
-                @click="changePage('EditAnnouncement',params?.id)">Edit
+                @click="changePage('EditAnnouncement', params?.id)">Edit
             </button>
         </div>
     </div>
 
-    <input type="checkbox" id="error-modal" class="modal-toggle modal-open" :checked="isModalOpen" />
-    <div class="modal flex items-center justify-center" v-if="isModalOpen">
-        <CancelRounded class="text-red-500 absolute top-48 z-30 flex items-center justify-center bg-white rounded-full" />
-        <div class="absolute top-72 bg-white px-40 pb-10 z-10 rounded-3xl shadow-xl">
-            <p class="text-3xl font-bold text-center pt-16">Error!</p>
-            <p class="py-5 text-center">The requested page is not available!</p>
-            <div class="modal-action flex justify-center">
-                <label class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
-                    @click="changePage('Announcement')">OK</label>
-            </div>
-        </div>
-    </div>
+    <ErrorModalComponent v-if="isModalOpen" :checkCondition="isModalOpen" :typeError="'problem'" :status="errors?.status"
+        :message="errors?.message"/>
 </template>
  
 <style scoped></style>

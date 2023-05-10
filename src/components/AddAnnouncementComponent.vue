@@ -4,6 +4,7 @@ import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
 import ArrowRight from './icons/ArrowRight.vue'
 import CancelRounded from './icons/CancelRounded.vue'
+import ErrorModalComponent from './ErrorModalComponent.vue';
 const router = useRouter()
 
 const errors = ref({})
@@ -84,7 +85,6 @@ const addNewAnnouncement = async (annonuce) => {
                 categoryId: annonuce.categoryId
             })
         })
-
         if (res.status === 200) {
             console.log('add successfully')
             changePage('Announcement')
@@ -100,22 +100,14 @@ const addNewAnnouncement = async (annonuce) => {
         haveError.value = true
     }
 }
+const isModalOpen = ref(false)
+
 </script>
 <template>
     <div style="width: 80em;" class="mx-auto">
         <!-- Error message -->
-        <div class="flex items-center justify-center" v-if="haveError">
-            <CancelRounded
-                class="text-red-500 absolute top-48 z-30 flex items-center justify-center bg-white rounded-full" />
-            <div class="absolute top-72 bg-white px-10 pb-10 z-10 rounded-3xl shadow-xl">
-                <p class="text-3xl font-bold text-center pt-16">Error {{ errors.status }}!</p>
-                <p class="py-5 text-center">{{ errors.message }}</p>
-                <div class="modal-action flex justify-center">
-                    <label class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
-                        @click="changePage('Announcement')">OK</label>
-                </div>
-            </div>
-        </div>
+        <ErrorModalComponent v-if="haveError" :checkCondition="haveError" :typeError="'problem'" :status="errors?.status"
+            :message="errors?.message" />
         <!-- content -->
         <div :class="haveError ? 'blur-sm' : ''" :style="haveError ? 'pointer-events: none;' : ''">
             <!-- header -->
@@ -191,30 +183,19 @@ const addNewAnnouncement = async (annonuce) => {
             </div>
             <!-- Submit or Cancel -->
             <div class="flex justify-end mt-5 mb-24">
-                <label for="my-modal"
-                    class="ann-button btn mx-5 w-32 bg-zinc-300  hover:bg-zinc-400 border-none ">Cancel</label>
-                <input type="checkbox" id="my-modal" class="modal-toggle" />
-                <div class="modal">
-                    <CancelRounded class="text-red-500 absolute top-52 z-10 bg-white rounded-full" />
-                    <div class="modal-box bg-white">
-                        <p class="text-3xl font-bold text-center pt-16">Are you sure to cancel?</p>
-                        <p class="py-5 text-center">Do you really want to leave this section? This process will discard all
-                            changes.</p>
-                        <div class="modal-action flex justify-center">
-                            <!-- close modal -->
-                            <label for="my-modal" class="btn border-none w-24 bg-zinc-300 hover:bg-zinc-400">Cancel</label>
-                            <!-- cancel all change -->
-                            <label for="my-modal" class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
-                                @click="changePage('Announcement')">OK</label>
-                        </div>
-                    </div>
-                </div>
-                <button class="ann-button bg-emerald-plus text-white w-32 py-3 rounded-lg "
+                <button class="ann-button btn mx-5 w-32 bg-zinc-300  hover:bg-zinc-400 border-none"
+                    @click="isModalOpen = true">cancel</button>
+
+
+                <button class="ann-button bg-emerald-plus text-white w-32 py-3 rounded-lg"
                     :class="{ 'opacity-50 cursor-not-allowed': !isFormValid, 'cursor-pointer': isFormValid }"
                     :disabled="!isFormValid" @click="addNewAnnouncement(newAnnouncement)">Submit</button>
             </div>
+
         </div>
     </div>
+    <!-- cancel modal -->
+    <ErrorModalComponent :checkCondition="isModalOpen" :typeError="'cancel'" @close="isModalOpen = false" />
 </template>
  
 <style scoped>

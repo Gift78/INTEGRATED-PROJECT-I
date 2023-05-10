@@ -245,7 +245,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         </div>
     </div>
 
-    <input type="checkbox" id="error-modal" class="modal-toggle modal-open" :checked="isModalOpen" />
+    <!-- <input type="checkbox" id="error-modal" class="modal-toggle modal-open" :checked="isModalOpen" />
     <div class="modal flex items-center justify-center" v-if="isModalOpen">
         <CancelRounded class="text-red-500 absolute top-48 z-30 flex items-center justify-center bg-white rounded-full" />
         <div class="absolute top-72 bg-white px-40 pb-10 z-10 rounded-3xl shadow-xl">
@@ -256,7 +256,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
                     @click="changePage('AnnouncementDetail', params?.id)">OK</label>
             </div>
         </div>
-    </div>
+    </div> -->
 </template>
  
 <style scoped>
