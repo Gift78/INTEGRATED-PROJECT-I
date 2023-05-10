@@ -19,9 +19,11 @@ import java.util.List;
 public class AnnounceService {
     @Autowired
     private AnnounceRepository announceRepository;
-
     @Autowired
     private CategoryService categoryService;
+    private final DateTimeFormatter utcFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private final DateTimeFormatter localFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private void datetimeFormatter(DateTimeFormatter localFormatter, Announces announce) {
         if (announce.getPublishDate() != null) {
@@ -38,28 +40,66 @@ public class AnnounceService {
         }
     }
 
-    public List<Announces> getAllAnnouncements() {
+    public List<Announces> getAllAnnouncements(String mode) {
         List<Announces> announces = announceRepository.findAll(Sort.by("announcementId").descending());
-        announces.forEach((announce) -> {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            datetimeFormatter(formatter, announce);
-        });
-        return announces;
+
+        if (mode == null || mode.equals("admin")) {
+            announces.forEach((announce) -> datetimeFormatter(formatter, announce));
+            return announces;
+        } else if (mode.equals("active")) {
+            announces.removeIf(announce -> String.valueOf(announce.getAnnouncementDisplay()).equals("N"));
+            announces.removeIf((announce) -> {
+               if (announce.getPublishDate() != null && announce.getCloseDate() == null) {
+                    LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), formatter);
+                    ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
+                    Instant instantPublishDate = zonePublishDate.toInstant();
+                    return Instant.now().compareTo(instantPublishDate) < 0;
+                } else if (announce.getPublishDate() != null && announce.getCloseDate() != null) {
+                    LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), formatter);
+                    ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
+                    Instant instantPublishDate = zonePublishDate.toInstant();
+                    LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
+                    ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
+                    Instant instantCloseDate = zoneCloseDate.toInstant();
+                    return Instant.now().compareTo(instantPublishDate) < 0 || Instant.now().compareTo(instantCloseDate) >= 0;
+                } else if (announce.getPublishDate() == null && announce.getCloseDate() != null) {
+                    LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
+                    ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
+                    Instant instantCloseDate = zoneCloseDate.toInstant();
+                    return Instant.now().compareTo(instantCloseDate) >= 0;
+                }
+                return false;
+            });
+            announces.forEach(announce -> datetimeFormatter(formatter, announce));
+            return announces;
+        } else if (mode.equals("close")) {
+            announces.removeIf(announce -> String.valueOf(announce.getAnnouncementDisplay()).equals("N"));
+            announces.removeIf((announce) -> {
+                if (announce.getCloseDate() == null) {
+                    return true;
+                } else {
+                    LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
+                    ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
+                    Instant instantCloseDate = zoneCloseDate.toInstant();
+                    return Instant.now().compareTo(instantCloseDate) < 0;
+                }
+            });
+            announces.forEach((announce) -> datetimeFormatter(formatter, announce));
+            return announces;
+        } else {
+            return null;
+        }
     }
 
     public Announces getAnnounceById(Integer announceId) {
         Announces announce = announceRepository.findById(announceId).orElseThrow(() -> new AnnounceNotFoundException(announceId));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         datetimeFormatter(formatter, announce);
         return announce;
     }
 
     public Announces addNewAnnounce(Announces newAnnounce) {
-        Categories category = categoryService.getCategoryById(newAnnounce.getCategoryId());
-        newAnnounce.setCategoriesObject(category);
+        newAnnounce.setCategoriesObject(categoryService.getCategoryById(newAnnounce.getCategoryId()));
 
-        DateTimeFormatter utcFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        DateTimeFormatter localFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         if (newAnnounce.getPublishDate() != null) {
             LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), utcFormatter).atZone(ZoneId.of("UTC")).toLocalDateTime();
             newAnnounce.setPublishDate(localDateTime.format(localFormatter));
@@ -84,8 +124,6 @@ public class AnnounceService {
         Categories category = categoryService.getCategoryById(newAnnounce.getCategoryId());
         newAnnounce.setCategoriesObject(category);
 
-        DateTimeFormatter utcFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        DateTimeFormatter localFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         if (newAnnounce.getPublishDate() != null) {
             LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), utcFormatter).atZone(ZoneId.of("UTC")).toLocalDateTime();
             newAnnounce.setPublishDate(localDateTime.format(localFormatter));
