@@ -15,7 +15,7 @@ const isClosed = ref(false)
 
 onMounted(async () => {
     try {
-        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/s" + params?.id)
+        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + params?.id)
         if (res.ok) {
             data.value = await res.json();
             checkCloseDate(data.value.closeDate)
