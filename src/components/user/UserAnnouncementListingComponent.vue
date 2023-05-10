@@ -30,7 +30,6 @@ const button = async (modeName) => {
 }
 
 const changePage = (name, id) => {
-    console.log(name, id)
     if (id !== undefined) {
         router.push({ name: name, params: { id: id } })
     } else {
