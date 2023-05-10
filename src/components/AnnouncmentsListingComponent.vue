@@ -23,7 +23,7 @@ const changePage = (name, id) => {
 
 
 onMounted(async () => {
-    data.value = await getAllData();
+    data.value = await getAllData('admin');
 });
 
 const errorOnDelete = ref(false)
