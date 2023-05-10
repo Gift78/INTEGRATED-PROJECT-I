@@ -1,6 +1,5 @@
 <script setup>
 import IconGlobe from './icons/IconGlobe.vue';
-
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 </script>
 
@@ -12,7 +11,6 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         </div>
         <div class="text-cyan-800 p-1 pl-3 text-lg">{{ timezone }}</div>
     </div>
-
 </template>
 
 <style scoped></style>

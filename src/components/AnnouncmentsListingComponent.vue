@@ -4,13 +4,18 @@ import { useRouter } from 'vue-router'
 import { getAllData } from '../composable/getData.js';
 import formatDatetime from '../composable/formatDatetime';
 import TimezoneComponent from './TimezoneComponent.vue';
-import InformationCircle from './icons/InformationCircle.vue'
-import CancelRounded from './icons/CancelRounded.vue';
 import ErrorModalComponent from './ErrorModalComponent.vue';
 
 const router = useRouter()
 const data = ref([])
 const errors = ref({})
+const deleteId = ref(undefined)
+const confirmDelete = ref(false)
+const errorOnDelete = ref(false)
+
+onMounted(async () => {
+    data.value = await getAllData('admin');
+});
 
 const changePage = (name, id) => {
     if (id !== undefined) {
@@ -20,14 +25,6 @@ const changePage = (name, id) => {
     }
 }
 
-
-
-onMounted(async () => {
-    data.value = await getAllData('admin');
-});
-
-const errorOnDelete = ref(false)
-const deleteId = ref(undefined)
 const deleteAnnouncement = async (id) => {
     try {
         const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + id, {
@@ -48,9 +45,6 @@ const deleteAnnouncement = async (id) => {
         errors.value = error
     }
 }
-
-const confirmDelete = ref(false)
-
 </script>
 
 <template>
@@ -60,20 +54,20 @@ const confirmDelete = ref(false)
             <!-- header -->
             <div class="text-center text-3xl text-cyan-800 py-10">SIT Announcement System (SAS)</div>
 
-        <!-- time zone bar -->
-        <div class="flex justify-between">
-            <TimezoneComponent />
-            <div class="ann-button text-center rounded-md text-white p-1 px-4 bg-emerald-plus hover:bg-emerald-light hover:scale-105 cursor-pointer"
-                @click="changePage('AddAnnouncement', undefined)">
-                + Add Announcement
+            <!-- time zone bar -->
+            <div class="flex justify-between">
+                <TimezoneComponent />
+                <div class="ann-button text-center rounded-md text-white p-1 px-4 bg-emerald-plus hover:bg-emerald-light hover:scale-105 cursor-pointer"
+                    @click="changePage('AddAnnouncement', undefined)">
+                    + Add Announcement
+                </div>
+
             </div>
+            <hr class="mt-4 border-2">
 
-        </div>
-        <hr class="mt-4 border-2">
-
-        <!-- head table -->
-        <div class="grid grid-cols-11 my-5">
-            <div class="text-center text-zinc-400">No.</div>
+            <!-- head table -->
+            <div class="grid grid-cols-11 my-5">
+                <div class="text-center text-zinc-400">No.</div>
                 <div class=" text-zinc-400 col-span-2">Title</div>
                 <div class="text-center text-zinc-400">Category</div>
                 <div class="text-center text-zinc-400 col-span-2">Publish Date</div>
@@ -113,22 +107,6 @@ const confirmDelete = ref(false)
                         <button
                             class="ann-button mx-2 text-red-400 my-auto text-center bg-red-100 hover:bg-red-200 hover:scale-110  rounded-lg w-16 h-10 shadow-sm cursor-pointer"
                             @click="deleteId = announce.id, confirmDelete = true">Delete</button>
-
-                        <!-- <div class="modal">
-                                    <InformationCircle class="text-red-500 absolute top-40 z-10 bg-white rounded-full" />
-                                    <div class="modal-box bg-white">
-                                        <p class="text-3xl font-bold text-center pt-16">Are you sure to delete?
-                                        </p>
-                                        <p class="py-5 text-center">Do you really want to delete this announcement? This process
-                                            cannot be undone.</p>
-                                        <div class="modal-action flex justify-center">
-                                            <label for="my-modal"
-                                                class="btn border-none w-24 bg-zinc-300 hover:bg-zinc-400">Cancel</label>
-                                            <label for="my-modal"
-                                                class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
-                                                @click="deleteAnnouncement(deleteId)">OK</label>
-                                        </div>
-                                    </div> -->
                     </div>
                 </div>
             </div>

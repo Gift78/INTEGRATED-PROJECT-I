@@ -1,17 +1,21 @@
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { getDataById } from '../composable/getData';
 import TimezoneComponent from './TimezoneComponent.vue';
-import CancelRounded from './icons/CancelRounded.vue'
-import formatDatetime from '../composable/formatDatetime';
 
 const { params } = useRoute();
 const router = useRouter();
 const data = ref({});
 const isModalOpen = ref(false);
 const isFieldEdit = ref(false);
+const publishDate = ref('')
+const publishTime = ref('')
+const closeDate = ref('')
+const closeTime = ref('')
+const display = ref(false)
+
 const categoryItem = [
     { categoryId: 1, categoryName: 'ทั่วไป' },
     { categoryId: 2, categoryName: 'ทุนการศึกษา' },
@@ -29,12 +33,46 @@ const editedAnnounce = ref({
     announcementCategory: ''
 })
 
-// to set date and time
-const publishDate = ref('')
-const publishTime = ref('')
-const closeDate = ref('')
-const closeTime = ref('')
-const display = ref(false)
+onMounted(async () => {
+    try {
+        data.value = await getDataById(params?.id);
+
+        if (data.value === undefined) {
+            isModalOpen.value = true;
+        }
+
+        if (data.value.publishDate !== null) {
+            publishDate.value = getFormattedDate(data.value.publishDate)
+            publishTime.value = getFormattedTime(data.value.publishDate)
+        }
+
+        if (data.value.closeDate !== null) {
+            closeDate.value = getFormattedDate(data.value.closeDate)
+            closeTime.value = getFormattedTime(data.value.closeDate)
+        }
+
+        editedAnnounce.value.announcementTitle = data.value.announcementTitle
+        editedAnnounce.value.announcementDescription = data.value.announcementDescription
+        editedAnnounce.value.publishDate = data.value.publishDate
+        editedAnnounce.value.closeDate = data.value.closeDate
+        editedAnnounce.value.announcementDisplay = data.value.announcementDisplay
+        editedAnnounce.value.announcementCategory = data.value.announcementCategory
+
+        if (editedAnnounce.value.announcementDisplay === 'Y') {
+            display.value = true
+        } else {
+            display.value = false
+        }
+
+        categoryItem.forEach((item) => {
+            if (item.categoryName === editedAnnounce.value.announcementCategory) {
+                editedAnnounce.value.categoryId = item.categoryId
+            }
+        })
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 const changePage = (name, id) => {
     if (id !== undefined) {
@@ -98,47 +136,6 @@ watch([editedAnnounce, display, publishDate, publishTime, closeDate, closeTime],
         isFieldEdit.value = false;
     }
 }, { deep: true })
-
-onMounted(async () => {
-    try {
-        data.value = await getDataById(params?.id);
-
-        if (data.value === undefined) {
-            isModalOpen.value = true;
-        }
-
-        if (data.value.publishDate !== null) {
-            publishDate.value = getFormattedDate(data.value.publishDate)
-            publishTime.value = getFormattedTime(data.value.publishDate)
-        }
-
-        if (data.value.closeDate !== null) {
-            closeDate.value = getFormattedDate(data.value.closeDate)
-            closeTime.value = getFormattedTime(data.value.closeDate)
-        }
-
-        editedAnnounce.value.announcementTitle = data.value.announcementTitle
-        editedAnnounce.value.announcementDescription = data.value.announcementDescription
-        editedAnnounce.value.publishDate = data.value.publishDate
-        editedAnnounce.value.closeDate = data.value.closeDate
-        editedAnnounce.value.announcementDisplay = data.value.announcementDisplay
-        editedAnnounce.value.announcementCategory = data.value.announcementCategory
-
-        if (editedAnnounce.value.announcementDisplay === 'Y') {
-            display.value = true
-        } else {
-            display.value = false
-        }
-
-        categoryItem.forEach((item) => {
-            if (item.categoryName === editedAnnounce.value.announcementCategory) {
-                editedAnnounce.value.categoryId = item.categoryId
-            }
-        })
-    } catch (error) {
-        console.log(error);
-    }
-});
 
 const editAnnouncement = async (updateAnnounce, announceId) => {
     updateAnnounce.publishDate = datetimeFormatterISO(publishDate.value, publishTime.value)
@@ -244,19 +241,6 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
                 :disabled="!isFieldEdit" @click="editAnnouncement(editedAnnounce, params?.id)">edit</button>
         </div>
     </div>
-
-    <!-- <input type="checkbox" id="error-modal" class="modal-toggle modal-open" :checked="isModalOpen" />
-    <div class="modal flex items-center justify-center" v-if="isModalOpen">
-        <CancelRounded class="text-red-500 absolute top-48 z-30 flex items-center justify-center bg-white rounded-full" />
-        <div class="absolute top-72 bg-white px-40 pb-10 z-10 rounded-3xl shadow-xl">
-            <p class="text-3xl font-bold text-center pt-16">Error!</p>
-            <p class="py-5 text-center">The requested page is not available!</p>
-            <div class="modal-action flex justify-center">
-                <label class="btn text-white border-none w-24 bg-red-500 hover:bg-red-700"
-                    @click="changePage('AnnouncementDetail', params?.id)">OK</label>
-            </div>
-        </div>
-    </div> -->
 </template>
  
 <style scoped>

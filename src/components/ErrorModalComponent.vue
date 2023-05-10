@@ -54,7 +54,6 @@ const props = defineProps({
     }
 })
 
-const getParameter = props.parameter
 const messageHeader = ref('')
 const messageDesc = ref('')
 const showCancel = ref(false)
@@ -87,7 +86,6 @@ const changePage = (name, id) => {
         router.push({ name: name })
     }
 }
-
 </script>
  
 <template>
@@ -102,7 +100,8 @@ const changePage = (name, id) => {
             <div class="modal-action flex justify-center">
                 <label for="my-modal" class="btn shadow-xl border-none w-24 bg-zinc-300 hover:bg-zinc-400" v-if="showCancel"
                     @click="$emit('close')">Cancel</label>
-                <label v-if="method == undefined" for="my-modal" class="btn shadow-xl text-white border-none w-24 bg-red-500 hover:bg-red-700"
+                <label v-if="method == undefined" for="my-modal"
+                    class="btn shadow-xl text-white border-none w-24 bg-red-500 hover:bg-red-700"
                     @click="changePage(goToPage), $emit('close')">OK</label>
                 <label v-if="method !== undefined" for="my-modal"
                     class="btn shadow-xl text-white border-none w-24 bg-red-500 hover:bg-red-700"
@@ -114,5 +113,3 @@ const changePage = (name, id) => {
 </template>
  
 <style scoped></style>
-
-<!-- changePage -->

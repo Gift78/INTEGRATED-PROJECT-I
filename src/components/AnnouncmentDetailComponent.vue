@@ -2,16 +2,15 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
-import { getDataById } from '../composable/getData';
 import formatDatetime from '../composable/formatDatetime';
 import TimezoneComponent from './TimezoneComponent.vue';
-import CancelRounded from './icons/CancelRounded.vue'
 import ErrorModalComponent from './ErrorModalComponent.vue';
 
 const { params } = useRoute();
 const router = useRouter();
 const data = ref({});
 const isModalOpen = ref(false);
+const errors = ref()
 
 const changePage = (name, id) => {
     if (id !== undefined) {
@@ -21,7 +20,6 @@ const changePage = (name, id) => {
     }
 }
 
-const errors = ref()
 onMounted(async () => {
     try {
         const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + params?.id)
@@ -48,7 +46,6 @@ onMounted(async () => {
 
         <TimezoneComponent />
         <hr class="mt-4 border-2">
-
 
         <!-- content -->
         <div class="ann-item bg-white flex-col rounded-lg p-10 shadow-lg mt-5" v-if="!isModalOpen">
@@ -92,7 +89,7 @@ onMounted(async () => {
     </div>
 
     <ErrorModalComponent v-if="isModalOpen" :checkCondition="isModalOpen" :typeError="'problem'" :status="errors?.status"
-        :message="errors?.message"/>
+        :message="errors?.message" />
 </template>
  
 <style scoped></style>

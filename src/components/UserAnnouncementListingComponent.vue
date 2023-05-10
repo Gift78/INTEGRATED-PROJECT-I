@@ -9,6 +9,12 @@ import formatDatetime from '../composable/formatDatetime.js'
 const mode = ref('active')
 const activeButton = ref('text-white bg-emerald-light')
 const closedButton = ref('')
+const data = ref([])
+
+onMounted(async () => {
+    data.value = await getAllData(mode.value);
+});
+
 const button = async (modeName) => {
     mode.value = modeName
     data.value = await getAllData(mode.value);
@@ -20,11 +26,6 @@ const button = async (modeName) => {
         activeButton.value = ''
     }
 }
-const data = ref({})
-onMounted(async () => {
-    data.value = await getAllData(mode.value);
-});
-
 </script>
  
 <template>

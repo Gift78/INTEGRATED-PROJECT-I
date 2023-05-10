@@ -3,12 +3,19 @@ import TimezoneComponent from './TimezoneComponent.vue';
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
 import ArrowRight from './icons/ArrowRight.vue'
-import CancelRounded from './icons/CancelRounded.vue'
 import ErrorModalComponent from './ErrorModalComponent.vue';
 const router = useRouter()
 
 const errors = ref({})
-// category data
+const displayed = ref(false)
+const isFormValid = ref(false)
+const isModalOpen = ref(false)
+const haveError = ref(false)
+const publishDate = ref('')
+const publishTime = ref('')
+const closeDate = ref('')
+const closeTime = ref('')
+
 const categoryItem = [
     { categoryId: 1, categoryName: 'ทั่วไป' },
     { categoryId: 2, categoryName: 'ทุนการศึกษา' },
@@ -16,10 +23,6 @@ const categoryItem = [
     { categoryId: 4, categoryName: 'ฝึกงาน' }
 ]
 
-// for set display to Y / N
-const displayed = ref(false)
-const isFormValid = ref(false)
-// default announcement
 const newAnnouncement = ref({
     announcementTitle: '',
     announcementDescription: '',
@@ -28,12 +31,6 @@ const newAnnouncement = ref({
     announcementDisplay: 'N',
     categoryId: null
 })
-
-// to set date and time
-const publishDate = ref('')
-const publishTime = ref('')
-const closeDate = ref('')
-const closeTime = ref('')
 
 watch([newAnnouncement, displayed], () => {
     if (newAnnouncement.value.announcementTitle == '' || newAnnouncement.value.announcementDescription == '' || newAnnouncement.value.categoryId == undefined) {
@@ -53,8 +50,6 @@ const changePage = (name) => {
     router.push({ name: name })
 }
 
-// if have error will show pop up
-const haveError = ref(false)
 const addNewAnnouncement = async (annonuce) => {
     console.log('fetching...')
 
@@ -100,8 +95,6 @@ const addNewAnnouncement = async (annonuce) => {
         haveError.value = true
     }
 }
-const isModalOpen = ref(false)
-
 </script>
 <template>
     <div style="width: 80em;" class="mx-auto">
@@ -185,7 +178,6 @@ const isModalOpen = ref(false)
             <div class="flex justify-end mt-5 mb-24">
                 <button class="ann-button btn mx-5 w-32 bg-zinc-300  hover:bg-zinc-400 border-none"
                     @click="isModalOpen = true">cancel</button>
-
 
                 <button class="ann-button bg-emerald-plus text-white w-32 py-3 rounded-lg"
                     :class="{ 'opacity-50 cursor-not-allowed': !isFormValid, 'cursor-pointer': isFormValid }"
