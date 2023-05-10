@@ -16,4 +16,5 @@ public class AnnounceViewActiveDTO {
     private CategoryDTO categoriesObject;
     public String getAnnouncementCategory(){
         return categoriesObject.getCategoryName();
-    }}
+    }
+}
