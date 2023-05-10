@@ -99,7 +99,7 @@ const changePage = (name, id) => {
     </div>
 
     <ErrorModalComponent v-if="isModalOpen" :checkCondition="isModalOpen" :typeError="'problem'" :status="errors?.status"
-        :message="errors?.message" />
+        :message="errors?.message" goToPage="UserAnnouncement" />
 </template>
 
 <style scoped></style>
