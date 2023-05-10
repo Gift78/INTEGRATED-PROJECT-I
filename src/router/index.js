@@ -3,6 +3,7 @@ import AnnouncmentsListingComponent from "../components/AnnouncmentsListingCompo
 import AnnouncmentsDetailComponent from "../components/AnnouncmentDetailComponent.vue";
 import AddAnnouncementComponent from "../components/AddAnnouncementComponent.vue";
 import EditAnnouncementComponent from "../components/EditAnnouncementComponent.vue"
+import UserAnnouncementListingComponent from '../components/UserAnnouncementListingComponent.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +31,11 @@ const router = createRouter({
       path: "/admin/announcement/:id/edit",
       name: "EditAnnouncement",
       component: EditAnnouncementComponent
+    },
+    {
+      path: "/announcement",
+      name: "UserAnnouncement",
+      component: UserAnnouncementListingComponent
 },
   ],
 });
