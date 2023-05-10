@@ -1,11 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import Published from '../icons/Published.vue'
 import Unpublished from '../icons/Unpublished.vue'
 import { getAllData } from '../../composable/getData';
 import formatDatetime from '../../composable/formatDatetime.js'
 
+const router = useRouter()
 const mode = ref('active')
 const activeButton = ref('text-white bg-emerald-light')
 const closedButton = ref('')
@@ -24,6 +26,15 @@ const button = async (modeName) => {
     } else if (mode.value == 'close') {
         closedButton.value = 'text-white bg-red-500'
         activeButton.value = ''
+    }
+}
+
+const changePage = (name, id) => {
+    console.log(name, id)
+    if (id !== undefined) {
+        router.push({ name: name, params: { id: id } })
+    } else {
+        router.push({ name: name })
     }
 }
 </script>
@@ -59,12 +70,15 @@ const button = async (modeName) => {
             </div>
             <div v-else>
                 <div v-for="(announce, index) in data" :key="data.id"
-                    class="grid grid-cols-9 bg-white my-5 py-7 h-20 rounded-xl shadow-md">
-                    <div class="text-center "> {{ index + 1 }}</div>
-                    <div :class="mode == 'active' ? 'col-span-7' : 'col-span-5'">{{ announce.announcementTitle }}</div>
-                    <div class="col-span-2 text-center" v-if="mode == 'close'">{{
+                    class="ann-item grid grid-cols-9 bg-white my-5 py-7 h-20 rounded-xl shadow-md">
+                    <div class="text-center"> {{ index + 1 }}</div>
+                    <div class="ann-title underline cursor-pointer" :class="mode == 'active' ? 'col-span-7' : 'col-span-5'"
+                        @click="changePage('UserAnnouncementDetail', announce.id)">
+                        {{ announce.announcementTitle }}
+                    </div>
+                    <div class="ann-close-date col-span-2 text-center" v-if="mode == 'close'">{{
                         formatDatetime(announce.closeDate) }}</div>
-                    <div class="text-center">{{ announce.announcementCategory }}</div>
+                    <div class="ann-category text-center">{{ announce.announcementCategory }}</div>
                 </div>
             </div>
         </div>
