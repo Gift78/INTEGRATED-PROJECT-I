@@ -4,8 +4,10 @@ import com.example.int221backend.converters.*;
 import com.example.int221backend.dtos.*;
 import com.example.int221backend.entities.Announces;
 import com.example.int221backend.services.AnnounceService;
+import com.example.int221backend.utils.ListMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +20,8 @@ public class AnnouncementController {
     private AnnounceService announceService;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ListMapper listMapper;
 
     @GetMapping("")
     public List<?> getAllAnnouncements(@RequestParam(required = false) String mode) {
@@ -60,5 +64,14 @@ public class AnnouncementController {
         Announces announce = announceService.updateAnnounce(announceId, newAnnounce);
         modelMapper.addConverter(new AnnouncesToAnnounceTestDTOConverter());
         return modelMapper.map(announce, AnnounceTestDTO.class);
+    }
+
+    @GetMapping("/page")
+    public PageDTO<AnnounceDTO> getAnnouncePage(@RequestParam(defaultValue = "active") String mode,
+                                                @RequestParam(defaultValue = "0") Integer page,
+                                                @RequestParam(defaultValue = "5") Integer size) {
+        Page<Announces> announces = announceService.getAnnouncePage(mode, page, size);
+        modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
+        return listMapper.toPageDTO(announces, AnnounceDTO.class, modelMapper);
     }
 }
