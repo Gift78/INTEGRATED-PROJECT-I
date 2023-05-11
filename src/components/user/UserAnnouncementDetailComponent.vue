@@ -58,15 +58,16 @@ const changePage = (name, id) => {
                 </div>
                 <div :class="mode === 'close' ? 'flex-col' : ''">
                     <div :class="mode === 'close' ? 'flex' : 'flex-col'">
-                        <div class="text-cyan-800 font-bold text-3xl ml-5">{{ data?.announcementTitle }}</div>
-                        <div class="text-white font-bold text-base mt-2" :class="mode === 'close' ? 'ml-2' : 'ml-5'">
+                        <div class="ann-title text-cyan-800 font-bold text-3xl ml-5">{{ data?.announcementTitle }}</div>
+                        <div class="ann-category text-white font-bold text-base mt-2"
+                            :class="mode === 'close' ? 'ml-2' : 'ml-5'">
                             <span class="bg-green-400 py-1 px-2 rounded-lg">
                                 {{ data?.announcementCategory }}
                             </span>
                         </div>
                     </div>
                     <div v-if="mode === 'close'" class="flex text-white font-bold text-sm ml-5 mt-2">
-                        <span class="bg-red-400 py-1 px-2 rounded-lg">
+                        <span class="ann-close-date bg-red-400 py-1 px-2 rounded-lg">
                             Closed on : {{ formatDatetime(data?.closeDate) }}
                         </span>
                     </div>
@@ -81,7 +82,7 @@ const changePage = (name, id) => {
         </div>
 
         <div class="flex justify-end mt-4">
-            <button class="bg-cyan-800 text-white rounded-lg py-2 px-6" @click="changePage('UserAnnouncement')">
+            <button class="ann-button bg-cyan-800 text-white rounded-lg py-2 px-6" @click="changePage('UserAnnouncement')">
                 Back
             </button>
         </div>
