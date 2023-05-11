@@ -1,8 +1,8 @@
 package com.example.int221backend.controllers;
 
-
 import com.example.int221backend.entities.Categories;
 import com.example.int221backend.services.CategoryService;
+import jdk.jfr.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ public class CategoryController {
         return categoryService.getAllCategories();
     }
 
-        @GetMapping("/categories/{categoryId}")
+    @GetMapping("/categories/{categoryId}")
     public Categories getCategoryById(@PathVariable Integer categoryId) {
         return categoryService.getCategoryById(categoryId);
     }
