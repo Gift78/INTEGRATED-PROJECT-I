@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins= {"http://localhost:5173", "http://intproj22.sit.kmutt.ac.th"})
+@CrossOrigin(origins= {"http://localhost:5173", "http://intproj22.sit.kmutt.ac.th", "http://127.0.0.1:5173"})
 @RequestMapping("/api/announcements")
 public class AnnouncementController {
     @Autowired
