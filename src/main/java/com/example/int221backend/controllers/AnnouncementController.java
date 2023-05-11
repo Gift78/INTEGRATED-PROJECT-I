@@ -1,11 +1,9 @@
 package com.example.int221backend.controllers;
 
+import com.example.int221backend.converters.*;
 import com.example.int221backend.dtos.*;
 import com.example.int221backend.entities.Announces;
 import com.example.int221backend.services.AnnounceService;
-import com.example.int221backend.converters.AnnouncesToAnnounceDTOConverter;
-import com.example.int221backend.converters.AnnouncesToAnnounceDetailDTOConverter;
-import com.example.int221backend.converters.AnnouncesToAnnounceTestDTOConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +26,10 @@ public class AnnouncementController {
             modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
             return announces.stream().map(e -> modelMapper.map(e, AnnounceDTO.class)).collect(Collectors.toList());
         } else if (mode.equals("active")) {
+            modelMapper.addConverter(new AnnouncesToAnnounceViewActiveDTOConverter());
             return announces.stream().map(e -> modelMapper.map(e, AnnounceViewActiveDTO.class)).collect(Collectors.toList());
         } else if (mode.equals("close")) {
+            modelMapper.addConverter(new AnnouncesToAnnounceViewCloseDTOConverter());
             return announces.stream().map(e -> modelMapper.map(e, AnnounceViewCloseDTO.class)).collect(Collectors.toList());
         } else {
             return null;
