@@ -3,7 +3,6 @@ package com.example.int221backend.services;
 import com.example.int221backend.entities.Categories;
 import com.example.int221backend.exceptions.CategoryNotFoundException;
 import com.example.int221backend.repositories.CategoryRepository;
-import jdk.jfr.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,4 +24,5 @@ public class CategoryService {
     public Categories addCategory(Categories newCategory){
         return categoryRepository.saveAndFlush(newCategory);
     }
+
 }
