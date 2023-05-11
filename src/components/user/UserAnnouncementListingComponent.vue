@@ -6,9 +6,13 @@ import Published from '../icons/Published.vue'
 import Unpublished from '../icons/Unpublished.vue'
 import { getAllData } from '../../composable/getData';
 import formatDatetime from '../../composable/formatDatetime.js'
+import { useMode } from '../../stores/mode';
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
-const mode = ref('active')
+const modeStore = useMode()
+const { mode } = storeToRefs(modeStore)
+const { toggleMode } = modeStore
 const activeButton = ref('text-white bg-emerald-light')
 const closedButton = ref('')
 const data = ref([])
@@ -17,8 +21,8 @@ onMounted(async () => {
     data.value = await getAllData(mode.value);
 });
 
-const button = async (modeName) => {
-    mode.value = modeName
+const changeMode = async (modeName) => {
+    toggleMode(modeName)
     data.value = await getAllData(mode.value);
     if (mode.value == 'active') {
         activeButton.value = 'text-white bg-emerald-light'
@@ -47,10 +51,10 @@ const changePage = (name, id) => {
             <div class="flex justify-between">
                 <TimezoneComponent />
                 <div class="flex bg-white p-1 rounded-xl mx-1 ">
-                    <button class="p-1 px-5 text-black rounded-lg flex" @click="button('active')" :class="activeButton">
+                    <button class="p-1 px-5 text-black rounded-lg flex" @click="changeMode('active')" :class="activeButton">
                         <Published class="mr-2" />ACTIVE
                     </button>
-                    <button class="p-1 px-5 text-black rounded-lg flex" @click="button('close')" :class="closedButton">
+                    <button class="p-1 px-5 text-black rounded-lg flex" @click="changeMode('close')" :class="closedButton">
                         <Unpublished class="mr-2" />CLOSED
                     </button>
                 </div>
@@ -59,7 +63,8 @@ const changePage = (name, id) => {
             <!-- head table -->
             <div class="grid grid-cols-9 my-5">
                 <div class="text-center text-zinc-400">No.</div>
-                <div class=" text-zinc-400 indent-10" :class="mode == 'active' ? 'col-span-7' : 'col-span-5'">Title</div>
+                <div class=" text-zinc-400 indent-10" :class="mode == 'active' ? 'col-span-7' : 'col-span-5'">
+                    Title</div>
                 <div class=" text-zinc-400 col-span-2 text-center" v-if="mode == 'close'">Close Date</div>
                 <div class="text-center text-zinc-400 ">Category</div>
             </div>
