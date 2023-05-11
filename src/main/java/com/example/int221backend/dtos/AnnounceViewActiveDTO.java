@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AnnounceViewActiveDTO {
+    private Integer id;
     private String announcementTitle;
     @JsonIgnore
     private CategoryDTO categoriesObject;

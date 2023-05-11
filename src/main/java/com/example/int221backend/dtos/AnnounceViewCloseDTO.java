@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AnnounceViewCloseDTO {
+    private Integer id;
     private String announcementTitle;
     private String closeDate;
     @JsonIgnore
