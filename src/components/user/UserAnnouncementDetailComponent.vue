@@ -67,7 +67,7 @@ const changePage = (name, id) => {
                     </div>
                     <div v-if="mode === 'close'" class="flex text-white font-bold text-sm ml-5 mt-2">
                         <span class="bg-red-400 py-1 px-2 rounded-lg">
-                            Close on {{ formatDatetime(data?.closeDate) }}
+                            Closed on : {{ formatDatetime(data?.closeDate) }}
                         </span>
                     </div>
                 </div>
