@@ -42,4 +42,47 @@ const getDataById = async (id) => {
   }
 };
 
-export { getAllData, getDataById };
+const getAllCategories = async () => {
+  try {
+    const res = await fetch(
+      import.meta.env.VITE_ROOT_API + `/api/category`
+    );
+    if (res.ok) {
+      const categories = await res.json();
+      return categories;
+    } else if (res.status === 404) {
+      throw new Error("404 Not Found");
+    } else if (res.status === 500) {
+      throw new Error("500 Internal Server Error");
+    } else if (res.status === 503) {
+      throw new Error("503 Service Unavailable");
+    } else {
+      throw new Error("Something went wrong.");
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+const getCategoryById = async (id) => {
+  try {
+    const res = await fetch(
+      import.meta.env.VITE_ROOT_API + "/api/category/" + id
+    );
+    if (res.ok) {
+      const category = await res.json();
+      return category;
+    } else if (res.status === 404) {
+      throw new Error("404 Not Found");
+    } else if (res.status === 500) {
+      throw new Error("500 Internal Server Error");
+    } else if (res.status === 503) {
+      throw new Error("503 Service Unavailable");
+    } else {
+      throw new Error("Something went wrong.");
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export { getAllData, getDataById, getAllCategories, getCategoryById };

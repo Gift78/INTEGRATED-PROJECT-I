@@ -1,7 +1,8 @@
 <script setup>
 import TimezoneComponent from '../base/TimezoneComponent.vue';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
+import { getAllCategories } from '../../composable/getData';
 import ArrowRight from '../icons/ArrowRight.vue'
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 const router = useRouter()
@@ -16,12 +17,10 @@ const publishTime = ref('')
 const closeDate = ref('')
 const closeTime = ref('')
 
-const categoryItem = [
-    { categoryId: 1, categoryName: 'ทั่วไป' },
-    { categoryId: 2, categoryName: 'ทุนการศึกษา' },
-    { categoryId: 3, categoryName: 'หางาน' },
-    { categoryId: 4, categoryName: 'ฝึกงาน' }
-]
+const categoryItem = ref([])
+onMounted(async () => {
+    categoryItem.value = await getAllCategories()
+})
 
 const newAnnouncement = ref({
     announcementTitle: '',

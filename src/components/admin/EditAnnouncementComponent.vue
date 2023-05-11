@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
-import { getDataById } from '../../composable/getData';
+import { getAllCategories, getDataById } from '../../composable/getData';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 
 const { params } = useRoute();
@@ -16,12 +16,7 @@ const closeDate = ref('')
 const closeTime = ref('')
 const display = ref(false)
 
-const categoryItem = [
-    { categoryId: 1, categoryName: 'ทั่วไป' },
-    { categoryId: 2, categoryName: 'ทุนการศึกษา' },
-    { categoryId: 3, categoryName: 'หางาน' },
-    { categoryId: 4, categoryName: 'ฝึกงาน' }
-]
+const categoryItem = ref({})
 
 const editedAnnounce = ref({
     announcementTitle: '',
@@ -35,6 +30,7 @@ const editedAnnounce = ref({
 
 onMounted(async () => {
     try {
+        categoryItem.value = await getAllCategories();
         data.value = await getDataById(params?.id);
 
         if (data.value === undefined) {
@@ -64,7 +60,7 @@ onMounted(async () => {
             display.value = false
         }
 
-        categoryItem.forEach((item) => {
+        categoryItem.value.forEach((item) => {
             if (item.categoryName === editedAnnounce.value.announcementCategory) {
                 editedAnnounce.value.categoryId = item.categoryId
             }
@@ -113,7 +109,7 @@ const getFormattedTime = (date) => {
 }
 
 watch([editedAnnounce, display, publishDate, publishTime, closeDate, closeTime], () => {
-    editedAnnounce.value.announcementCategory = categoryItem.find(item => item.categoryId === editedAnnounce.value.categoryId).categoryName
+    editedAnnounce.value.announcementCategory = categoryItem.value.find(item => item.categoryId === editedAnnounce.value.categoryId)?.categoryName
 
     if (display.value === true) {
         editedAnnounce.value.announcementDisplay = 'Y'
