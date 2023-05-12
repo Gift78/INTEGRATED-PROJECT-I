@@ -66,8 +66,8 @@ public class AnnouncementController {
         return modelMapper.map(announce, AnnounceTestDTO.class);
     }
 
-    @GetMapping("/page")
-    public PageDTO<AnnounceDTO> getAnnouncePage(@RequestParam(defaultValue = "active") String mode,
+    @GetMapping("/pages")
+    public PageDTO<AnnounceDTO> getAnnouncePage(@RequestParam(defaultValue = "admin") String mode,
                                                 @RequestParam(defaultValue = "0") Integer page,
                                                 @RequestParam(defaultValue = "5") Integer size) {
         Page<Announces> announces = announceService.getAnnouncePage(mode, page, size);

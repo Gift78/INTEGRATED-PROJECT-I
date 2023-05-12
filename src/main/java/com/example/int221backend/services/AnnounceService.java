@@ -75,6 +75,14 @@ public class AnnounceService {
     }
 
     public Announces addNewAnnounce(Announces newAnnounce) {
+        if (Objects.equals(newAnnounce.getPublishDate(), "")) {
+            newAnnounce.setPublishDate(null);
+        }
+
+        if (Objects.equals(newAnnounce.getCloseDate(), "")) {
+            newAnnounce.setCloseDate(null);
+        }
+
         newAnnounce.setCategoriesObject(categoryService.getCategoryById(newAnnounce.getCategoryId()));
 
         if (newAnnounce.getPublishDate() != null) {
@@ -129,8 +137,10 @@ public class AnnounceService {
         List<Announces> filteredAnnounces = new ArrayList<>();
 
         if (mode == null || mode.equals("admin")) {
+            size = 9;
+            pageable = PageRequest.of(page, size, sort);
             announces = announceRepository.findAll(pageable);
-            filteredAnnounces.addAll(announces.getContent());
+            return announces;
         } else if (mode.equals("active")) {
             List<Announces> test = announceRepository.findAll();
             for (Announces announce : test) {
