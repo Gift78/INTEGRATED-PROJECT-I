@@ -125,7 +125,7 @@ public class AnnounceService {
     public Page<Announces> getAnnouncePage(String mode, int page, int size) {
         Sort sort = Sort.by(Sort.Direction.DESC, "announcementId");
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Announces> announces = null;
+        Page<Announces> announces;
         List<Announces> filteredAnnounces = new ArrayList<>();
 
         if (mode == null || mode.equals("admin")) {
