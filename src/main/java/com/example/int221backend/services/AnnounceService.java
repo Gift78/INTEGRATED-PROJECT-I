@@ -141,7 +141,7 @@ public class AnnounceService {
             combinedAnnounces.addAll(announces3.getContent());
 
             combinedAnnounces.sort(Comparator.comparingLong(Announces::getAnnouncementId).reversed());
-            announces = new PageImpl<>(combinedAnnounces, pageable, combinedAnnounces.size());
+            announces = new PageImpl<>(combinedAnnounces.subList(0, Math.min(combinedAnnounces.size(), size)), pageable, combinedAnnounces.size());
         } else if (mode.equals("close")) {
             announces = announceRepository.findAllByAnnouncementDisplayAndCloseDateIsNotNullAndCloseDateBeforeOrderByAnnouncementIdDesc(AnnouncementDisplay.Y, String.valueOf(Instant.now()), pageable);
         }
