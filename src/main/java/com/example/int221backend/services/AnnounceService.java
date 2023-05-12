@@ -126,27 +126,63 @@ public class AnnounceService {
         Sort sort = Sort.by(Sort.Direction.DESC, "announcementId");
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Announces> announces = null;
+        List<Announces> filteredAnnounces = new ArrayList<>();
 
         if (mode == null || mode.equals("admin")) {
             announces = announceRepository.findAll(pageable);
+            filteredAnnounces.addAll(announces.getContent());
         } else if (mode.equals("active")) {
-            announces = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNull(AnnouncementDisplay.Y, pageable);
-            Page<Announces> announces1 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNullAndPublishDateBefore(AnnouncementDisplay.Y, String.valueOf(Instant.now()), pageable);
-            Page<Announces> announces2 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter(AnnouncementDisplay.Y, String.valueOf(Instant.now()), String.valueOf(Instant.now()), pageable);
-            Page<Announces> announces3 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNotNullAndCloseDateAfter(AnnouncementDisplay.Y, String.valueOf(Instant.now()), pageable);
-
-            List<Announces> combinedAnnounces = new ArrayList<>(announces.getContent());
-            combinedAnnounces.addAll(announces1.getContent());
-            combinedAnnounces.addAll(announces2.getContent());
-            combinedAnnounces.addAll(announces3.getContent());
-
-            combinedAnnounces.sort(Comparator.comparingLong(Announces::getAnnouncementId).reversed());
-            announces = new PageImpl<>(combinedAnnounces.subList(0, Math.min(combinedAnnounces.size(), size)), pageable, combinedAnnounces.size());
+            List<Announces> test = announceRepository.findAll();
+            for (Announces announce : test) {
+                if (String.valueOf(announce.getAnnouncementDisplay()).equals("Y")) {
+                    if (announce.getPublishDate() != null && announce.getCloseDate() == null) {
+                        LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), formatter);
+                        ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
+                        Instant instantPublishDate = zonePublishDate.toInstant();
+                        if (Instant.now().compareTo(instantPublishDate) >= 0) {
+                            filteredAnnounces.add(announce);
+                        }
+                    } else if (announce.getPublishDate() != null && announce.getCloseDate() != null) {
+                        LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), formatter);
+                        ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
+                        Instant instantPublishDate = zonePublishDate.toInstant();
+                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
+                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
+                        Instant instantCloseDate = zoneCloseDate.toInstant();
+                        if (Instant.now().compareTo(instantPublishDate) >= 0 && Instant.now().compareTo(instantCloseDate) < 0) {
+                            filteredAnnounces.add(announce);
+                        }
+                    } else if (announce.getPublishDate() == null && announce.getCloseDate() != null) {
+                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
+                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
+                        Instant instantCloseDate = zoneCloseDate.toInstant();
+                        if (Instant.now().compareTo(instantCloseDate) < 0) {
+                            filteredAnnounces.add(announce);
+                        }
+                    } else if (announce.getPublishDate() == null && announce.getCloseDate() == null) {
+                        filteredAnnounces.add(announce);
+                    }
+                }
+            }
         } else if (mode.equals("close")) {
-            announces = announceRepository.findAllByAnnouncementDisplayAndCloseDateIsNotNullAndCloseDateBeforeOrderByAnnouncementIdDesc(AnnouncementDisplay.Y, String.valueOf(Instant.now()), pageable);
+            List<Announces> test = announceRepository.findAll();
+            for (Announces announce : test) {
+                if (String.valueOf(announce.getAnnouncementDisplay()).equals("Y")) {
+                     if (announce.getCloseDate() != null) {
+                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
+                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
+                        Instant instantCloseDate = zoneCloseDate.toInstant();
+                        if (Instant.now().compareTo(instantCloseDate) >= 0) {
+                            filteredAnnounces.add(announce);
+                        }
+                    }
+                }
+            }
         }
 
-        announces.forEach((announce) -> datetimeFormatter(formatter, announce));
-        return announces;
+        filteredAnnounces.sort(Comparator.comparing(Announces::getAnnouncementId).reversed());
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filteredAnnounces.size());
+        return new PageImpl<>(filteredAnnounces.subList(start, end), pageable, filteredAnnounces.size());
     }
 }
