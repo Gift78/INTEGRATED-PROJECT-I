@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { getAllCategories, getDataById } from '../../composable/getData';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
+import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 
 const { params } = useRoute();
 const router = useRouter();
@@ -15,6 +16,8 @@ const publishTime = ref('')
 const closeDate = ref('')
 const closeTime = ref('')
 const display = ref(false)
+const haveFieldError = ref(false)
+const fieldErrorMsg = ref('')
 
 const categoryItem = ref({})
 
@@ -134,6 +137,54 @@ watch([editedAnnounce, display, publishDate, publishTime, closeDate, closeTime],
 }, { deep: true })
 
 const editAnnouncement = async (updateAnnounce, announceId) => {
+    if (updateAnnounce.announcementTitle === '') {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'Announcement title is required'
+        return
+    }
+
+    if (updateAnnounce.announcementDescription === '') {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'Announcement description is required'
+        return
+    }
+
+    if (updateAnnounce.categoryId === undefined) {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'Category is required'
+        return
+    }
+
+    console.log(publishDate.value + ' ' + publishTime.value)
+    console.log(closeDate.value + ' ' + closeTime.value)
+    if (publishDate.value !== '' && publishTime.value !== '') {
+        updateAnnounce.publishDate = new Date(`${publishDate.value} ${publishTime.value}`).toISOString().slice(0, 19) + 'Z'
+    } else if (publishDate.value !== '' && publishTime.value === '') {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'Both of publish date and time must be filled or empty'
+        return
+    } else if (publishDate.value === '' && publishTime.value !== '') {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'Both of publish date and time must be filled or empty'
+        return
+    } else {
+        updateAnnounce.publishDate = null
+    }
+
+    if (closeDate.value !== '' && closeTime.value !== '') {
+        updateAnnounce.closeDate = new Date(`${closeDate.value} ${closeTime.value}`).toISOString().slice(0, 19) + 'Z'
+    } else if (closeDate.value !== '' && closeTime.value === '') {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'Both of close date and time must be filled or empty'
+        return
+    } else if (closeDate.value === '' && closeTime.value !== '') {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'Both of close date and time must be filled or empty'
+        return
+    } else {
+        updateAnnounce.closeDate = null
+    }
+
     updateAnnounce.publishDate = datetimeFormatterISO(publishDate.value, publishTime.value)
     updateAnnounce.closeDate = datetimeFormatterISO(closeDate.value, closeTime.value)
 
@@ -237,6 +288,9 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
                 :disabled="!isFieldEdit" @click="editAnnouncement(editedAnnounce, params?.id)">Edit</button>
         </div>
     </div>
+
+    <ErrorModalComponent v-if="haveFieldError" :checkCondition="haveFieldError" :typeError="'problem'"
+        :message="fieldErrorMsg" />
 </template>
  
 <style scoped>

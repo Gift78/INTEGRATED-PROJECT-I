@@ -73,10 +73,12 @@ if (props.typeError == 'delete') {
 }
 if (props.typeError == 'problem') {
     type.value = 'problem'
-    messageHeader.value = `Error ${props.status} `
+    if (props.status === undefined) {
+        messageHeader.value = 'Error'
+    } else {
+        messageHeader.value = `Error ${props.status} `
+    }
     messageDesc.value = props.message
-    console.log('test : ' + props.status + ' ' + props.message)
-
 }
 
 const changePage = (name, id) => {
