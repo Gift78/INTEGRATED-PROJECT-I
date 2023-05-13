@@ -72,8 +72,8 @@ public class AnnouncementController {
     public PageDTO<AnnounceDTO> getAnnouncePage(@RequestParam(defaultValue = "admin") String mode,
                                                 @RequestParam(defaultValue = "0") Integer page,
                                                 @RequestParam(defaultValue = "5") Integer size,
-                                                @RequestParam(defaultValue = "0") Integer categoryId) {
-        if (categoryId == null || categoryId==0) {
+                                                @RequestParam(defaultValue = "0") Integer category) {
+        if (category == null || category == 0) {
             Page<Announces> announces = announceService.getAnnouncePage(mode, page, size);
             modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
             PageDTO<AnnounceDTO> pageDTO = listMapper.toPageDTO(announces, AnnounceDTO.class, modelMapper);
@@ -81,7 +81,7 @@ public class AnnouncementController {
             return pageDTO;
         }
         else {
-            Page<Announces> announcesPage = announceService.getAnnounceByCategoryId(mode, page, size, categoryId);
+            Page<Announces> announcesPage = announceService.getAnnounceByCategoryId(mode, page, size, category);
             modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
             PageDTO<AnnounceDTO> pageDTO = listMapper.toPageDTO(announcesPage, AnnounceDTO.class, modelMapper);
             pageDTO.setPage(page);
