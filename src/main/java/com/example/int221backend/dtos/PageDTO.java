@@ -15,6 +15,7 @@ public class PageDTO<T> {
     private Integer totalPages;
     private Integer totalElements;
     private Integer size;
+    private Integer page;
 
     @JsonIgnore
     private Integer number;

@@ -190,6 +190,10 @@ public class AnnounceService {
             }
         }
 
+        for (Announces announce : filteredAnnounces) {
+            datetimeFormatter(formatter, announce);
+        }
+
         filteredAnnounces.sort(Comparator.comparing(Announces::getAnnouncementId).reversed());
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), filteredAnnounces.size());

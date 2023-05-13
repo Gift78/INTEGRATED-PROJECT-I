@@ -72,6 +72,8 @@ public class AnnouncementController {
                                                 @RequestParam(defaultValue = "5") Integer size) {
         Page<Announces> announces = announceService.getAnnouncePage(mode, page, size);
         modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
-        return listMapper.toPageDTO(announces, AnnounceDTO.class, modelMapper);
+        PageDTO<AnnounceDTO> pageDTO = listMapper.toPageDTO(announces, AnnounceDTO.class, modelMapper);
+        pageDTO.setPage(page);
+        return pageDTO;
     }
 }
