@@ -98,9 +98,10 @@ const changePage = (name, id) => {
                 <!-- v-if="data.totalElements < 5" -->
                 <button class="px-5 py-2 bg-" @click="currentPage != 0 ? currentPage-- : ''">&lt; Prev</button>
                 <div v-for="(page, index) in data.totalPages" class="flex">
-                    <button class="px-6"
-                        :class="currentPage == index ? 'bg-emerald-light text-white' : 'bg-zinc-300 hover:bg-zinc-200'"
-                        @click="currentPage = index">{{ page }}</button>
+                    <button class="px-6" :class="currentPage == index ? 'bg-emerald-light text-white' : 'bg-zinc-300 hover:bg-zinc-200',
+                        index == 0 ? 'rounded-l-lg' : '', index == data.totalPages - 1 ? 'rounded-r-lg' : ''"
+                        @click="currentPage = index">{{ page }}
+                    </button>
                 </div>
                 <button class="px-5 py-2" @click="currentPage < data.totalPages - 1 ? currentPage++ : ''">Next &gt;</button>
             </div>
