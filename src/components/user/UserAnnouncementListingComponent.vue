@@ -9,7 +9,7 @@ import formatDatetime from '../../composable/formatDatetime.js'
 import { useMode } from '../../stores/mode';
 import { storeToRefs } from 'pinia'
 import { getAllCategories } from '../../composable/getData';
-import { getannouceByCategoryId } from '../../composable/getData';
+import { getAnnoucePageByCategoryId } from '../../composable/getData';
 
 const router = useRouter()
 const modeStore = useMode()
@@ -18,30 +18,25 @@ const { toggleMode } = modeStore
 const activeButton = ref('text-white bg-emerald-light')
 const closedButton = ref('')
 const data = ref([])
-
 const categoryItem = ref([])
-onMounted(async () => {
-    categoryItem.value = await getAllCategories()
-    categoryItem.value.unshift({categoryId:0,categoryName:'ทั้งหมด'})
-
-})
 const selectedCategory = ref('')
-
 const currentPage = ref(0)
 
-
-watch(currentPage, async (newVal) => {
-    data.value = await getDataByPage(mode.value, newVal, 5);
+onMounted(async () => {
+    categoryItem.value = await getAllCategories()
+    data.value = await getDataByPage(mode.value, currentPage.value, 5);
 })
 
-onMounted(async () => {
-    data.value = await getannouceByCategoryId(mode.value, currentPage.value, 5,1);
-});
-
+watch([currentPage, selectedCategory, mode], async () => {
+    if (selectedCategory.value === 0 || selectedCategory.value === '') {
+        data.value = await getDataByPage(mode.value, currentPage.value, 5);
+    } else {
+        data.value = await getAnnoucePageByCategoryId(mode.value, currentPage.value, 5, selectedCategory.value);
+    }
+})
 
 const changeMode = async (modeName) => {
     toggleMode(modeName)
-    data.value = await getDataByPage(mode.value, currentPage.value, 5);
     if (mode.value == 'active') {
         activeButton.value = 'text-white bg-emerald-light'
         closedButton.value = ''
@@ -57,9 +52,8 @@ const changePage = (name, id) => {
     } else {
         router.push({ name: name })
     }
-    
-}
 
+}
 </script>
  
 <template>
@@ -81,18 +75,16 @@ const changePage = (name, id) => {
             </div>
             <!-- dropdown-->
             <div class="flex mt-3">
-                <div class="w-44 text-cyan-800 font-bold pt-3">Choose Category :</div>
-                <div class="flex pt-3 ">
-                    <select v-model="selectedCategory">
-                        <option v-for="category in categoryItem">{{category.categoryName }}</option>
+                <div class=" w-40 text-cyan-800 font-bold pt-3">Choose Category :</div>
+                <div class="flex pt-3">
+                    <select class="select select-bordered w-full max-w-xs font-normal bg-white" v-model="selectedCategory">
+                        <option value="">ทั้งหมด</option>
+                        <option v-for="category in categoryItem" :value="category.categoryId">
+                            {{ category.categoryName }}
+                        </option>
                     </select>
-
                 </div>
-
-
             </div>
-
-
 
             <hr class="mt-4 border-2">
             <!-- head table -->
@@ -106,7 +98,7 @@ const changePage = (name, id) => {
 
             <!-- content -->
             <div class="text-center items-center justify-center text-gray-400 mt-48 text-2xl"
-                v-if="data === undefined || data.length === 0">No Announcement
+                v-if="data === undefined || data.length === 0 || data.content.length === 0">No Announcement
             </div>
             <div v-else>
                 <div v-for="(announce, index) in data.content" :key="data.id"

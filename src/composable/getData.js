@@ -105,11 +105,11 @@ const getDataByPage = async (mode, page, size) => {
   }
 };
 
-const getannouceByCategoryId  = async (mode, page, size,catId) => {
+const getAnnoucePageByCategoryId = async (mode, page, size, catId) => {
   try {
     const res = await fetch(
       import.meta.env.VITE_ROOT_API +
-        `/api/announcements/pages?mode=${mode}&page=${page}&size=${size}&categoryId=${catId}`
+        `/api/announcements/pages?mode=${mode}&page=${page}&size=${size}&category=${catId}`
     );
     if (res.ok) {
       const data = await res.json();
@@ -133,5 +133,5 @@ export {
   getAllCategories,
   getCategoryById,
   getDataByPage,
-  getannouceByCategoryId
+  getAnnoucePageByCategoryId,
 };
