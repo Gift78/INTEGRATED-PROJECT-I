@@ -29,14 +29,23 @@ onMounted(async () => {
 
 watch([currentPage, selectedCategory, mode], async () => {
     if (selectedCategory.value === 0 || selectedCategory.value === '') {
-        data.value = await getDataByPage(mode.value, currentPage.value, 5);
+        if (currentPage.value === 0) {
+            data.value = await getDataByPage(mode.value, 0, 5);
+        } else {
+            data.value = await getDataByPage(mode.value, currentPage.value, 5);
+        }
     } else {
-        data.value = await getAnnoucePageByCategoryId(mode.value, currentPage.value, 5, selectedCategory.value);
+        if (currentPage.value === 0) {
+            data.value = await getAnnoucePageByCategoryId(mode.value, 0, 5, selectedCategory.value);
+        } else {
+            data.value = await getAnnoucePageByCategoryId(mode.value, currentPage.value, 5, selectedCategory.value);
+        }
     }
 })
 
 const changeMode = async (modeName) => {
     toggleMode(modeName)
+    currentPage.value = 0
     if (mode.value == 'active') {
         activeButton.value = 'text-white bg-emerald-light'
         closedButton.value = ''
@@ -115,7 +124,7 @@ const changePage = (name, id) => {
                 </div>
             </div>
             <!-- pagination -->
-            <div class="w-full my-10 flex justify-start" v-if="data.totalElements > 5">
+            <div class="w-full my-10 flex justify-start" v-if="data?.totalElements > 5">
                 <!-- v-if="data.totalElements < 5" -->
                 <button class="pr-5 py-2 bg-" @click="currentPage != 0 ? currentPage-- : ''">&lt; Prev</button>
                 <div v-for="(page, index) in data.totalPages" class="flex">
