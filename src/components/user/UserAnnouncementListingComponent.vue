@@ -84,7 +84,7 @@ const changePage = (name, id) => {
             </div>
             <!-- dropdown-->
             <div class="flex mt-3">
-                <div class=" w-40 text-cyan-800 font-bold pt-3">Choose Category :</div>
+                <div class="w-40 text-cyan-800 font-bold pt-3 my-auto">Choose Category :</div>
                 <div class="flex pt-3">
                     <select class="select select-bordered w-full max-w-xs font-normal bg-white" v-model="selectedCategory">
                         <option value="">ทั้งหมด</option>
@@ -118,8 +118,9 @@ const changePage = (name, id) => {
                         :class="mode == 'active' ? 'col-span-7' : 'col-span-5'">
                         {{ announce.announcementTitle }}
                     </div>
-                    <div class="ann-close-date col-span-2 text-center" v-if="mode == 'close'">{{
-                        formatDatetime(announce.closeDate) }}</div>
+                    <div class="ann-close-date col-span-2 text-center" v-if="mode == 'close'">
+                        {{ formatDatetime(announce.closeDate) }}
+                    </div>
                     <div class="ann-category text-center">{{ announce.announcementCategory }}</div>
                 </div>
             </div>
