@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, onUpdated } from 'vue';
 import { useRouter } from 'vue-router';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import Published from '../icons/Published.vue'
@@ -8,6 +8,8 @@ import { getDataByPage } from '../../composable/getData';
 import formatDatetime from '../../composable/formatDatetime.js'
 import { useMode } from '../../stores/mode';
 import { storeToRefs } from 'pinia'
+import { getAllCategories } from '../../composable/getData';
+import { getannouceByCategoryId } from '../../composable/getData';
 
 const router = useRouter()
 const modeStore = useMode()
@@ -17,15 +19,24 @@ const activeButton = ref('text-white bg-emerald-light')
 const closedButton = ref('')
 const data = ref([])
 
+const categoryItem = ref([])
+onMounted(async () => {
+    categoryItem.value = await getAllCategories()
+    categoryItem.value.unshift({categoryId:0,categoryName:'ทั้งหมด'})
+
+})
+const selectedCategory = ref('')
+
 const currentPage = ref(0)
 
-onMounted(async () => {
-    data.value = await getDataByPage(mode.value, currentPage.value, 5);
-});
 
 watch(currentPage, async (newVal) => {
     data.value = await getDataByPage(mode.value, newVal, 5);
 })
+
+onMounted(async () => {
+    data.value = await getannouceByCategoryId(mode.value, currentPage.value, 5,1);
+});
 
 
 const changeMode = async (modeName) => {
@@ -46,6 +57,7 @@ const changePage = (name, id) => {
     } else {
         router.push({ name: name })
     }
+    
 }
 
 </script>
@@ -67,6 +79,21 @@ const changePage = (name, id) => {
                     </button>
                 </div>
             </div>
+            <!-- dropdown-->
+            <div class="flex mt-3">
+                <div class="w-44 text-cyan-800 font-bold pt-3">Choose Category :</div>
+                <div class="flex pt-3 ">
+                    <select v-model="selectedCategory">
+                        <option v-for="category in categoryItem">{{category.categoryName }}</option>
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+
             <hr class="mt-4 border-2">
             <!-- head table -->
             <div class="grid grid-cols-9 my-5">
@@ -76,6 +103,7 @@ const changePage = (name, id) => {
                 <div class=" text-zinc-400 col-span-2 text-center" v-if="mode == 'close'">Close Date</div>
                 <div class="text-center text-zinc-400 ">Category</div>
             </div>
+
             <!-- content -->
             <div class="text-center items-center justify-center text-gray-400 mt-48 text-2xl"
                 v-if="data === undefined || data.length === 0">No Announcement
