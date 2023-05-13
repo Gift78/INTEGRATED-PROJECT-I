@@ -96,7 +96,7 @@ const changePage = (name, id) => {
             <!-- pagination -->
             <div class="w-full my-10 flex justify-start" v-if="data.totalElements > 5">
                 <!-- v-if="data.totalElements < 5" -->
-                <button class="px-5 py-2 bg-" @click="currentPage != 0 ? currentPage-- : ''">&lt; Prev</button>
+                <button class="pr-5 py-2 bg-" @click="currentPage != 0 ? currentPage-- : ''">&lt; Prev</button>
                 <div v-for="(page, index) in data.totalPages" class="flex">
                     <button class="px-6" :class="currentPage == index ? 'bg-emerald-light text-white' : 'bg-zinc-300 hover:bg-zinc-200',
                         index == 0 ? 'rounded-l-lg' : '', index == data.totalPages - 1 ? 'rounded-r-lg' : ''"
