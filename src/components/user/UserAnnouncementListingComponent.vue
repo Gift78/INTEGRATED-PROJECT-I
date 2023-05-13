@@ -85,7 +85,8 @@ const changePage = (name, id) => {
                     class="ann-item grid grid-cols-9 bg-white hover:bg-slate-100 my-5 py-7 h-20 rounded-xl shadow-md cursor-pointer"
                     @click="changePage('UserAnnouncementDetail', announce.id)">
                     <div class="text-center"> {{ index + 1 + (currentPage * 5) }}</div>
-                    <div class="ann-title underline" :class="mode == 'active' ? 'col-span-7' : 'col-span-5'">
+                    <div class="ann-title underline overflow-hidden"
+                        :class="mode == 'active' ? 'col-span-7' : 'col-span-5'">
                         {{ announce.announcementTitle }}
                     </div>
                     <div class="ann-close-date col-span-2 text-center" v-if="mode == 'close'">{{
