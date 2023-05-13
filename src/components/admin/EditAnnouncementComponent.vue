@@ -155,8 +155,18 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         return
     }
 
-    console.log(publishDate.value + ' ' + publishTime.value)
-    console.log(closeDate.value + ' ' + closeTime.value)
+    if (updateAnnounce.announcementTitle.length > 200) {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'Announcement title must not exceed 200 characters'
+        return
+    }
+
+    if (updateAnnounce.announcementDescription.length > 10000) {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'Announcement description must not exceed 10000 characters'
+        return
+    }
+
     if (publishDate.value !== '' && publishTime.value !== '') {
         updateAnnounce.publishDate = new Date(`${publishDate.value} ${publishTime.value}`).toISOString().slice(0, 19) + 'Z'
     } else if (publishDate.value !== '' && publishTime.value === '') {
@@ -228,7 +238,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         <div class="ann-item bg-white flex-col rounded-lg p-10 shadow-lg mt-5" v-if="!isModalOpen">
             <div class="flex">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Title</div>
-                <input type="text" class="ann-title h-10 w-full bg-slate-100 rounded-lg pl-4 border"
+                <input type="text" class="ann-title h-10 w-full bg-slate-100 rounded-lg pl-4 border" maxlength="200"
                     v-model="editedAnnounce.announcementTitle" />
             </div>
             <div class="flex mt-5">
@@ -243,7 +253,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Description</div>
-                <textarea class="ann-description pt-2 w-full bg-slate-100 rounded-lg pl-4 border" rows="5"
+                <textarea class="ann-description pt-2 w-full bg-slate-100 rounded-lg pl-4 border" rows="5" maxlength="10000"
                     v-model="editedAnnounce.announcementDescription"></textarea>
             </div>
 

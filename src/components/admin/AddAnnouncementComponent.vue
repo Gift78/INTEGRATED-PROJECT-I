@@ -70,6 +70,18 @@ const addNewAnnouncement = async (annonuce) => {
         return
     }
 
+    if (annonuce.announcementTitle.length > 200) {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'Announcement title must not exceed 200 characters'
+        return
+    }
+
+    if (annonuce.announcementDescription.length > 10000) {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'Announcement description must not exceed 10000 characters'
+        return
+    }
+
     if (publishDate.value !== '' && publishTime.value !== '') {
         annonuce.publishDate = new Date(`${publishDate.value} ${publishTime.value}`).toISOString().slice(0, 19) + 'Z'
     } else if (publishDate.value !== '' && publishTime.value === '') {
@@ -148,7 +160,7 @@ const addNewAnnouncement = async (annonuce) => {
             <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
                 <div class="flex">
                     <div class="ml-16 text-cyan-800 w-20 py-3">Title :</div>
-                    <input type="text" v-model="newAnnouncement.announcementTitle"
+                    <input type="text" v-model="newAnnouncement.announcementTitle" maxlength="200"
                         class="ann-title bg-white border-2 rounded-lg w-full mr-20 py-3 pl-5">
                 </div>
                 <div class="flex">
@@ -171,8 +183,10 @@ const addNewAnnouncement = async (annonuce) => {
             <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
                 <div class="flex">
                     <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Description :</div>
-                    <textarea rows="10" class="ann-description bg-white pl-5 pt-3 border-2 rounded-lg w-full mr-20"
-                        v-model="newAnnouncement.announcementDescription"></textarea>
+                    <textarea rows="10" maxlength="10000"
+                        class="ann-description bg-white pl-5 pt-3 border-2 rounded-lg w-full mr-20"
+                        v-model="newAnnouncement.announcementDescription">
+                    </textarea>
                 </div>
             </div>
             <!-- Date and Display -->
