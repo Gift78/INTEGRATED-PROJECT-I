@@ -9,8 +9,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
@@ -65,7 +65,7 @@ public class AnnouncementController {
     public AnnounceDetailDTO create(@Valid @RequestBody Announces newAnnounce, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             List<ObjectError> errors = bindingResult.getAllErrors();
-            Set<String> errorSet = errors.stream().map(e -> e.getDefaultMessage()).collect(Collectors.toSet());
+            Set<String> errorSet = errors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toSet());
             throw new ValidationException(errorSet.toString());
         }
 
