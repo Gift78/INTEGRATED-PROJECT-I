@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUpdated } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import Published from '../icons/Published.vue'
@@ -21,15 +21,10 @@ const currentPage = ref(0)
 
 onMounted(async () => {
     data.value = await getDataByPage(mode.value, currentPage.value, 5);
-    console.log(data.value)
-    if (data.value.totalElements < 5) {
-        console.log('not show')
-    } else {
-        console.log('show')
-    }
 });
-onUpdated(async () => {
-    data.value = await getDataByPage(mode.value, currentPage.value, 5)
+
+watch(currentPage, async (newVal) => {
+    data.value = await getDataByPage(mode.value, newVal, 5);
 })
 
 
@@ -89,7 +84,7 @@ const changePage = (name, id) => {
                 <div v-for="(announce, index) in data.content" :key="data.id"
                     class="ann-item grid grid-cols-9 bg-white hover:bg-slate-100 my-5 py-7 h-20 rounded-xl shadow-md cursor-pointer"
                     @click="changePage('UserAnnouncementDetail', announce.id)">
-                    <div class="text-center"> {{ index + 1 }}</div>
+                    <div class="text-center"> {{ index + 1 + (currentPage * 5) }}</div>
                     <div class="ann-title underline" :class="mode == 'active' ? 'col-span-7' : 'col-span-5'">
                         {{ announce.announcementTitle }}
                     </div>
@@ -103,7 +98,8 @@ const changePage = (name, id) => {
                 <!-- v-if="data.totalElements < 5" -->
                 <button class="px-5 py-2 bg-" @click="currentPage != 0 ? currentPage-- : ''">&lt; Prev</button>
                 <div v-for="(page, index) in data.totalPages" class="flex">
-                    <button class="px-6" :class="currentPage == index ? 'bg-emerald-light text-white' : 'bg-zinc-300 hover:bg-zinc-200'"
+                    <button class="px-6"
+                        :class="currentPage == index ? 'bg-emerald-light text-white' : 'bg-zinc-300 hover:bg-zinc-200'"
                         @click="currentPage = index">{{ page }}</button>
                 </div>
                 <button class="px-5 py-2" @click="currentPage < data.totalPages - 1 ? currentPage++ : ''">Next &gt;</button>
