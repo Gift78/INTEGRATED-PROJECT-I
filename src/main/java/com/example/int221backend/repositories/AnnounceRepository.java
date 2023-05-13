@@ -25,4 +25,7 @@ public interface AnnounceRepository extends JpaRepository<Announces, Integer> {
     Page<Announces> findAllByAnnouncementDisplayAndCloseDateIsNotNullAndCloseDateBeforeOrderByAnnouncementIdDesc(AnnouncementDisplay announcementDisplay, String s, Pageable pageable);
 
     Page<Announces> findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter(AnnouncementDisplay announcementDisplay, String s, String s1, Pageable pageable);
+
+    Page<Announces> findAllByCategoryId(Integer catId,Pageable pageable);
+    List<Announces> findAllByCategoryId(Integer catId);
 }

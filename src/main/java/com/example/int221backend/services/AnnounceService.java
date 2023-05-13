@@ -68,6 +68,8 @@ public class AnnounceService {
         return announces;
     }
 
+
+
     public Announces getAnnounceById(Integer announceId) {
         Announces announce = announceRepository.findById(announceId).orElseThrow(() -> new AnnounceNotFoundException(announceId));
         datetimeFormatter(formatter, announce);
@@ -98,7 +100,7 @@ public class AnnounceService {
         return announce;
     }
 
-    public void removeAnnounce(Integer announceId){
+    public void removeAnnounce(Integer announceId) {
         Announces announce = announceRepository.findById(announceId).orElseThrow(() -> new AnnounceNotFoundException(announceId));
         announceRepository.delete(announce);
     }
@@ -178,7 +180,79 @@ public class AnnounceService {
             List<Announces> test = announceRepository.findAll();
             for (Announces announce : test) {
                 if (String.valueOf(announce.getAnnouncementDisplay()).equals("Y")) {
-                     if (announce.getCloseDate() != null) {
+                    if (announce.getCloseDate() != null) {
+                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
+                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
+                        Instant instantCloseDate = zoneCloseDate.toInstant();
+                        if (Instant.now().compareTo(instantCloseDate) >= 0) {
+                            filteredAnnounces.add(announce);
+                        }
+                    }
+                }
+            }
+        }
+
+        for (Announces announce : filteredAnnounces) {
+            datetimeFormatter(formatter, announce);
+        }
+
+        filteredAnnounces.sort(Comparator.comparing(Announces::getAnnouncementId).reversed());
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filteredAnnounces.size());
+        return new PageImpl<>(filteredAnnounces.subList(start, end), pageable, filteredAnnounces.size());
+    }
+
+    public Page<Announces> getAnnounceByCategoryId(String mode, Integer page, Integer size, Integer catId) {
+//        Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.DESC,"announcementId"));
+//        return announceRepository.findAllByCategoryId(catId,pageable);
+        Sort sort = Sort.by(Sort.Direction.DESC, "announcementId");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Announces> announces;
+        List<Announces> filteredAnnounces = new ArrayList<>();
+
+        if (mode == null || mode.equals("admin")) {
+            size = 9;
+            pageable = PageRequest.of(page, size, sort);
+            announces = announceRepository.findAllByCategoryId(catId,pageable);
+            return announces;
+        } else if (mode.equals("active")) {
+            List<Announces> test = announceRepository.findAllByCategoryId(catId);
+            for (Announces announce : test) {
+                if (String.valueOf(announce.getAnnouncementDisplay()).equals("Y")) {
+                    if (announce.getPublishDate() != null && announce.getCloseDate() == null) {
+                        LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), formatter);
+                        ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
+                        Instant instantPublishDate = zonePublishDate.toInstant();
+                        if (Instant.now().compareTo(instantPublishDate) >= 0) {
+                            filteredAnnounces.add(announce);
+                        }
+                    } else if (announce.getPublishDate() != null && announce.getCloseDate() != null) {
+                        LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), formatter);
+                        ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
+                        Instant instantPublishDate = zonePublishDate.toInstant();
+                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
+                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
+                        Instant instantCloseDate = zoneCloseDate.toInstant();
+                        if (Instant.now().compareTo(instantPublishDate) >= 0 && Instant.now().compareTo(instantCloseDate) < 0) {
+                            filteredAnnounces.add(announce);
+                        }
+                    } else if (announce.getPublishDate() == null && announce.getCloseDate() != null) {
+                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
+                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
+                        Instant instantCloseDate = zoneCloseDate.toInstant();
+                        if (Instant.now().compareTo(instantCloseDate) < 0) {
+                            filteredAnnounces.add(announce);
+                        }
+                    } else if (announce.getPublishDate() == null && announce.getCloseDate() == null) {
+                        filteredAnnounces.add(announce);
+                    }
+                }
+            }
+        } else if (mode.equals("close")) {
+            List<Announces> test = announceRepository.findAllByCategoryId(catId);
+            for (Announces announce : test) {
+                if (String.valueOf(announce.getAnnouncementDisplay()).equals("Y")) {
+                    if (announce.getCloseDate() != null) {
                         LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
                         ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
                         Instant instantCloseDate = zoneCloseDate.toInstant();

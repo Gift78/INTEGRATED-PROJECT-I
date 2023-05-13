@@ -9,11 +9,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins= {"http://localhost:5173", "http://intproj22.sit.kmutt.ac.th", "http://127.0.0.1:5173"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://intproj22.sit.kmutt.ac.th", "http://127.0.0.1:5173"})
 @RequestMapping("/api/announcements")
 public class AnnouncementController {
     @Autowired
@@ -55,12 +57,12 @@ public class AnnouncementController {
     }
 
     @DeleteMapping("{announceId}")
-    public void removeAnnounce(@PathVariable Integer announceId){
+    public void removeAnnounce(@PathVariable Integer announceId) {
         announceService.removeAnnounce((announceId));
     }
 
     @PutMapping("{announceId}")
-    public AnnounceTestDTO updateAnnounce(@PathVariable Integer announceId, @RequestBody Announces newAnnounce){
+    public AnnounceTestDTO updateAnnounce(@PathVariable Integer announceId, @RequestBody Announces newAnnounce) {
         Announces announce = announceService.updateAnnounce(announceId, newAnnounce);
         modelMapper.addConverter(new AnnouncesToAnnounceTestDTOConverter());
         return modelMapper.map(announce, AnnounceTestDTO.class);
@@ -69,11 +71,20 @@ public class AnnouncementController {
     @GetMapping("/pages")
     public PageDTO<AnnounceDTO> getAnnouncePage(@RequestParam(defaultValue = "admin") String mode,
                                                 @RequestParam(defaultValue = "0") Integer page,
-                                                @RequestParam(defaultValue = "5") Integer size) {
-        Page<Announces> announces = announceService.getAnnouncePage(mode, page, size);
-        modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
-        PageDTO<AnnounceDTO> pageDTO = listMapper.toPageDTO(announces, AnnounceDTO.class, modelMapper);
-        pageDTO.setPage(page);
-        return pageDTO;
+                                                @RequestParam(defaultValue = "5") Integer size,
+                                                @RequestParam(defaultValue = "0")Integer categoryId) {
+        if (categoryId == null || categoryId==0) {
+            Page<Announces> announces = announceService.getAnnouncePage(mode, page, size);
+            modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
+            PageDTO<AnnounceDTO> pageDTO = listMapper.toPageDTO(announces, AnnounceDTO.class, modelMapper);
+            pageDTO.setPage(page);
+            return pageDTO;
+        }
+        else {
+            Page<Announces> announcesPage = announceService.getAnnounceByCategoryId(mode, page, size, categoryId);
+            PageDTO<AnnounceDTO> pageDTO = listMapper.toPageDTO(announcesPage, AnnounceDTO.class, modelMapper);
+            pageDTO.setPage(page);
+            return pageDTO;
+        }
     }
 }
