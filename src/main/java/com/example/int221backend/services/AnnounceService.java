@@ -142,6 +142,9 @@ public class AnnounceService {
             size = 9;
             pageable = PageRequest.of(page, size, sort);
             announces = announceRepository.findAll(pageable);
+            for (Announces announce : announces) {
+                datetimeFormatter(formatter, announce);
+            }
             return announces;
         } else if (mode.equals("active")) {
             List<Announces> test = announceRepository.findAll();
