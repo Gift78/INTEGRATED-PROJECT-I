@@ -5,9 +5,14 @@ import com.example.int221backend.dtos.*;
 import com.example.int221backend.entities.Announces;
 import com.example.int221backend.services.AnnounceService;
 import com.example.int221backend.utils.ListMapper;
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,12 +54,26 @@ public class AnnouncementController {
         return modelMapper.map(announcesExist, AnnounceDetailDTO.class);
     }
 
+//    @PostMapping("")
+//    public AnnounceDetailDTO create(@Valid @RequestBody Announces newAnnounce, BindingResult bindingResult) {
+//        Announces announce = announceService.addNewAnnounce(newAnnounce);
+//        modelMapper.addConverter(new AnnouncesToAnnounceDetailDTOConverter());
+//        return modelMapper.map(announce, AnnounceDetailDTO.class);
+//    }
+
     @PostMapping("")
-    public AnnounceDetailDTO create(@RequestBody Announces newAnnounce) {
+    public AnnounceDetailDTO create(@Valid @RequestBody Announces newAnnounce, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<ObjectError> errors = bindingResult.getAllErrors();
+            Set<String> errorSet = errors.stream().map(e -> e.getDefaultMessage()).collect(Collectors.toSet());
+            throw new ValidationException(errorSet.toString());
+        }
+
         Announces announce = announceService.addNewAnnounce(newAnnounce);
         modelMapper.addConverter(new AnnouncesToAnnounceDetailDTOConverter());
         return modelMapper.map(announce, AnnounceDetailDTO.class);
     }
+
 
     @DeleteMapping("{announceId}")
     public void removeAnnounce(@PathVariable Integer announceId) {

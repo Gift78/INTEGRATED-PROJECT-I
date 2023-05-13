@@ -1,5 +1,6 @@
 package com.example.int221backend.entities;
 
+import com.example.int221backend.validators.ValidPublishAndCloseDate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "announces")
+@ValidPublishAndCloseDate
 public class Announces {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
