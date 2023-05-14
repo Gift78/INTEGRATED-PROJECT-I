@@ -1,6 +1,6 @@
 <script setup>
 import TimezoneComponent from '../base/TimezoneComponent.vue';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUpdated, ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
 import { getAllCategories } from '../../composable/getData';
 import ArrowRight from '../icons/ArrowRight.vue'
@@ -18,6 +18,8 @@ const closeDate = ref('')
 const closeTime = ref('')
 const haveFieldError = ref(false)
 const fieldErrorMsg = ref('')
+const enablePublishTime = ref(false)
+const enableCloseTime = ref(false)
 
 const categoryItem = ref([])
 onMounted(async () => {
@@ -33,7 +35,7 @@ const newAnnouncement = ref({
     categoryId: null
 })
 
-watch([newAnnouncement, displayed], () => {
+watch([newAnnouncement, displayed, publishDate,closeDate], () => {
     if (newAnnouncement.value.announcementTitle == '' || newAnnouncement.value.announcementDescription == '' || newAnnouncement.value.categoryId == undefined) {
         isFormValid.value = false
     } else {
@@ -45,7 +47,26 @@ watch([newAnnouncement, displayed], () => {
     } else {
         newAnnouncement.value.announcementDisplay = 'N'
     }
+
+    if (publishTime.value == ''){
+        publishTime.value = publishDate.value !== '' ? '06:00' : ''
+    }
+    if (closeTime.value == ''){
+        closeTime.value = closeDate.value !== '' ? '18:00' : ''
+    }
+
 }, { deep: true })
+
+onUpdated(() => {
+    // enable or disable publish time
+    if (publishDate.value !== '') {
+        enablePublishTime.value = true
+    }
+    // enable or disable close time
+    if (closeDate.value !== '') {
+        enableCloseTime.value = true
+    }
+})
 
 const changePage = (name) => {
     router.push({ name: name })
@@ -108,6 +129,19 @@ const addNewAnnouncement = async (annonuce) => {
         return
     } else {
         annonuce.closeDate = null
+    }
+
+    // validate date
+    const currentTime = new Date().toISOString();
+    if (annonuce.closeDate < currentTime) {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'close date must be a future date'
+        return
+    }
+    if (annonuce.publishDate > annonuce.closeDate) {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'close date must be a future date'
+        return
     }
 
     try {
@@ -199,7 +233,8 @@ const addNewAnnouncement = async (annonuce) => {
                             <input type="date" class="ann-publish-date bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
                                 v-model="publishDate">
                             <input type="time" class="ann-publish-time bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
-                                v-model="publishTime">
+                                v-model="publishTime" :disabled="!enablePublishTime"
+                                :class="!enablePublishTime ? 'cursor-not-allowed text-zinc-300' : ''">
                         </div>
                     </div>
                     <ArrowRight class="text-zinc-300 mt-8" />
@@ -209,7 +244,8 @@ const addNewAnnouncement = async (annonuce) => {
                             <input type="date" class="ann-close-date bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
                                 v-model="closeDate">
                             <input type="time" class="ann-close-time bg-white mx-3 w-full border-2 rounded-lg px-10 py-2"
-                                v-model="closeTime">
+                                v-model="closeTime" :disabled="!enableCloseTime"
+                                :class="!enableCloseTime ? 'cursor-not-allowed text-zinc-300' : ''">
                         </div>
                     </div>
                 </div>
