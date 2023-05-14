@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, onUpdated } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import Published from '../icons/Published.vue'
@@ -63,6 +63,17 @@ const changePage = (name, id) => {
     }
 
 }
+
+const buttonsToShow = 10;
+const displayedButtons = computed(() => {
+    const from = Math.max(1, currentPage.value - Math.floor(buttonsToShow / 2) - 3);
+    const to = Math.min(data.value.totalPages, from + buttonsToShow - 1);
+    return Array.from({ length: to - from + 1 }, (_, index) => from + index);
+
+});
+const changePageButton = (page) => {
+    currentPage.value = page;
+};
 </script>
  
 <template>
@@ -124,17 +135,25 @@ const changePage = (name, id) => {
                     <div class="ann-category text-center">{{ announce.announcementCategory }}</div>
                 </div>
             </div>
+            
             <!-- pagination -->
-            <div class="w-full my-10 flex justify-start" v-if="data?.totalElements > 5">
-                <!-- v-if="data.totalElements < 5" -->
-                <button class="pr-5 py-2 bg-" @click="currentPage != 0 ? currentPage-- : ''">&lt; Prev</button>
-                <div v-for="(page, index) in data.totalPages" class="flex">
-                    <button class="px-6" :class="currentPage == index ? 'bg-emerald-light text-white' : 'bg-zinc-300 hover:bg-zinc-200',
-                        index == 0 ? 'rounded-l-lg' : '', index == data.totalPages - 1 ? 'rounded-r-lg' : ''"
-                        @click="currentPage = index">{{ page }}
-                    </button>
-                </div>
-                <button class="px-5 py-2" @click="currentPage < data.totalPages - 1 ? currentPage++ : ''">Next &gt;</button>
+            <div class="w-full my-10 flex justify-center" v-if="data?.totalElements > 5">
+                <!-- previuous button -->
+                <button class="px-5 py-2 rounded-l-full hover:bg-slate-200" @click="changePageButton(currentPage - 1)"
+                    :disabled="currentPage === 0" :class="currentPage === 0 ? 'cursor-not-allowed' : ''">
+                    &lt;Prev</button>
+                <!-- page number button -->
+                <button class="w-20 h-10" v-for="(button, index) in displayedButtons" :key="button"
+                    @click="changePageButton(button - 1)" :class="{ active: currentPage === button },
+                        currentPage == button - 1 ? 'bg-emerald-light text-white' : 'bg-zinc-300 hover:bg-zinc-200',
+                        index == 0 ? 'rounded-l-lg' : '',
+                        index == displayedButtons.length - 1 ? 'rounded-r-lg' : ''">
+                    {{ button }}
+                </button>
+                <!-- next button -->
+                <button class="px-5 py-2 rounded-r-full hover:bg-slate-200" @click="changePageButton(currentPage + 1)"
+                    :disabled="currentPage === data.totalPages - 1"
+                    :class="currentPage === data.totalPages - 1 ? 'cursor-not-allowed' : ''">Next &gt;</button>
             </div>
         </div>
     </div>
