@@ -15,6 +15,11 @@ public class DisplayValidator implements ConstraintValidator<ValidDisplay, Annou
             addConstraintViolation("must be either 'Y' or 'N'", "announcementDisplay", context);
         }
 
+        if (announce.getAnnouncementDisplay() == null) {
+            announce.setAnnouncementDisplay("N");
+            return true;
+        }
+
         return false;
     }
 
