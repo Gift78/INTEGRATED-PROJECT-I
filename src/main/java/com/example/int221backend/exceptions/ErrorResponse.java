@@ -18,13 +18,13 @@ public class ErrorResponse {
     private final String instance;
     private final String error;
     private String stackTrace;
-    private List<ValidationError> errors;
+    private List<ValidationError> detail;
 
     public void addValidationError(String field, String message) {
-        if (Objects.isNull(errors)) {
-            errors = new java.util.ArrayList<>();
+        if (Objects.isNull(detail)) {
+            detail = new java.util.ArrayList<>();
         }
-        errors.add(new ValidationError(field, message));
+        detail.add(new ValidationError(field, message));
     }
 
     @Getter
@@ -32,6 +32,6 @@ public class ErrorResponse {
     @RequiredArgsConstructor
     public static class ValidationError {
         private final String field;
-        private final String message;
+        private final String errorMessage;
     }
 }

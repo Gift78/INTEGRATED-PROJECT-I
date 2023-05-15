@@ -87,11 +87,23 @@ public class AnnounceService {
 
         newAnnounce.setCategoriesObject(categoryService.getCategoryById(newAnnounce.getCategoryId()));
 
+        DateTimeFormatter test = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
         if (newAnnounce.getPublishDate() != null) {
+            if (newAnnounce.getPublishDate().length() == 24) {
+                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), test);
+                newAnnounce.setPublishDate(localDateTime.format(utcFormatter));
+            }
+
             LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), utcFormatter).atZone(ZoneId.of("UTC")).toLocalDateTime();
             newAnnounce.setPublishDate(localDateTime.format(localFormatter));
         }
         if (newAnnounce.getCloseDate() != null) {
+            if (newAnnounce.getCloseDate().length() == 24) {
+                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), test);
+                newAnnounce.setCloseDate(localDateTime.format(utcFormatter));
+            }
+
             LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), utcFormatter).atZone(ZoneId.of("UTC")).toLocalDateTime();
             newAnnounce.setCloseDate(localDateTime.format(localFormatter));
         }
@@ -111,11 +123,23 @@ public class AnnounceService {
         Categories category = categoryService.getCategoryById(newAnnounce.getCategoryId());
         newAnnounce.setCategoriesObject(category);
 
+        DateTimeFormatter test = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
         if (newAnnounce.getPublishDate() != null) {
+            if (newAnnounce.getPublishDate().length() == 24) {
+                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), test);
+                newAnnounce.setPublishDate(localDateTime.format(utcFormatter));
+            }
+
             LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), utcFormatter).atZone(ZoneId.of("UTC")).toLocalDateTime();
             newAnnounce.setPublishDate(localDateTime.format(localFormatter));
         }
         if (newAnnounce.getCloseDate() != null) {
+            if (newAnnounce.getCloseDate().length() == 24) {
+                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), test);
+                newAnnounce.setCloseDate(localDateTime.format(utcFormatter));
+            }
+
             LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), utcFormatter).atZone(ZoneId.of("UTC")).toLocalDateTime();
             newAnnounce.setCloseDate(localDateTime.format(localFormatter));
         }

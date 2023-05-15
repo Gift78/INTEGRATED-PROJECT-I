@@ -5,8 +5,8 @@ import com.example.int221backend.dtos.*;
 import com.example.int221backend.entities.Announces;
 import com.example.int221backend.services.AnnounceService;
 import com.example.int221backend.utils.ListMapper;
-import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
+import jakarta.validation.*;
+import jakarta.validation.metadata.ConstraintDescriptor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,19 +55,10 @@ public class AnnouncementController {
         return modelMapper.map(announcesExist, AnnounceDetailDTO.class);
     }
 
-//    @PostMapping("")
-//    public AnnounceDetailDTO create(@Valid @RequestBody Announces newAnnounce, BindingResult bindingResult) {
-//        Announces announce = announceService.addNewAnnounce(newAnnounce);
-//        modelMapper.addConverter(new AnnouncesToAnnounceDetailDTOConverter());
-//        return modelMapper.map(announce, AnnounceDetailDTO.class);
-//    }
-
     @PostMapping("")
     public AnnounceDetailDTO create(@Valid @RequestBody Announces newAnnounce, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            Set<String> errorSet = errors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toSet());
-            throw new ValidationException(errorSet.toString());
+
         }
 
         Announces announce = announceService.addNewAnnounce(newAnnounce);
@@ -81,7 +73,7 @@ public class AnnouncementController {
     }
 
     @PutMapping("{announceId}")
-    public AnnounceTestDTO updateAnnounce(@PathVariable Integer announceId, @RequestBody Announces newAnnounce) {
+    public AnnounceTestDTO updateAnnounce(@Valid @PathVariable Integer announceId, @RequestBody Announces newAnnounce) {
         Announces announce = announceService.updateAnnounce(announceId, newAnnounce);
         modelMapper.addConverter(new AnnouncesToAnnounceTestDTOConverter());
         return modelMapper.map(announce, AnnounceTestDTO.class);
