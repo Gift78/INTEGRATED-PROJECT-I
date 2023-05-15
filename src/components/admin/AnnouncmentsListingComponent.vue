@@ -48,9 +48,8 @@ const deleteAnnouncement = async (id) => {
 </script>
 
 <template>
-    <div>
+    <div class="h-screen">
         <div style="width: 80em;" class="mx-auto">
-
             <!-- header -->
             <div class="text-center text-3xl text-cyan-800 py-10">SIT Announcement System (SAS)</div>
 
@@ -110,14 +109,14 @@ const deleteAnnouncement = async (id) => {
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- delete modal -->
-        <ErrorModalComponent :checkCondition="confirmDelete" :typeError="'delete'" :method="deleteAnnouncement"
-            :parameter="deleteId" @close="confirmDelete = false" />
+            <!-- delete modal -->
+            <ErrorModalComponent :checkCondition="confirmDelete" :typeError="'delete'" :method="deleteAnnouncement"
+                :parameter="deleteId" @close="confirmDelete = false" />
 
-        <!-- error when delete modal -->
-        <ErrorModalComponent v-if="errorOnDelete" :checkCondition="errorOnDelete" :typeError="'problem'"
-            :status="errors?.status" :message="errors?.message" />
+            <!-- error when delete modal -->
+            <ErrorModalComponent v-if="errorOnDelete" :checkCondition="errorOnDelete" :typeError="'problem'"
+                :status="errors?.status" :message="errors?.message" />
+        </div>
     </div>
 </template>
 

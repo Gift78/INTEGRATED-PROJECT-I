@@ -21,11 +21,8 @@ const data = ref([])
 const categoryItem = ref([])
 const selectedCategory = ref('')
 const currentPage = ref(0)
-const testCloseDate = ref()
 
 onMounted(async () => {
-    categoryItem.value = await getAllCategories()
-    data.value = await getDataByPage(mode.value, currentPage.value, 5);
     if (mode.value == 'active') {
         activeButton.value = 'text-white bg-emerald-light'
         closedButton.value = ''
@@ -33,6 +30,9 @@ onMounted(async () => {
         closedButton.value = 'text-white bg-red-500'
         activeButton.value = ''
     }
+
+    categoryItem.value = await getAllCategories()
+    data.value = await getDataByPage(mode.value, currentPage.value, 5);
 })
 
 watch([currentPage, selectedCategory, mode], async () => {
@@ -51,8 +51,8 @@ watch([currentPage, selectedCategory, mode], async () => {
     }
 })
 
-const changeMode = async (modeName) => {
-    toggleMode(modeName)
+const changeMode = async () => {
+    toggleMode()
     currentPage.value = 0
     if (mode.value == 'active') {
         activeButton.value = 'text-white bg-emerald-light'
@@ -69,7 +69,6 @@ const changePage = (name, id) => {
     } else {
         router.push({ name: name })
     }
-
 }
 
 const buttonsToShow = 10;
@@ -85,22 +84,20 @@ const changePageButton = (page) => {
 </script>
  
 <template>
-    <div class="text-cyan-800">
+    <div class="h-screen text-cyan-800">
         <div style="width: 80em;" class="mx-auto">
             <!-- header -->
             <div class="text-center text-3xl text-cyan-800 py-10">SIT Announcement System (SAS)</div>
             <!-- time zone bar -->
             <div class="flex justify-between">
                 <TimezoneComponent />
-                <div class="flex bg-white p-1 rounded-xl mx-1 ">
-                    <button class="ann-button p-1 px-5 text-black rounded-lg flex" @click="changeMode('active')"
-                        :class="activeButton">
+                <div class="ann-button flex bg-white p-1 rounded-xl mx-1 cursor-pointer" @click="changeMode">
+                    <div class="p-1 px-5 text-black rounded-lg flex" :class="activeButton">
                         <Published class="mr-2" />ACTIVE
-                    </button>
-                    <button class="ann-button p-1 px-5 text-black rounded-lg flex" @click="changeMode('close')"
-                        :class="closedButton">
+                    </div>
+                    <div class="p-1 px-5 text-black rounded-lg flex" :class="closedButton">
                         <Unpublished class="mr-2" />CLOSED
-                    </button>
+                    </div>
                 </div>
             </div>
             <!-- dropdown-->

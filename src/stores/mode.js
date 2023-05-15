@@ -3,8 +3,12 @@ import { defineStore } from "pinia";
 
 export const useMode = defineStore("mode", () => {
   const mode = ref("active");
-  const toggleMode = (modeName) => {
-    mode.value = modeName;
+  const toggleMode = () => {
+    if (mode.value === "active") {
+      mode.value = "close";
+    } else {
+      mode.value = "active";
+    }
   };
 
   return { mode, toggleMode };
