@@ -1,6 +1,5 @@
 package com.example.int221backend.services;
 
-import com.example.int221backend.entities.AnnouncementDisplay;
 import com.example.int221backend.entities.Announces;
 import com.example.int221backend.entities.Categories;
 import com.example.int221backend.exceptions.AnnounceNotFoundException;
@@ -46,10 +45,10 @@ public class AnnounceService {
         if (mode == null || mode.equals("admin")) {
             announces = announceRepository.findAllByOrderByAnnouncementIdDesc();
         } else if (mode.equals("active")) {
-            announces = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNull(AnnouncementDisplay.Y);
-            List<Announces> announces1 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNullAndPublishDateBefore(AnnouncementDisplay.Y, String.valueOf(Instant.now()));
-            List<Announces> announces2 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter(AnnouncementDisplay.Y, String.valueOf(Instant.now()), String.valueOf(Instant.now()));
-            List<Announces> announces3 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNotNullAndCloseDateAfter(AnnouncementDisplay.Y, String.valueOf(Instant.now()));
+            announces = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNull("Y");
+            List<Announces> announces1 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNullAndPublishDateBefore("Y", String.valueOf(Instant.now()));
+            List<Announces> announces2 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter("Y", String.valueOf(Instant.now()), String.valueOf(Instant.now()));
+            List<Announces> announces3 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNotNullAndCloseDateAfter("Y", String.valueOf(Instant.now()));
             announces.addAll(announces1);
             announces.addAll(announces2);
             announces.addAll(announces3);
@@ -62,7 +61,7 @@ public class AnnounceService {
             // sort the list by announcementId desc
             announces.sort(Comparator.comparing(Announces::getAnnouncementId).reversed());
         } else if (mode.equals("close")) {
-            announces = announceRepository.findAllByAnnouncementDisplayAndCloseDateIsNotNullAndCloseDateBeforeOrderByAnnouncementIdDesc(AnnouncementDisplay.Y, String.valueOf(Instant.now()));
+            announces = announceRepository.findAllByAnnouncementDisplayAndCloseDateIsNotNullAndCloseDateBeforeOrderByAnnouncementIdDesc("Y", String.valueOf(Instant.now()));
         }
         announces.forEach((announce) -> datetimeFormatter(formatter, announce));
         return announces;

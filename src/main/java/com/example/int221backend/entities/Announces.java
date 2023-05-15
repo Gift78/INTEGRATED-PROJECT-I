@@ -1,5 +1,6 @@
 package com.example.int221backend.entities;
 
+import com.example.int221backend.validators.ValidDisplay;
 import com.example.int221backend.validators.ValidPublishAndCloseDate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -13,6 +14,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "announces")
 @ValidPublishAndCloseDate
+@ValidDisplay
 public class Announces {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,9 +23,7 @@ public class Announces {
     private String announcementTitle;
     @NotBlank @Size(min = 1, max = 10000)
     private String announcementDescription;
-    @Column(nullable = true)
     private String publishDate;
-    @Column(nullable = true)
     private String closeDate;
 
     @JsonIgnore
@@ -31,9 +31,8 @@ public class Announces {
     @JoinColumn(name = "categoryId", nullable = false)
     private Categories categoriesObject;
 
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('Y','n') DEFAULT 'N'")
-    private AnnouncementDisplay announcementDisplay = AnnouncementDisplay.N;
+    @Column(columnDefinition = "VARCHAR(1) DEFAULT 'N'")
+    private String announcementDisplay = "N";
 
     @Column(insertable=false, updatable=false)
     private int categoryId;
