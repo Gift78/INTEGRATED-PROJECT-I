@@ -15,7 +15,6 @@ const isModalOpen = ref(false);
 const errors = ref()
 const modeStore = useMode()
 const { mode } = storeToRefs(modeStore)
-const { toggleMode } = modeStore
 
 onMounted(async () => {
     try {
@@ -34,8 +33,6 @@ onMounted(async () => {
 })
 
 const changePage = (name, id) => {
-    toggleMode('active')
-
     if (id !== undefined) {
         router.push({ name: name, params: { id: id } })
     } else {
@@ -80,7 +77,7 @@ const changePage = (name, id) => {
             <hr class="mt-4 mx-12 border-2">
 
             <div class="mt-4">
-                <div class="text-cyan-800 text-base ml-12 mt-2 indent-8">{{ data?.announcementDescription }}</div>
+                <div class="ann-description text-cyan-800 text-base ml-12 mt-2 indent-8">{{ data?.announcementDescription }}</div>
             </div>
         </div>
 

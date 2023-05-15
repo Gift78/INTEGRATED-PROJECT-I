@@ -21,10 +21,18 @@ const data = ref([])
 const categoryItem = ref([])
 const selectedCategory = ref('')
 const currentPage = ref(0)
+const testCloseDate = ref()
 
 onMounted(async () => {
     categoryItem.value = await getAllCategories()
     data.value = await getDataByPage(mode.value, currentPage.value, 5);
+    if (mode.value == 'active') {
+        activeButton.value = 'text-white bg-emerald-light'
+        closedButton.value = ''
+    } else if (mode.value == 'close') {
+        closedButton.value = 'text-white bg-red-500'
+        activeButton.value = ''
+    }
 })
 
 watch([currentPage, selectedCategory, mode], async () => {
@@ -85,10 +93,12 @@ const changePageButton = (page) => {
             <div class="flex justify-between">
                 <TimezoneComponent />
                 <div class="flex bg-white p-1 rounded-xl mx-1 ">
-                    <button class="p-1 px-5 text-black rounded-lg flex" @click="changeMode('active')" :class="activeButton">
+                    <button class="ann-button p-1 px-5 text-black rounded-lg flex" @click="changeMode('active')"
+                        :class="activeButton">
                         <Published class="mr-2" />ACTIVE
                     </button>
-                    <button class="p-1 px-5 text-black rounded-lg flex" @click="changeMode('close')" :class="closedButton">
+                    <button class="ann-button p-1 px-5 text-black rounded-lg flex" @click="changeMode('close')"
+                        :class="closedButton">
                         <Unpublished class="mr-2" />CLOSED
                     </button>
                 </div>
@@ -97,7 +107,8 @@ const changePageButton = (page) => {
             <div class="flex mt-3">
                 <div class="w-40 text-cyan-800 font-bold pt-3 my-auto">Choose Category :</div>
                 <div class="flex pt-3">
-                    <select class="select select-bordered w-full max-w-xs font-normal bg-white" v-model="selectedCategory">
+                    <select class="ann-category-filter select select-bordered w-full max-w-xs font-normal bg-white"
+                        v-model="selectedCategory">
                         <option value="">ทั้งหมด</option>
                         <option v-for="category in categoryItem" :value="category.categoryId">
                             {{ category.categoryName }}
@@ -112,7 +123,7 @@ const changePageButton = (page) => {
                 <div class="text-center text-zinc-400">No.</div>
                 <div class=" text-zinc-400 indent-10" :class="mode == 'active' ? 'col-span-7' : 'col-span-5'">
                     Title</div>
-                <div class=" text-zinc-400 col-span-2 text-center" v-if="mode == 'close'">Close Date</div>
+                <div class="text-zinc-400 col-span-2 text-center" v-if="mode == 'close'">Close Date</div>
                 <div class="text-center text-zinc-400 ">Category</div>
             </div>
 
@@ -135,24 +146,25 @@ const changePageButton = (page) => {
                     <div class="ann-category text-center">{{ announce.announcementCategory }}</div>
                 </div>
             </div>
-            
+
             <!-- pagination -->
             <div class="w-full my-10 flex justify-center" v-if="data?.totalElements > 5">
                 <!-- previuous button -->
-                <button class="px-5 py-2 rounded-l-full hover:bg-slate-200" @click="changePageButton(currentPage - 1)"
-                    :disabled="currentPage === 0" :class="currentPage === 0 ? 'cursor-not-allowed' : ''">
+                <button class="ann-page-prev px-5 py-2 rounded-l-full hover:bg-slate-200"
+                    @click="changePageButton(currentPage - 1)" :disabled="currentPage === 0"
+                    :class="currentPage === 0 ? 'cursor-not-allowed' : ''">
                     &lt;Prev</button>
                 <!-- page number button -->
-                <button class="w-20 h-10" v-for="(button, index) in displayedButtons" :key="button"
-                    @click="changePageButton(button - 1)" :class="{ active: currentPage === button },
+                <button v-for="(button, index) in displayedButtons" :key="button" @click="changePageButton(button - 1)"
+                    :class="`ann-page-${index}`, { active: currentPage === button },
                         currentPage == button - 1 ? 'bg-emerald-light text-white' : 'bg-zinc-300 hover:bg-zinc-200',
                         index == 0 ? 'rounded-l-lg' : '',
-                        index == displayedButtons.length - 1 ? 'rounded-r-lg' : ''">
+                        index == displayedButtons.length - 1 ? 'rounded-r-lg' : ''" class="w-20 h-10">
                     {{ button }}
                 </button>
                 <!-- next button -->
-                <button class="px-5 py-2 rounded-r-full hover:bg-slate-200" @click="changePageButton(currentPage + 1)"
-                    :disabled="currentPage === data.totalPages - 1"
+                <button class="ann-page-next px-5 py-2 rounded-r-full hover:bg-slate-200"
+                    @click="changePageButton(currentPage + 1)" :disabled="currentPage === data.totalPages - 1"
                     :class="currentPage === data.totalPages - 1 ? 'cursor-not-allowed' : ''">Next &gt;</button>
             </div>
         </div>
