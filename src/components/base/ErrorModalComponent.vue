@@ -111,7 +111,7 @@ const changePage = (name, id) => {
             </div>
         </div>
     </div>
-    <div class="absolute inset-0 z-40 opacity-25 bg-black" v-if="checkCondition"></div>
+    <div class="fixed inset-0 z-40 opacity-25 bg-black" v-if="checkCondition"></div>
 </template>
  
 <style scoped></style>

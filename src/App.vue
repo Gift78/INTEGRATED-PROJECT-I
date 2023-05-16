@@ -3,13 +3,7 @@ import { RouterView } from 'vue-router';
 </script>
 
 <template >
-  <body class="bg-background">
-    <RouterView />
-  </body>
+  <RouterView />
 </template>
 
-<style scoped>
-body {
-  overflow: auto;
-}
-</style>
+<style scoped></style>
