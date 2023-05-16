@@ -176,7 +176,7 @@ const addNewAnnouncement = async (annonuce) => {
 }
 </script>
 <template>
-    <div style="width: 80em;" class="mx-auto">
+    <div style="width: 80em;" class="mx-auto pb-1">
         <!-- Error message -->
         <ErrorModalComponent v-if="haveError" :checkCondition="haveError" :typeError="'problem'" :status="errors?.status"
             :message="errors?.message" />

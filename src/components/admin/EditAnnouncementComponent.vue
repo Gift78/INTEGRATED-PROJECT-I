@@ -10,6 +10,7 @@ const { params } = useRoute();
 const router = useRouter();
 const data = ref({});
 const isModalOpen = ref(false);
+const isCancel = ref(false)
 const isFieldEdit = ref(false);
 const publishDate = ref('')
 const publishTime = ref('')
@@ -334,7 +335,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         <div class="flex justify-end mt-3 space-x-3 " v-if="!isModalOpen">
             <button
                 class="ann-button text-black bg-slate-100 text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
-                @click="changePage('AnnouncementDetail', params?.id)">Back</button>
+                @click="isCancel = true">Back</button>
 
             <button class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md px-5 py-2 w-20 h-10"
                 :class="{ 'opacity-50 cursor-not-allowed': !isFieldEdit, 'cursor-pointer': isFieldEdit }"
@@ -342,6 +343,9 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         </div>
     </div>
 
+    <!-- cancel modal -->
+    <ErrorModalComponent :checkCondition="isCancel" :typeError="'cancel'" @close="isModalOpen = false" />
+    <!-- error -->
     <ErrorModalComponent v-if="haveFieldError" :checkCondition="haveFieldError" :typeError="'problem'"
         :message="fieldErrorMsg" />
 </template>
