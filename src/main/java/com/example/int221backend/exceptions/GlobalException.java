@@ -19,12 +19,11 @@ public class GlobalException extends ResponseEntityExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), request.getDescription(false).substring(4), HttpStatus.NOT_FOUND.getReasonPhrase());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
-
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
         Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Validation Error", request.getDescription(false).substring(4), HttpStatus.BAD_REQUEST.getReasonPhrase());
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Announcement attributes validation failed!", request.getDescription(false).substring(4), HttpStatus.BAD_REQUEST.getReasonPhrase());
         if (constraintViolations != null) {
             for (ConstraintViolation<?> constraintViolation : constraintViolations) {
                 errorResponse.addValidationError(constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage());
