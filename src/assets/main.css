@@ -13,5 +13,5 @@ body {
 }
 
 body, html {
-    background-color: #f7fafc;
+    background-color: #f7fafc !important;
 }
