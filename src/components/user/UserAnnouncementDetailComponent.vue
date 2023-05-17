@@ -74,10 +74,10 @@ const changePage = (name, id) => {
                 </div>
             </div>
 
-            <hr class="mt-4 mx-12 border-2">
+            <hr class="mt-4 mx-12">
 
             <div class="mt-4">
-                <div class="ann-description text-cyan-800 text-base ml-12 mt-2 indent-8">{{ data?.announcementDescription }}</div>
+                <div class="ann-description text-cyan-800 text-base ml-12 mt-2 indent-8" v-html="data?.announcementDescription"></div>
             </div>
         </div>
 

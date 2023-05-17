@@ -57,7 +57,8 @@ onMounted(async () => {
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Description</div>
-                <div class="ann-description text-cyan-800 w-full">{{ data?.announcementDescription }}</div>
+                <!-- <div class="ann-description text-cyan-800 w-full">{{ data?.announcementDescription }}</div> -->
+                <div class="ann-description text-cyan-800 w-full" v-html="data?.announcementDescription"></div>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Publish Date</div>

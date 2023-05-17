@@ -3,6 +3,8 @@ import { ref, onMounted, watch, onUpdated } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { getAllCategories, getDataById } from '../../composable/getData';
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 
@@ -293,10 +295,13 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
                     </option>
                 </select>
             </div>
+            <!-- Description -->
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Description</div>
-                <textarea class="ann-description pt-2 w-full bg-slate-100 rounded-lg pl-4 border" rows="5" maxlength="10000"
-                    v-model="editedAnnounce.announcementDescription"></textarea>
+                <div class="w-full px-5 mx-auto">
+                    <QuillEditor theme="snow" toolbar="full" v-model:content="editedAnnounce.announcementDescription"
+                        content-type="html" class="ann-description h-96 border rounded-2xl" />
+                </div>
             </div>
 
             <!-- new date & time input -->
@@ -337,7 +342,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
                 class="ann-button text-black bg-slate-100 text-center rounded-lg shadow-md cursor-pointer px-5 py-2 w-20 h-10"
                 @click="isCancel = true">Back</button>
 
-            <button class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md px-5 py-2 w-20 h-10"
+            <button class="ann-button text-white bg-emerald-plus text-center rounded-lg shadow-md px-5 py-2 w-20 h-10 mb-24"
                 :class="{ 'opacity-50 cursor-not-allowed': !isFieldEdit, 'cursor-pointer': isFieldEdit }"
                 :disabled="!isFieldEdit" @click="editAnnouncement(editedAnnounce, params?.id)">Edit</button>
         </div>

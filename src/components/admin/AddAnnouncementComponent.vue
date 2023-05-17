@@ -3,6 +3,8 @@ import TimezoneComponent from '../base/TimezoneComponent.vue';
 import { computed, onMounted, onUpdated, ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
 import { getAllCategories } from '../../composable/getData';
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import ArrowRight from '../icons/ArrowRight.vue'
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 const router = useRouter()
@@ -216,11 +218,11 @@ const addNewAnnouncement = async (annonuce) => {
             <div class="text-cyan-800 text-xl ml-10 mt-3">Announcement Description</div>
             <div class="bg-white py-5 rounded-xl shadow-md mt-3 flex-col">
                 <div class="flex">
-                    <div class="ml-16 mr-5 text-cyan-800 w-32 py-3">Description :</div>
-                    <textarea rows="10" maxlength="10000"
-                        class="ann-description bg-white pl-5 pt-3 border-2 rounded-lg w-full mr-20"
-                        v-model="newAnnouncement.announcementDescription">
-                    </textarea>
+                    <div class="ml-16 text-cyan-800 w-32 pt-3">Description :</div>
+                    <div class="w-full px-5 mx-auto">
+                        <QuillEditor theme="snow" toolbar="full" v-model:content="newAnnouncement.announcementDescription"
+                            content-type="html" class="ann-description h-96 border rounded-2xl" />
+                    </div>
                 </div>
             </div>
             <!-- Date and Display -->
