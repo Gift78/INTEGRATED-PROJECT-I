@@ -21,5 +21,7 @@ public class AnnounceDetailDTO {
     private CategoryDTO categoriesObject;
     public String getAnnouncementCategory(){
         return categoriesObject.getCategoryName();
+
     }
+    public int viewCount;
 }
