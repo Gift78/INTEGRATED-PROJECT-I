@@ -7,6 +7,7 @@ import Megaphone from '../icons/Megaphone.vue';
 import formatDatetime from '../../composable/formatDatetime';
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 import { storeToRefs } from 'pinia'
+import { getDataById } from '../../composable/getData';
 
 const params = useRoute().params;
 const router = useRouter();
@@ -19,21 +20,8 @@ const QuillEditorOptions = {
     readOnly: true,
 };
 
-
 onMounted(async () => {
-    try {
-        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + params?.id + "?count=true")
-        if (res.ok) {
-            data.value = await res.json();
-        } else {
-            data.value = await res.json();
-            isModalOpen.value = true
-            const errorData = data.value
-            errors.value = errorData
-        }
-    } catch (error) {
-        errors.value = error
-    }
+    data.value = await getDataById(params?.id, 'true')
 })
 
 const changePage = (name, id) => {
@@ -80,14 +68,14 @@ const changePage = (name, id) => {
 
             <!-- <hr class="mt-4 mx-12"> -->
 
-                <div class="mt-14 mx-auto w-full border-t">
-                    <QuillEditor toolbar="#my-toolbar" v-model:content="data.announcementDescription" content-type="html"
-                        class="ann-description" :options="QuillEditorOptions">
-                        <template #toolbar>
-                            <div id="my-toolbar" class="hidden"></div>
-                        </template>
-                    </QuillEditor>
-                </div>
+            <div class="mt-14 mx-auto w-full border-t">
+                <QuillEditor toolbar="#my-toolbar" v-model:content="data.announcementDescription" content-type="html"
+                    class="ann-description" :options="QuillEditorOptions">
+                    <template #toolbar>
+                        <div id="my-toolbar" class="hidden"></div>
+                    </template>
+                </QuillEditor>
+            </div>
         </div>
 
         <div class="flex justify-end mt-4">

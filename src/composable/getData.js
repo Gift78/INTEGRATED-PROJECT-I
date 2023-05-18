@@ -20,10 +20,18 @@ const getAllData = async (mode) => {
   }
 };
 
-const getDataById = async (id) => {
+const getDataById = async (id, isCount) => {
+  if (isCount === undefined) {
+    isCount = false;
+  }
+
   try {
     const res = await fetch(
-      import.meta.env.VITE_ROOT_API + "/api/announcements/" + id + "?count=true"
+      import.meta.env.VITE_ROOT_API +
+        "/api/announcements/" +
+        id +
+        "?count=" +
+        isCount
     );
     if (res.ok) {
       const data = await res.json();
