@@ -60,9 +60,9 @@ onMounted(async () => {
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Description</div>
-                <div class="text-cyan-800 w-full border-4 border-gray-300">
-                    <QuillEditor toolbar="#my-toolbar" v-model:content="data.announcementDescription" content-type="html"
-                        class="ann-description" :options="QuillEditorOptions">
+                <div class="text-cyan-800 w-full border-t border-slate-300">
+                    <QuillEditor class="ann-description" toolbar="#my-toolbar" v-model:content="data.announcementDescription" content-type="html"
+                         :options="QuillEditorOptions">
                         <template #toolbar>
                             <div id="my-toolbar" class="hidden"></div>
                         </template>

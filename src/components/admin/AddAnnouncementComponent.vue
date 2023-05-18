@@ -2,6 +2,7 @@
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import { onMounted, onUpdated, ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
+import { getAllCategories } from '../../composable/getData';
 import ArrowRight from '../icons/ArrowRight.vue'
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 const router = useRouter()

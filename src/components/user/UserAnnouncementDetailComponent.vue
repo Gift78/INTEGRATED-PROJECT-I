@@ -78,10 +78,9 @@ const changePage = (name, id) => {
                 </div>
             </div>
 
-            <hr class="mt-4 mx-12">
+            <!-- <hr class="mt-4 mx-12"> -->
 
-            <div class="mt-4">
-                <div class="text-cyan-800 w-full border-2 border-gray-300">
+                <div class="mt-14 mx-auto w-full border-t">
                     <QuillEditor toolbar="#my-toolbar" v-model:content="data.announcementDescription" content-type="html"
                         class="ann-description" :options="QuillEditorOptions">
                         <template #toolbar>
@@ -89,7 +88,6 @@ const changePage = (name, id) => {
                         </template>
                     </QuillEditor>
                 </div>
-            </div>
         </div>
 
         <div class="flex justify-end mt-4">
