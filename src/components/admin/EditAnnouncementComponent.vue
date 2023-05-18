@@ -234,11 +234,20 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         fieldErrorMsg.value = 'close date must be a future date'
         return
     }
-    if (updateAnnounce.publishDate > updateAnnounce.closeDate) {
+
+    if (updateAnnounce.publishDate < currentTime) {
         haveFieldError.value = true
-        fieldErrorMsg.value = 'close date must be a future date'
+        fieldErrorMsg.value = 'publish date must be a future date'
         return
     }
+
+    if (updateAnnounce.publishDate > updateAnnounce.closeDate) {
+        haveFieldError.value = true
+        fieldErrorMsg.value = 'publish date must be earlier than close date'
+        return
+    }
+
+
 
     try {
         const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + announceId,
