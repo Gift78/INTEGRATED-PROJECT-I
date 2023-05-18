@@ -6,6 +6,7 @@ import formatDatetime from '../../composable/formatDatetime';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 import ViewCounter from '../icons/ViewCounter.vue';
+import { getDataById } from '../../composable/getData';
 
 const { params } = useRoute();
 const router = useRouter();
@@ -25,20 +26,7 @@ const changePage = (name, id) => {
 }
 
 onMounted(async () => {
-    try {
-        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + params?.id)
-        if (res.ok) {
-            data.value = await res.json();
-            console.log (data.value)
-        } else {
-            data.value = await res.json();
-            isModalOpen.value = true
-            const errorData = data.value
-            errors.value = errorData
-        }
-    } catch (error) {
-        errors.value = error
-    }
+    data.value = await getDataById(params?.id)
 })
 </script>
  
@@ -50,7 +38,7 @@ onMounted(async () => {
         <div class="flex justify-between">
             <TimezoneComponent />
             <div class="flex p-1 pr-3  rounded-lg text-white bg-emerald-plus">
-                <ViewCounter class="pt-1"/>
+                <ViewCounter class="pt-1" />
                 <div class="text-white text-lg">View : {{ data.viewCount }}</div>
             </div>
         </div>
