@@ -12,6 +12,7 @@ public class AnnounceDTO {
     private String publishDate;
     private String closeDate;
     private String announcementDisplay;
+    public Integer viewCount;
     @JsonIgnore
     private CategoryDTO categoriesObject;
 

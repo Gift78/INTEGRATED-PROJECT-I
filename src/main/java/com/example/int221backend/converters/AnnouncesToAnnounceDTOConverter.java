@@ -21,6 +21,7 @@ public class AnnouncesToAnnounceDTOConverter implements Converter<Announces, Ann
         destination.setPublishDate(source.getPublishDate());
         destination.setCloseDate(source.getCloseDate());
         destination.setAnnouncementDisplay(source.getAnnouncementDisplay());
+        destination.setViewCount(source.getViewCount());
         destination.setCategoriesObject(new CategoryDTO(source.getCategoriesObject().getCategoryName()));
         return destination;
     }
