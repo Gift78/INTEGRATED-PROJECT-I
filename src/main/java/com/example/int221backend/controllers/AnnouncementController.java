@@ -44,8 +44,8 @@ public class AnnouncementController {
     }
 
     @GetMapping("{announceId}")
-    public AnnounceDetailDTO getDetailById(@PathVariable Integer announceId) {
-        Announces announcesExist = announceService.getAnnounceById(announceId);
+    public AnnounceDetailDTO getDetailById(@PathVariable Integer announceId, @RequestParam(required = false) Boolean count) {
+        Announces announcesExist = announceService.getAnnounceById(announceId, count);
         modelMapper.addConverter(new AnnouncesToAnnounceDetailDTOConverter());
         return modelMapper.map(announcesExist, AnnounceDetailDTO.class);
     }

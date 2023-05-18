@@ -69,8 +69,15 @@ public class AnnounceService {
 
 
 
-    public Announces getAnnounceById(Integer announceId) {
+    public Announces getAnnounceById(Integer announceId, Boolean count) {
         Announces announce = announceRepository.findById(announceId).orElseThrow(() -> new AnnounceNotFoundException(announceId));
+
+        if (count != null && count) {
+            announce.setViewCount(announce.getViewCount() + 1);
+            System.out.println("view count: " + announce.getViewCount());
+            announceRepository.saveAndFlush(announce);
+        }
+
         datetimeFormatter(formatter, announce);
         return announce;
     }

@@ -25,6 +25,7 @@ public class Announces {
     private String announcementDescription;
     private String publishDate;
     private String closeDate;
+    private int viewCount;
 
     @JsonIgnore
     @ManyToOne
