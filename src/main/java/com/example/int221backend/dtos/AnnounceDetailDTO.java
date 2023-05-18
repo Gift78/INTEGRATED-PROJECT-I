@@ -17,11 +17,11 @@ public class AnnounceDetailDTO {
     private String publishDate;
     private String closeDate;
     private String announcementDisplay;
+    public Integer viewCount;
     @JsonIgnore
     private CategoryDTO categoriesObject;
     public String getAnnouncementCategory(){
         return categoriesObject.getCategoryName();
 
     }
-    public int viewCount;
 }
