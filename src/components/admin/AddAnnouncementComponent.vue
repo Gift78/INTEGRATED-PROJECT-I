@@ -1,10 +1,7 @@
 <script setup>
 import TimezoneComponent from '../base/TimezoneComponent.vue';
-import { computed, onMounted, onUpdated, ref, watch } from 'vue';
+import { onMounted, onUpdated, ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
-import { getAllCategories } from '../../composable/getData';
-import { QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import ArrowRight from '../icons/ArrowRight.vue'
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 const router = useRouter()

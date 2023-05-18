@@ -8,13 +8,17 @@ import formatDatetime from '../../composable/formatDatetime';
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 import { storeToRefs } from 'pinia'
 
-const params = useRoute().params
-const router = useRouter()
-const data = ref([])
+const params = useRoute().params;
+const router = useRouter();
+const data = ref([]);
 const isModalOpen = ref(false);
-const errors = ref()
-const modeStore = useMode()
-const { mode } = storeToRefs(modeStore)
+const errors = ref();
+const modeStore = useMode();
+const { mode } = storeToRefs(modeStore);
+const QuillEditorOptions = {
+    readOnly: true,
+};
+
 
 onMounted(async () => {
     try {
@@ -77,7 +81,14 @@ const changePage = (name, id) => {
             <hr class="mt-4 mx-12">
 
             <div class="mt-4">
-                <div class="ann-description text-cyan-800 text-base ml-12 mt-2 indent-8" v-html="data?.announcementDescription"></div>
+                <div class="text-cyan-800 w-full border-2 border-gray-300">
+                    <QuillEditor toolbar="#my-toolbar" v-model:content="data.announcementDescription" content-type="html"
+                        class="ann-description" :options="QuillEditorOptions">
+                        <template #toolbar>
+                            <div id="my-toolbar" class="hidden"></div>
+                        </template>
+                    </QuillEditor>
+                </div>
             </div>
         </div>
 

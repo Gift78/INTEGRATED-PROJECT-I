@@ -10,7 +10,10 @@ const { params } = useRoute();
 const router = useRouter();
 const data = ref({});
 const isModalOpen = ref(false);
-const errors = ref()
+const errors = ref();
+const QuillEditorOptions = {
+    readOnly: true,
+};
 
 const changePage = (name, id) => {
     if (id !== undefined) {
@@ -57,8 +60,14 @@ onMounted(async () => {
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Description</div>
-                <!-- <div class="ann-description text-cyan-800 w-full">{{ data?.announcementDescription }}</div> -->
-                <div class="ann-description text-cyan-800 w-full" v-html="data?.announcementDescription"></div>
+                <div class="text-cyan-800 w-full border-4 border-gray-300">
+                    <QuillEditor toolbar="#my-toolbar" v-model:content="data.announcementDescription" content-type="html"
+                        class="ann-description" :options="QuillEditorOptions">
+                        <template #toolbar>
+                            <div id="my-toolbar" class="hidden"></div>
+                        </template>
+                    </QuillEditor>
+                </div>
             </div>
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Publish Date</div>

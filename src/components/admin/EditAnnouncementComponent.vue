@@ -3,8 +3,6 @@ import { ref, onMounted, watch, onUpdated } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { getAllCategories, getDataById } from '../../composable/getData';
-import { QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 
@@ -300,7 +298,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
                 <div class="w-52 text-cyan-800 font-bold pt-2">Description</div>
                 <div class="w-full px-5 mx-auto">
                     <QuillEditor theme="snow" toolbar="full" v-model:content="editedAnnounce.announcementDescription"
-                        content-type="html" class="ann-description h-96 border rounded-2xl" />
+                        content-type="html" class="ann-description h-96" />
                 </div>
             </div>
 
