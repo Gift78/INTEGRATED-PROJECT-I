@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 import formatDatetime from '../../composable/formatDatetime';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
+import ViewCounter from '../icons/ViewCounter.vue';
 
 const { params } = useRoute();
 const router = useRouter();
@@ -28,6 +29,7 @@ onMounted(async () => {
         const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + params?.id)
         if (res.ok) {
             data.value = await res.json();
+            console.log (data.value)
         } else {
             data.value = await res.json();
             isModalOpen.value = true
@@ -45,8 +47,17 @@ onMounted(async () => {
         <!-- header -->
         <h1 class="text-cyan-800 text-3xl py-10">Announcement Detail</h1>
 
-        <TimezoneComponent />
+        <div class="flex justify-between">
+            <TimezoneComponent />
+            <div class="flex p-1 pr-3  rounded-lg text-white bg-emerald-plus">
+                <ViewCounter class="pt-1"/>
+                <div class="text-white text-lg">View : {{ data.viewCount }}</div>
+            </div>
+        </div>
+
         <hr class="mt-4 border-2">
+
+
 
         <!-- content -->
         <div class="ann-item bg-white flex-col rounded-lg p-10 shadow-lg mt-5" v-if="!isModalOpen">
@@ -61,8 +72,8 @@ onMounted(async () => {
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold">Description</div>
                 <div class="text-cyan-800 w-full border-t border-slate-300">
-                    <QuillEditor class="ann-description" toolbar="#my-toolbar" v-model:content="data.announcementDescription" content-type="html"
-                         :options="QuillEditorOptions">
+                    <QuillEditor class="ann-description" toolbar="#my-toolbar"
+                        v-model:content="data.announcementDescription" content-type="html" :options="QuillEditorOptions">
                         <template #toolbar>
                             <div id="my-toolbar" class="hidden"></div>
                         </template>

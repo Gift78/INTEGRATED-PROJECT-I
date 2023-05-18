@@ -23,7 +23,7 @@ const getAllData = async (mode) => {
 const getDataById = async (id) => {
   try {
     const res = await fetch(
-      import.meta.env.VITE_ROOT_API + "/api/announcements/" + id
+      import.meta.env.VITE_ROOT_API + "/api/announcements/" + id + "?count=true"
     );
     if (res.ok) {
       const data = await res.json();
