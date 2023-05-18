@@ -64,13 +64,14 @@ const deleteAnnouncement = async (id) => {
         <hr class="mt-4 border-2">
 
         <!-- head table -->
-        <div class="grid grid-cols-11 my-5">
+        <div class="grid grid-cols-12 my-5">
             <div class="text-center text-zinc-400">No.</div>
-            <div class=" text-zinc-400 col-span-2">Title</div>
+            <div class="text-zinc-400 col-span-2">Title</div>
             <div class="text-center text-zinc-400">Category</div>
             <div class="text-center text-zinc-400 col-span-2">Publish Date</div>
             <div class="text-center text-zinc-400 col-span-2">Close Date</div>
             <div class="text-center text-zinc-400">Display</div>
+            <div class="text-center text-zinc-400">Views</div>
             <div class="text-center text-zinc-400 col-span-2">Action</div>
         </div>
 
@@ -81,7 +82,7 @@ const deleteAnnouncement = async (id) => {
         <div v-else>
             <!-- show data -->
             <div v-for="(announce, index) in data" :key="data.id"
-                class="ann-item grid grid-cols-11 bg-white my-5 h-20 rounded-xl shadow-md">
+                class="ann-item grid grid-cols-12 bg-white my-5 h-20 rounded-xl shadow-md">
                 <div class="text-cyan-800 my-auto text-center">{{ index + 1 }} </div>
                 <div class="ann-title text-cyan-800 my-auto col-span-2 overflow-hidden">{{ announce.announcementTitle }}
                 </div>
@@ -97,6 +98,7 @@ const deleteAnnouncement = async (id) => {
                     :class="announce.announcementDisplay == 'Y' ? 'bg-emerald-100 text-emerald-400' : 'bg-red-100 text-red-400'">
                     {{ announce.announcementDisplay }}
                 </div>
+                <div class="ann-views text-cyan-800 my-auto text-center">{{ announce.viewCount }}</div>
                 <div class="flex ml-10 col-span-2">
                     <div class="ann-button mx-2 text-cyan-400 my-auto text-center bg-cyan-100 hover:bg-cyan-200 hover:scale-110  rounded-lg pt-2 w-16 h-10 shadow-sm cursor-pointer"
                         @click="changePage('AnnouncementDetail', announce.id)">View
