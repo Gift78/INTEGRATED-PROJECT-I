@@ -21,19 +21,7 @@ const QuillEditorOptions = {
 
 
 onMounted(async () => {
-    try {
-        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + params?.id + "?count=true")
-        if (res.ok) {
-            data.value = await res.json();
-        } else {
-            data.value = await res.json();
-            isModalOpen.value = true
-            const errorData = data.value
-            errors.value = errorData
-        }
-    } catch (error) {
-        errors.value = error
-    }
+    data.value = await getDataById(params?.id,true)
 })
 </script>
 
