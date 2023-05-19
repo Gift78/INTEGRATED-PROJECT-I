@@ -5,8 +5,9 @@ import { getAllData } from '../../composable/getData.js';
 import formatDatetime from '../../composable/formatDatetime';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
+import { changePage } from '../../composable/changePage';
 
-const router = useRouter()
+
 const data = ref([])
 const errors = ref({})
 const deleteId = ref(undefined)
@@ -17,13 +18,6 @@ onMounted(async () => {
     data.value = await getAllData('admin');
 });
 
-const changePage = (name, id) => {
-    if (id !== undefined) {
-        router.push({ name: name, params: { id: id } })
-    } else {
-        router.push({ name: name })
-    }
-}
 
 const deleteAnnouncement = async (id) => {
     try {

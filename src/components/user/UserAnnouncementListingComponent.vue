@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
-import { useRouter } from 'vue-router';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import Published from '../icons/Published.vue'
 import Unpublished from '../icons/Unpublished.vue'
@@ -10,8 +9,8 @@ import { useMode } from '../../stores/mode';
 import { storeToRefs } from 'pinia'
 import { getAllCategories } from '../../composable/getData';
 import { getAnnoucePageByCategoryId } from '../../composable/getData';
+import { changePage } from '../../composable/changePage';
 
-const router = useRouter()
 const modeStore = useMode()
 const { mode } = storeToRefs(modeStore)
 const { toggleMode } = modeStore
@@ -63,13 +62,6 @@ const changeMode = async () => {
     }
 }
 
-const changePage = (name, id) => {
-    if (id !== undefined) {
-        router.push({ name: name, params: { id: id } })
-    } else {
-        router.push({ name: name })
-    }
-}
 
 const buttonsToShow = 10;
 const displayedButtons = computed(() => {

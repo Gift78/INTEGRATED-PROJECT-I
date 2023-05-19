@@ -5,9 +5,9 @@ import { useRouter } from 'vue-router';
 import { getAllCategories, getDataById } from '../../composable/getData';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
+import { changePage } from '../../composable/changePage';
 
 const { params } = useRoute();
-const router = useRouter();
 const data = ref({});
 const isModalOpen = ref(false);
 const isCancel = ref(false)
@@ -77,13 +77,6 @@ onMounted(async () => {
     }
 });
 
-const changePage = (name, id) => {
-    if (id !== undefined) {
-        router.push({ name: name, params: { id: id } })
-    } else {
-        router.push({ name: name })
-    }
-}
 
 const datetimeFormatterISO = (date, time) => {
     if (!date || !time) {

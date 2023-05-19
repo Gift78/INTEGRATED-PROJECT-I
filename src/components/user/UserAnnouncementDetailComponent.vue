@@ -1,5 +1,5 @@
 <script setup>
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { useMode } from '../../stores/mode';
 import TimezoneComponent from '../base/TimezoneComponent.vue';
@@ -7,10 +7,9 @@ import Megaphone from '../icons/Megaphone.vue';
 import formatDatetime from '../../composable/formatDatetime';
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 import { storeToRefs } from 'pinia'
-import { getDataById } from '../../composable/getData';
-
+import { changePage } from '../../composable/changePage';
 const params = useRoute().params;
-const router = useRouter();
+
 const data = ref([]);
 const isModalOpen = ref(false);
 const errors = ref();
@@ -20,17 +19,22 @@ const QuillEditorOptions = {
     readOnly: true,
 };
 
-onMounted(async () => {
-    data.value = await getDataById(params?.id, 'true')
-})
 
-const changePage = (name, id) => {
-    if (id !== undefined) {
-        router.push({ name: name, params: { id: id } })
-    } else {
-        router.push({ name: name })
+onMounted(async () => {
+    try {
+        const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + params?.id + "?count=true")
+        if (res.ok) {
+            data.value = await res.json();
+        } else {
+            data.value = await res.json();
+            isModalOpen.value = true
+            const errorData = data.value
+            errors.value = errorData
+        }
+    } catch (error) {
+        errors.value = error
     }
-}
+})
 </script>
 
 <template>

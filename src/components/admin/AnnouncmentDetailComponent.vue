@@ -7,9 +7,9 @@ import TimezoneComponent from '../base/TimezoneComponent.vue';
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 import ViewCounter from '../icons/ViewCounter.vue';
 import { getDataById } from '../../composable/getData';
+import { changePage } from '../../composable/changePage';
 
 const { params } = useRoute();
-const router = useRouter();
 const data = ref({});
 const isModalOpen = ref(false);
 const errors = ref();
@@ -17,13 +17,6 @@ const QuillEditorOptions = {
     readOnly: true,
 };
 
-const changePage = (name, id) => {
-    if (id !== undefined) {
-        router.push({ name: name, params: { id: id } })
-    } else {
-        router.push({ name: name })
-    }
-}
 
 onMounted(async () => {
     data.value = await getDataById(params?.id)

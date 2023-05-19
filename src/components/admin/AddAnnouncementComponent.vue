@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import { getAllCategories } from '../../composable/getData';
 import ArrowRight from '../icons/ArrowRight.vue'
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
-const router = useRouter()
+import { changePage } from '../../composable/changePage';
 
 const errors = ref({})
 const displayed = ref(false)
@@ -67,10 +67,6 @@ onUpdated(() => {
         enableCloseTime.value = true
     }
 })
-
-const changePage = (name) => {
-    router.push({ name: name })
-}
 
 const addNewAnnouncement = async (annonuce) => {
     if (annonuce.announcementTitle === '') {
