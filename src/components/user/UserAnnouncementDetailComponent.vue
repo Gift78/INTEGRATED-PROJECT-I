@@ -8,6 +8,8 @@ import formatDatetime from '../../composable/formatDatetime';
 import ErrorModalComponent from '../base/ErrorModalComponent.vue';
 import { storeToRefs } from 'pinia'
 import { changePage } from '../../composable/changePage';
+import { getDataById } from '../../composable/getData';
+
 const params = useRoute().params;
 
 const data = ref([]);
