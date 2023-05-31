@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -21,19 +18,21 @@ public class AnnounceService {
     private AnnounceRepository announceRepository;
     @Autowired
     private CategoryService categoryService;
-    private final DateTimeFormatter utcFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    private final DateTimeFormatter localFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter DATE_FORMATTER_1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private final DateTimeFormatter DATE_FORMATTER_2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private final DateTimeFormatter DATE_FORMATTER_3 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter DATE_FORMATTER_4 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-    private void datetimeFormatter(DateTimeFormatter localFormatter, Announces announce) {
+
+    private void datetimeFormatter(DateTimeFormatter dateTimeFormatter, Announces announce) {
         if (announce.getPublishDate() != null) {
-            LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), localFormatter);
+            LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), dateTimeFormatter);
             ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
             Instant instantPublishDate = zonePublishDate.toInstant();
             announce.setPublishDate(instantPublishDate.toString());
         }
         if (announce.getCloseDate() != null) {
-            LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), localFormatter);
+            LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), dateTimeFormatter);
             ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
             Instant instantCloseDate = zoneCloseDate.toInstant();
             announce.setCloseDate(instantCloseDate.toString());
@@ -43,31 +42,24 @@ public class AnnounceService {
     public List<Announces> getAllAnnouncements(String mode) {
         List<Announces> announces = null;
         if (mode == null || mode.equals("admin")) {
-            announces = announceRepository.findAllByOrderByAnnouncementIdDesc();
+            announces = announceRepository.findAll();
         } else if (mode.equals("active")) {
-            announces = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNull("Y");
-            List<Announces> announces1 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNullAndPublishDateBefore("Y", String.valueOf(Instant.now()));
-            List<Announces> announces2 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter("Y", String.valueOf(Instant.now()), String.valueOf(Instant.now()));
-            List<Announces> announces3 = announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNotNullAndCloseDateAfter("Y", String.valueOf(Instant.now()));
-            announces.addAll(announces1);
-            announces.addAll(announces2);
-            announces.addAll(announces3);
+            announces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNull("Y"));
+            announces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNullAndPublishDateBefore("Y", String.valueOf(Instant.now())));
+            announces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter("Y", String.valueOf(Instant.now()), String.valueOf(Instant.now())));
+            announces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNotNullAndCloseDateAfter("Y", String.valueOf(Instant.now())));
 
-            // remove the duplicate
             Set<Announces> set = new HashSet<>(announces);
             announces.clear();
             announces.addAll(set);
-
-            // sort the list by announcementId desc
-            announces.sort(Comparator.comparing(Announces::getAnnouncementId).reversed());
         } else if (mode.equals("close")) {
-            announces = announceRepository.findAllByAnnouncementDisplayAndCloseDateIsNotNullAndCloseDateBeforeOrderByAnnouncementIdDesc("Y", String.valueOf(Instant.now()));
+            announces = announceRepository.findAllByAnnouncementDisplayAndCloseDateIsNotNullAndCloseDateBefore("Y", String.valueOf(Instant.now()));
         }
-        announces.forEach((announce) -> datetimeFormatter(formatter, announce));
+
+        announces.sort(Comparator.comparing(Announces::getAnnouncementId).reversed());
+        announces.forEach((announce) -> datetimeFormatter(DATE_FORMATTER_3, announce));
         return announces;
     }
-
-
 
     public Announces getAnnounceById(Integer announceId, Boolean count) {
         Announces announce = announceRepository.findById(announceId).orElseThrow(() -> new AnnounceNotFoundException(announceId));
@@ -78,7 +70,7 @@ public class AnnounceService {
             announceRepository.saveAndFlush(announce);
         }
 
-        datetimeFormatter(formatter, announce);
+        datetimeFormatter(DATE_FORMATTER_3, announce);
         return announce;
     }
 
@@ -93,28 +85,26 @@ public class AnnounceService {
 
         newAnnounce.setCategoriesObject(categoryService.getCategoryById(newAnnounce.getCategoryId()));
 
-        DateTimeFormatter test = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
         if (newAnnounce.getPublishDate() != null) {
             if (newAnnounce.getPublishDate().length() == 24) {
-                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), test);
-                newAnnounce.setPublishDate(localDateTime.format(utcFormatter));
+                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), DATE_FORMATTER_4);
+                newAnnounce.setPublishDate(localDateTime.format(DATE_FORMATTER_1));
             }
 
-            LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), utcFormatter).atZone(ZoneId.of("UTC")).toLocalDateTime();
-            newAnnounce.setPublishDate(localDateTime.format(localFormatter));
+            LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), DATE_FORMATTER_1).atZone(ZoneId.of("UTC")).toLocalDateTime();
+            newAnnounce.setPublishDate(localDateTime.format(DATE_FORMATTER_2));
         }
         if (newAnnounce.getCloseDate() != null) {
             if (newAnnounce.getCloseDate().length() == 24) {
-                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), test);
-                newAnnounce.setCloseDate(localDateTime.format(utcFormatter));
+                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), DATE_FORMATTER_4);
+                newAnnounce.setCloseDate(localDateTime.format(DATE_FORMATTER_1));
             }
 
-            LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), utcFormatter).atZone(ZoneId.of("UTC")).toLocalDateTime();
-            newAnnounce.setCloseDate(localDateTime.format(localFormatter));
+            LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), DATE_FORMATTER_1).atZone(ZoneId.of("UTC")).toLocalDateTime();
+            newAnnounce.setCloseDate(localDateTime.format(DATE_FORMATTER_2));
         }
         Announces announce = announceRepository.saveAndFlush(newAnnounce);
-        datetimeFormatter(localFormatter, announce);
+        datetimeFormatter(DATE_FORMATTER_2, announce);
         return announce;
     }
 
@@ -129,25 +119,23 @@ public class AnnounceService {
         Categories category = categoryService.getCategoryById(newAnnounce.getCategoryId());
         newAnnounce.setCategoriesObject(category);
 
-        DateTimeFormatter test = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
         if (newAnnounce.getPublishDate() != null) {
             if (newAnnounce.getPublishDate().length() == 24) {
-                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), test);
-                newAnnounce.setPublishDate(localDateTime.format(utcFormatter));
+                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), DATE_FORMATTER_4);
+                newAnnounce.setPublishDate(localDateTime.format(DATE_FORMATTER_1));
             }
 
-            LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), utcFormatter).atZone(ZoneId.of("UTC")).toLocalDateTime();
-            newAnnounce.setPublishDate(localDateTime.format(localFormatter));
+            LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getPublishDate(), DATE_FORMATTER_1).atZone(ZoneId.of("UTC")).toLocalDateTime();
+            newAnnounce.setPublishDate(localDateTime.format(DATE_FORMATTER_2));
         }
         if (newAnnounce.getCloseDate() != null) {
             if (newAnnounce.getCloseDate().length() == 24) {
-                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), test);
-                newAnnounce.setCloseDate(localDateTime.format(utcFormatter));
+                LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), DATE_FORMATTER_4);
+                newAnnounce.setCloseDate(localDateTime.format(DATE_FORMATTER_1));
             }
 
-            LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), utcFormatter).atZone(ZoneId.of("UTC")).toLocalDateTime();
-            newAnnounce.setCloseDate(localDateTime.format(localFormatter));
+            LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), DATE_FORMATTER_1).atZone(ZoneId.of("UTC")).toLocalDateTime();
+            newAnnounce.setCloseDate(localDateTime.format(DATE_FORMATTER_2));
         }
 
         announce.setAnnouncementTitle(newAnnounce.getAnnouncementTitle());
@@ -158,7 +146,7 @@ public class AnnounceService {
         announce.setCategoriesObject(newAnnounce.getCategoriesObject());
 
         Announces announceSave = announceRepository.saveAndFlush(announce);
-        datetimeFormatter(localFormatter, announceSave);
+        datetimeFormatter(DATE_FORMATTER_2, announceSave);
         return announceSave;
     }
 
@@ -169,65 +157,27 @@ public class AnnounceService {
         List<Announces> filteredAnnounces = new ArrayList<>();
 
         if (mode == null || mode.equals("admin")) {
-            size = 9;
-            pageable = PageRequest.of(page, size, sort);
             announces = announceRepository.findAll(pageable);
-            for (Announces announce : announces) {
-                datetimeFormatter(formatter, announce);
-            }
+            announces.forEach(announce -> datetimeFormatter(DATE_FORMATTER_3, announce));
             return announces;
         } else if (mode.equals("active")) {
-            List<Announces> test = announceRepository.findAll();
-            for (Announces announce : test) {
-                if (String.valueOf(announce.getAnnouncementDisplay()).equals("Y")) {
-                    if (announce.getPublishDate() != null && announce.getCloseDate() == null) {
-                        LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), formatter);
-                        ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
-                        Instant instantPublishDate = zonePublishDate.toInstant();
-                        if (Instant.now().compareTo(instantPublishDate) >= 0) {
-                            filteredAnnounces.add(announce);
-                        }
-                    } else if (announce.getPublishDate() != null && announce.getCloseDate() != null) {
-                        LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), formatter);
-                        ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
-                        Instant instantPublishDate = zonePublishDate.toInstant();
-                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
-                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
-                        Instant instantCloseDate = zoneCloseDate.toInstant();
-                        if (Instant.now().compareTo(instantPublishDate) >= 0 && Instant.now().compareTo(instantCloseDate) < 0) {
-                            filteredAnnounces.add(announce);
-                        }
-                    } else if (announce.getPublishDate() == null && announce.getCloseDate() != null) {
-                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
-                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
-                        Instant instantCloseDate = zoneCloseDate.toInstant();
-                        if (Instant.now().compareTo(instantCloseDate) < 0) {
-                            filteredAnnounces.add(announce);
-                        }
-                    } else if (announce.getPublishDate() == null && announce.getCloseDate() == null) {
-                        filteredAnnounces.add(announce);
-                    }
-                }
-            }
+            List<Announces> activeAnnounces = new ArrayList<>();
+            activeAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNull("Y"));
+            activeAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNullAndPublishDateBefore("Y", String.valueOf(Instant.now())));
+            activeAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter("Y", String.valueOf(Instant.now()), String.valueOf(Instant.now())));
+            activeAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNotNullAndCloseDateAfter("Y", String.valueOf(Instant.now())));
+
+            activeAnnounces.forEach(announce -> {
+                datetimeFormatter(DATE_FORMATTER_3, announce);
+                filteredAnnounces.add(announce);
+            });
         } else if (mode.equals("close")) {
-            List<Announces> test = announceRepository.findAll();
-            for (Announces announce : test) {
-                if (String.valueOf(announce.getAnnouncementDisplay()).equals("Y")) {
-                    if (announce.getCloseDate() != null) {
-                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
-                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
-                        Instant instantCloseDate = zoneCloseDate.toInstant();
-                        if (Instant.now().compareTo(instantCloseDate) >= 0) {
-                            filteredAnnounces.add(announce);
-                        }
-                    }
-                }
-            }
+            filteredAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndCloseDateIsNotNullAndCloseDateBefore("Y", String.valueOf(Instant.now())));
         }
 
-        for (Announces announce : filteredAnnounces) {
-            datetimeFormatter(formatter, announce);
-        }
+        Set<Announces> set = new LinkedHashSet<>(filteredAnnounces);
+        filteredAnnounces.clear();
+        filteredAnnounces.addAll(set);
 
         filteredAnnounces.sort(Comparator.comparing(Announces::getAnnouncementId).reversed());
         int start = (int) pageable.getOffset();
@@ -235,74 +185,34 @@ public class AnnounceService {
         return new PageImpl<>(filteredAnnounces.subList(start, end), pageable, filteredAnnounces.size());
     }
 
-    public Page<Announces> getAnnounceByCategoryId(String mode, Integer page, Integer size, Integer catId) {
-//        Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.DESC,"announcementId"));
-//        return announceRepository.findAllByCategoryId(catId,pageable);
+    public Page<Announces> getAnnounceByCategoryId(String mode, Integer page, Integer size, Integer categoryId) {
         Sort sort = Sort.by(Sort.Direction.DESC, "announcementId");
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Announces> announces;
         List<Announces> filteredAnnounces = new ArrayList<>();
 
         if (mode == null || mode.equals("admin")) {
-            size = 9;
-            pageable = PageRequest.of(page, size, sort);
-            announces = announceRepository.findAllByCategoryId(catId,pageable);
-            for (Announces announce : announces) {
-                datetimeFormatter(formatter, announce);
-            }
+            announces = announceRepository.findAllByCategoryId(categoryId, pageable);
+            announces.forEach(announce -> datetimeFormatter(DATE_FORMATTER_3, announce));
             return announces;
         } else if (mode.equals("active")) {
-            List<Announces> test = announceRepository.findAllByCategoryId(catId);
-            for (Announces announce : test) {
-                if (String.valueOf(announce.getAnnouncementDisplay()).equals("Y")) {
-                    if (announce.getPublishDate() != null && announce.getCloseDate() == null) {
-                        LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), formatter);
-                        ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
-                        Instant instantPublishDate = zonePublishDate.toInstant();
-                        if (Instant.now().compareTo(instantPublishDate) >= 0) {
-                            filteredAnnounces.add(announce);
-                        }
-                    } else if (announce.getPublishDate() != null && announce.getCloseDate() != null) {
-                        LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), formatter);
-                        ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
-                        Instant instantPublishDate = zonePublishDate.toInstant();
-                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
-                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
-                        Instant instantCloseDate = zoneCloseDate.toInstant();
-                        if (Instant.now().compareTo(instantPublishDate) >= 0 && Instant.now().compareTo(instantCloseDate) < 0) {
-                            filteredAnnounces.add(announce);
-                        }
-                    } else if (announce.getPublishDate() == null && announce.getCloseDate() != null) {
-                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
-                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
-                        Instant instantCloseDate = zoneCloseDate.toInstant();
-                        if (Instant.now().compareTo(instantCloseDate) < 0) {
-                            filteredAnnounces.add(announce);
-                        }
-                    } else if (announce.getPublishDate() == null && announce.getCloseDate() == null) {
-                        filteredAnnounces.add(announce);
-                    }
-                }
-            }
+            List<Announces> activeAnnounces = new ArrayList<>();
+            activeAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNull(categoryId, "Y"));
+            activeAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNullAndPublishDateBefore(categoryId, "Y", String.valueOf(Instant.now())));
+            activeAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter(categoryId, "Y", String.valueOf(Instant.now()), String.valueOf(Instant.now())));
+            activeAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNotNullAndCloseDateAfter(categoryId, "Y", String.valueOf(Instant.now())));
+
+            activeAnnounces.forEach(announce -> {
+                datetimeFormatter(DATE_FORMATTER_3, announce);
+                filteredAnnounces.add(announce);
+            });
         } else if (mode.equals("close")) {
-            List<Announces> test = announceRepository.findAllByCategoryId(catId);
-            for (Announces announce : test) {
-                if (String.valueOf(announce.getAnnouncementDisplay()).equals("Y")) {
-                    if (announce.getCloseDate() != null) {
-                        LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), formatter);
-                        ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
-                        Instant instantCloseDate = zoneCloseDate.toInstant();
-                        if (Instant.now().compareTo(instantCloseDate) >= 0) {
-                            filteredAnnounces.add(announce);
-                        }
-                    }
-                }
-            }
+            filteredAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndCloseDateIsNotNullAndCloseDateBefore(categoryId, "Y", String.valueOf(Instant.now())));
         }
 
-        for (Announces announce : filteredAnnounces) {
-            datetimeFormatter(formatter, announce);
-        }
+        Set<Announces> set = new LinkedHashSet<>(filteredAnnounces);
+        filteredAnnounces.clear();
+        filteredAnnounces.addAll(set);
 
         filteredAnnounces.sort(Comparator.comparing(Announces::getAnnouncementId).reversed());
         int start = (int) pageable.getOffset();
