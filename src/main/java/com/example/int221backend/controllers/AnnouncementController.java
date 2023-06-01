@@ -3,17 +3,14 @@ package com.example.int221backend.controllers;
 import com.example.int221backend.converters.*;
 import com.example.int221backend.dtos.*;
 import com.example.int221backend.entities.Announces;
-import com.example.int221backend.exceptions.ErrorResponse;
 import com.example.int221backend.services.AnnounceService;
 import com.example.int221backend.utils.ListMapper;
 import jakarta.validation.*;
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
