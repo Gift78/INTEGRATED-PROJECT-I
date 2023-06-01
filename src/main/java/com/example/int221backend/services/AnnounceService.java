@@ -23,18 +23,15 @@ public class AnnounceService {
     private final DateTimeFormatter DATE_FORMATTER_3 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final DateTimeFormatter DATE_FORMATTER_4 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-
     private void datetimeFormatter(DateTimeFormatter dateTimeFormatter, Announces announce) {
         if (announce.getPublishDate() != null) {
             LocalDateTime localPublishDate = LocalDateTime.parse(announce.getPublishDate(), dateTimeFormatter);
-            ZonedDateTime zonePublishDate = localPublishDate.atZone(ZoneId.of("UTC"));
-            Instant instantPublishDate = zonePublishDate.toInstant();
+            Instant instantPublishDate = localPublishDate.toInstant(ZoneOffset.UTC);
             announce.setPublishDate(instantPublishDate.toString());
         }
         if (announce.getCloseDate() != null) {
             LocalDateTime localCloseDate = LocalDateTime.parse(announce.getCloseDate(), dateTimeFormatter);
-            ZonedDateTime zoneCloseDate = localCloseDate.atZone(ZoneId.of("UTC"));
-            Instant instantCloseDate = zoneCloseDate.toInstant();
+            Instant instantCloseDate = localCloseDate.toInstant(ZoneOffset.UTC);
             announce.setCloseDate(instantCloseDate.toString());
         }
     }
@@ -66,7 +63,6 @@ public class AnnounceService {
 
         if (count != null && count) {
             announce.setViewCount(announce.getViewCount() + 1);
-            System.out.println("view count: " + announce.getViewCount());
             announceRepository.saveAndFlush(announce);
         }
 
@@ -103,6 +99,7 @@ public class AnnounceService {
             LocalDateTime localDateTime = LocalDateTime.parse(newAnnounce.getCloseDate(), DATE_FORMATTER_1).atZone(ZoneId.of("UTC")).toLocalDateTime();
             newAnnounce.setCloseDate(localDateTime.format(DATE_FORMATTER_2));
         }
+
         Announces announce = announceRepository.saveAndFlush(newAnnounce);
         datetimeFormatter(DATE_FORMATTER_2, announce);
         return announce;
@@ -153,31 +150,26 @@ public class AnnounceService {
     public Page<Announces> getAnnouncePage(String mode, int page, int size) {
         Sort sort = Sort.by(Sort.Direction.DESC, "announcementId");
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Announces> announces;
         List<Announces> filteredAnnounces = new ArrayList<>();
 
         if (mode == null || mode.equals("admin")) {
+            Page<Announces> announces;
             announces = announceRepository.findAll(pageable);
             announces.forEach(announce -> datetimeFormatter(DATE_FORMATTER_3, announce));
             return announces;
         } else if (mode.equals("active")) {
-            List<Announces> activeAnnounces = new ArrayList<>();
-            activeAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNull("Y"));
-            activeAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNullAndPublishDateBefore("Y", String.valueOf(Instant.now())));
-            activeAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter("Y", String.valueOf(Instant.now()), String.valueOf(Instant.now())));
-            activeAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNotNullAndCloseDateAfter("Y", String.valueOf(Instant.now())));
+            filteredAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNull("Y"));
+            filteredAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNullAndPublishDateBefore("Y", String.valueOf(Instant.now())));
+            filteredAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter("Y", String.valueOf(Instant.now()), String.valueOf(Instant.now())));
+            filteredAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNotNullAndCloseDateAfter("Y", String.valueOf(Instant.now())));
 
-            activeAnnounces.forEach(announce -> {
-                datetimeFormatter(DATE_FORMATTER_3, announce);
-                filteredAnnounces.add(announce);
-            });
+            Set<Announces> set = new LinkedHashSet<>(filteredAnnounces);
+            filteredAnnounces.clear();
+            filteredAnnounces.addAll(set);
+            filteredAnnounces.forEach(announce -> datetimeFormatter(DATE_FORMATTER_3, announce));
         } else if (mode.equals("close")) {
             filteredAnnounces.addAll(announceRepository.findAllByAnnouncementDisplayAndCloseDateIsNotNullAndCloseDateBefore("Y", String.valueOf(Instant.now())));
         }
-
-        Set<Announces> set = new LinkedHashSet<>(filteredAnnounces);
-        filteredAnnounces.clear();
-        filteredAnnounces.addAll(set);
 
         filteredAnnounces.sort(Comparator.comparing(Announces::getAnnouncementId).reversed());
         int start = (int) pageable.getOffset();
@@ -188,31 +180,27 @@ public class AnnounceService {
     public Page<Announces> getAnnounceByCategoryId(String mode, Integer page, Integer size, Integer categoryId) {
         Sort sort = Sort.by(Sort.Direction.DESC, "announcementId");
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Announces> announces;
         List<Announces> filteredAnnounces = new ArrayList<>();
 
         if (mode == null || mode.equals("admin")) {
+            Page<Announces> announces;
             announces = announceRepository.findAllByCategoryId(categoryId, pageable);
             announces.forEach(announce -> datetimeFormatter(DATE_FORMATTER_3, announce));
             return announces;
         } else if (mode.equals("active")) {
-            List<Announces> activeAnnounces = new ArrayList<>();
-            activeAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNull(categoryId, "Y"));
-            activeAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNullAndPublishDateBefore(categoryId, "Y", String.valueOf(Instant.now())));
-            activeAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter(categoryId, "Y", String.valueOf(Instant.now()), String.valueOf(Instant.now())));
-            activeAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNotNullAndCloseDateAfter(categoryId, "Y", String.valueOf(Instant.now())));
+            filteredAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNull(categoryId, "Y"));
+            filteredAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNullAndPublishDateBefore(categoryId, "Y", String.valueOf(Instant.now())));
+            filteredAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNotNullAndCloseDateIsNotNullAndPublishDateBeforeAndCloseDateAfter(categoryId, "Y", String.valueOf(Instant.now()), String.valueOf(Instant.now())));
+            filteredAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndPublishDateIsNullAndCloseDateIsNotNullAndCloseDateAfter(categoryId, "Y", String.valueOf(Instant.now())));
 
-            activeAnnounces.forEach(announce -> {
-                datetimeFormatter(DATE_FORMATTER_3, announce);
-                filteredAnnounces.add(announce);
-            });
+            Set<Announces> set = new LinkedHashSet<>(filteredAnnounces);
+            filteredAnnounces.clear();
+            filteredAnnounces.addAll(set);
+
+            filteredAnnounces.forEach(announce -> datetimeFormatter(DATE_FORMATTER_3, announce));
         } else if (mode.equals("close")) {
             filteredAnnounces.addAll(announceRepository.findAllByCategoryIdAndAnnouncementDisplayAndCloseDateIsNotNullAndCloseDateBefore(categoryId, "Y", String.valueOf(Instant.now())));
         }
-
-        Set<Announces> set = new LinkedHashSet<>(filteredAnnounces);
-        filteredAnnounces.clear();
-        filteredAnnounces.addAll(set);
 
         filteredAnnounces.sort(Comparator.comparing(Announces::getAnnouncementId).reversed());
         int start = (int) pageable.getOffset();
