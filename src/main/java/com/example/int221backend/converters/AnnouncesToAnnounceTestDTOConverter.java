@@ -22,6 +22,7 @@ public class AnnouncesToAnnounceTestDTOConverter implements Converter<Announces,
         destination.setCloseDate(source.getCloseDate());
         destination.setAnnouncementDisplay(source.getAnnouncementDisplay());
         destination.setCategoriesObject(new CategoryDTO(source.getCategoriesObject().getCategoryName()));
+        destination.setCategoryId(source.getCategoriesObject().getCategoryId());
         return destination;
     }
 }
