@@ -23,7 +23,7 @@ const QuillEditorOptions = {
 
 
 onMounted(async () => {
-    data.value = await getDataById(params?.id,true)
+    data.value = await getDataById(params?.id, true)
 })
 </script>
 
@@ -60,16 +60,7 @@ onMounted(async () => {
                 </div>
             </div>
 
-            <!-- <hr class="mt-4 mx-12"> -->
-
-            <div class="mt-14 mx-auto w-full border-t">
-                <QuillEditor toolbar="#my-toolbar" v-model:content="data.announcementDescription" content-type="html"
-                    class="ann-description" :options="QuillEditorOptions">
-                    <template #toolbar>
-                        <div id="my-toolbar" class="hidden"></div>
-                    </template>
-                </QuillEditor>
-            </div>
+            <div class="ql-editor" v-html="data.announcementDescription"></div>
         </div>
 
         <div class="flex justify-end mt-4">

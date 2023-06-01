@@ -240,8 +240,6 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
         return
     }
 
-
-
     try {
         const res = await fetch(import.meta.env.VITE_ROOT_API + "/api/announcements/" + announceId,
             {
@@ -298,7 +296,7 @@ const editAnnouncement = async (updateAnnounce, announceId) => {
             <!-- Description -->
             <div class="flex mt-5">
                 <div class="w-52 text-cyan-800 font-bold pt-2">Description</div>
-                <div class="w-full px-5 mx-auto">
+                <div class="w-full mx-auto">
                     <QuillEditor theme="snow" toolbar="full" v-model:content="editedAnnounce.announcementDescription"
                         content-type="html" class="ann-description h-96" />
                 </div>
