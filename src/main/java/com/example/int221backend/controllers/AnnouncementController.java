@@ -3,16 +3,22 @@ package com.example.int221backend.controllers;
 import com.example.int221backend.converters.*;
 import com.example.int221backend.dtos.*;
 import com.example.int221backend.entities.Announces;
+import com.example.int221backend.exceptions.ErrorResponse;
 import com.example.int221backend.services.AnnounceService;
 import com.example.int221backend.utils.ListMapper;
 import jakarta.validation.*;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,7 +59,18 @@ public class AnnouncementController {
     @PostMapping("")
     public AnnounceDetailDTO create(@Valid @RequestBody Announces newAnnounce, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            Set<ConstraintViolation<?>> constraintViolations = new HashSet<>();
+            for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                Validation.buildDefaultValidatorFactory()
+                        .getValidator()
+                        .validateProperty(newAnnounce, fieldError.getField())
+                        .stream()
+                        .findFirst().ifPresent(constraintViolations::add);
+            }
 
+            if (!constraintViolations.isEmpty()) {
+                throw new ConstraintViolationException(constraintViolations);
+            }
         }
 
         Announces announce = announceService.addNewAnnounce(newAnnounce);
@@ -61,14 +78,28 @@ public class AnnouncementController {
         return modelMapper.map(announce, AnnounceDetailDTO.class);
     }
 
-
     @DeleteMapping("{announceId}")
     public void removeAnnounce(@PathVariable Integer announceId) {
         announceService.removeAnnounce((announceId));
     }
 
     @PutMapping("{announceId}")
-    public AnnounceTestDTO updateAnnounce(@Valid @PathVariable Integer announceId, @RequestBody Announces newAnnounce) {
+    public AnnounceTestDTO updateAnnounce(@Valid @PathVariable Integer announceId, @RequestBody Announces newAnnounce, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            Set<ConstraintViolation<?>> constraintViolations = new HashSet<>();
+            for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                Validation.buildDefaultValidatorFactory()
+                        .getValidator()
+                        .validateProperty(newAnnounce, fieldError.getField())
+                        .stream()
+                        .findFirst().ifPresent(constraintViolations::add);
+            }
+
+            if (!constraintViolations.isEmpty()) {
+                throw new ConstraintViolationException(constraintViolations);
+            }
+        }
+
         Announces announce = announceService.updateAnnounce(announceId, newAnnounce);
         modelMapper.addConverter(new AnnouncesToAnnounceTestDTOConverter());
         return modelMapper.map(announce, AnnounceTestDTO.class);
@@ -78,8 +109,8 @@ public class AnnouncementController {
     public PageDTO<AnnounceDTO> getAnnouncePage(@RequestParam(defaultValue = "admin") String mode,
                                                 @RequestParam(defaultValue = "0") Integer page,
                                                 @RequestParam(defaultValue = "5") Integer size,
-                                                @RequestParam(defaultValue = "0") Integer category) {
-        if (category == null || category == 0) {
+                                                @RequestParam(defaultValue = "0") Integer categoryId) {
+        if (categoryId == null || categoryId == 0) {
             Page<Announces> announces = announceService.getAnnouncePage(mode, page, size);
             modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
             PageDTO<AnnounceDTO> pageDTO = listMapper.toPageDTO(announces, AnnounceDTO.class, modelMapper);
@@ -87,7 +118,7 @@ public class AnnouncementController {
             return pageDTO;
         }
         else {
-            Page<Announces> announcesPage = announceService.getAnnounceByCategoryId(mode, page, size, category);
+            Page<Announces> announcesPage = announceService.getAnnounceByCategoryId(mode, page, size, categoryId);
             modelMapper.addConverter(new AnnouncesToAnnounceDTOConverter());
             PageDTO<AnnounceDTO> pageDTO = listMapper.toPageDTO(announcesPage, AnnounceDTO.class, modelMapper);
             pageDTO.setPage(page);
